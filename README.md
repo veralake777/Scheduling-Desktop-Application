@@ -1,2 +1,4 @@
-"# Scheduling Desktop Application" 
+# Scheduling Desktop Application
 
+
+![Login Page](/GUI/LoginPage.PNG)

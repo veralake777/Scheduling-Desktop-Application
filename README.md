@@ -10,6 +10,8 @@ Learn Java best practices.
 
 Implement Java design patterns (Singletons, Javabean, etc.).
 
+Utilize the SDLC (Software Development Lifecycle).
+
 Present a Graphical User Interface that has a modern look and feel.
 
 Create an pleasant and intuitive user experience.

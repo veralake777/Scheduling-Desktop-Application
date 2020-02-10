@@ -1,3 +1,5 @@
 # ItelliJ Files
 /.idea
 /out
+/CodeExamples
+/src/utils/DatabaseConnection.java

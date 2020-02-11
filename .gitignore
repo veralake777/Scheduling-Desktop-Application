@@ -1,5 +1,7 @@
 # ItelliJ Files
+/DAODemo2
 /.idea
+*.iml
 /out
 /CodeExamples
-/src/utils/DatabaseConnection.java
+/src/utils/DBUtils.java

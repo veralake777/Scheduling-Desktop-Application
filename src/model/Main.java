@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import utils.DBUtils;
 
 public class Main extends Application {
 
@@ -16,12 +17,24 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("../view/loginScreen.fxml"));
         primaryStage.setTitle("ACMECo Scheduling System");
-        primaryStage.setScene(new Scene(root, 1200, 800));
+        primaryStage.setMaximized(true);
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClassNotFoundException {
+        // connect to Database
+        try {
+        DBUtils.startConnection();
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // launch app
         launch(args);
+
+        // close Database connection
+        DBUtils.closeConnection();
     }
 }

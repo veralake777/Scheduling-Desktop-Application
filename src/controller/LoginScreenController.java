@@ -9,8 +9,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.User;
+import utils.Queries;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginScreenController {
     Stage stage;
@@ -18,7 +21,7 @@ public class LoginScreenController {
     @FXML
     private PasswordField passwordTxt;
     @FXML
-    private TextField emailTxt;
+    private TextField userNameTxt;
 
     public void goToMainScreen(ActionEvent actionEvent) throws IOException {
         Stage stage;
@@ -40,11 +43,34 @@ public class LoginScreenController {
         stage.show();
     }
     @FXML
-    private void onActionLogin(ActionEvent actionEvent) throws IOException {
+    private void onActionLogin(ActionEvent actionEvent) throws IOException, SQLException, ClassNotFoundException {
         // validate email and password
+        // set userName and password
+        User credentials = new User(userNameTxt.getText(), passwordTxt.getText());
 
-        // switch to main screen
-        goToMainScreen(actionEvent);
+        //get username and password
+        String userName = credentials.getUserName();
+        String password = credentials.getPassword();
+
+        // validate userName
+        boolean validUserName = Queries.validateValue("*", "user", "userName", userName);
+        // validate password
+        boolean validPassword = Queries.validateValue("*", "user", "password", password);
+
+        // if userName is true and password is true then switch to main screen
+        if(validUserName && validPassword) {
+            // switch to main screen
+            goToMainScreen(actionEvent);
+        } else {
+            System.out.println("Invalid Username or Password.");
+        }
+
+
+
+        // else notify user invalid credentials
+
+
+
     }
 
     @FXML

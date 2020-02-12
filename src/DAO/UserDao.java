@@ -17,11 +17,10 @@ import static utils.Queries.createQuery;
 import static utils.Queries.getResult;
 
 
-public class UserDao implements DaoInterface {
+public class UserDao {
     // flag for active user
     private static boolean activeBool;
     public static User getRow(String userName) throws ClassNotFoundException, SQLException, ParseException {
-        // type is name or phone, value is the name or the phone #
         DBUtils.startConnection();
         String sqlStatement="select * FROM user WHERE userName  = '" + userName+ "'";
         //  String sqlStatement="select FROM address";
@@ -86,18 +85,22 @@ public class UserDao implements DaoInterface {
         return allUsers;
     }
 
-    @Override
-    public void updateRow() {
+    public static void updateUser(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
+        try{
+            DaoMethods.updateRow("user", updateCol, setColValue, rowId);
+        } catch(ClassNotFoundException e) {
+            System.out.println("UserDao UPDATE CLASS NOT FOUND");
+            e.getException();
+        }
+    }
+
+    public void deleteRow(int rowId) {
+        //DELETE FROM `table_name` [WHERE condition];
 
     }
 
-    @Override
-    public void deleteRow() {
-
-    }
-
-    @Override
-    public void add() {
+    public void add(Object row) {
+        // INSERT INTO `table_name`(column_1,column_2,...) VALUES (value_1,value_2,...);
 
     }
 

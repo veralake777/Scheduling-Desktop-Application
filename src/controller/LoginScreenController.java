@@ -53,6 +53,9 @@ public class LoginScreenController {
         String userName = credentials.getUserName();
         String password = credentials.getPassword();
 
+        // test update
+        UserDao.updateUser("userName", "testtest", 1);
+
         // validate userName
         boolean validUserName = UserDao.validateUserInput("*", "user", "userName", userName);
         // validate password

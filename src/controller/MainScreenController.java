@@ -17,7 +17,7 @@ public class MainScreenController {
 
     @FXML
     public void initialize() throws Exception {
-        User testUser = UserDao.getUser("test");
+        User testUser = UserDao.getRow("test");
         userId.setText(String.valueOf(testUser.getUserId()));
         userName.setText(testUser.getUserName());
     }

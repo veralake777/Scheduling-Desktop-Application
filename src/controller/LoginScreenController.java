@@ -14,6 +14,7 @@ import model.User;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 public class LoginScreenController {
     Stage stage;
@@ -43,7 +44,7 @@ public class LoginScreenController {
         stage.show();
     }
     @FXML
-    private void onActionLogin(ActionEvent actionEvent) throws IOException, SQLException, ClassNotFoundException {
+    private void onActionLogin(ActionEvent actionEvent) throws IOException, SQLException, ClassNotFoundException, ParseException {
         // validate email and password
         // set userName and password
         User credentials = new User(userNameTxt.getText(), passwordTxt.getText());
@@ -65,7 +66,8 @@ public class LoginScreenController {
             System.out.println("Invalid Username or Password.");
         }
 
-
+        // test getAllUsers
+        UserDao.getAllRows();
 
         // else notify user invalid credentials
 

@@ -37,15 +37,4 @@ public class Queries {
         return result;
     }
 
-    public static boolean validateValue(String selectRow, String fromTable, String whereCol, String isValue) throws SQLException {
-
-        query = "SELECT " + selectRow + " FROM " + fromTable;
-        ResultSet rs = statement.executeQuery(query);
-        while (rs.next()) {
-            if(rs.getString(whereCol).equals(isValue)){
-                return true;
-            }
-        }
-        return false;
-    }
 }

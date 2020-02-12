@@ -1,5 +1,6 @@
 package controller;
 
+import DAO.UserDao;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +11,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.User;
-import utils.Queries;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -53,9 +53,9 @@ public class LoginScreenController {
         String password = credentials.getPassword();
 
         // validate userName
-        boolean validUserName = Queries.validateValue("*", "user", "userName", userName);
+        boolean validUserName = UserDao.validateUserInput("*", "user", "userName", userName);
         // validate password
-        boolean validPassword = Queries.validateValue("*", "user", "password", password);
+        boolean validPassword = UserDao.validateUserInput("*", "user", "password", password);
 
         // if userName is true and password is true then switch to main screen
         if(validUserName && validPassword) {

@@ -1,10 +1,9 @@
 package controller;
 
+import DAO.UserDao;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import model.User;
-
-import static DAO.UserDao.getRow;
 
 public class MainScreenController {
 
@@ -18,8 +17,8 @@ public class MainScreenController {
 
     @FXML
     public void initialize() throws Exception {
-        User testUser = getRow("testtest");
-        userId.setText(String.valueOf(testUser.getUserId()));
-        userName.setText(testUser.getUserName());
+        User testUser = UserDao.getUser("test");
+//        userId.setText(String.valueOf(testUser.getUserId()));
+//        userName.setText(testUser.getUserName());
     }
 }

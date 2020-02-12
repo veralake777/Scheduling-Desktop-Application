@@ -6,7 +6,6 @@ import java.sql.Statement;
 
 public class Queries {
 
-    private static String query;
     private static ResultSet result;
     // data source
     private static Statement statement;
@@ -21,11 +20,10 @@ public class Queries {
     }
 
     public static void createQuery(String q){
-        query =q;
         try{
-            if(query.toLowerCase().startsWith("select"))
+            if(q.toLowerCase().startsWith("select"))
                 result=statement.executeQuery(q);
-            if(query.toLowerCase().startsWith("delete")||query.toLowerCase().startsWith("insert")||query.toLowerCase().startsWith("update"))
+            if(q.toLowerCase().startsWith("delete")|| q.toLowerCase().startsWith("insert")|| q.toLowerCase().startsWith("update"))
                 statement.executeUpdate(q);
         }
         catch(Exception ex){

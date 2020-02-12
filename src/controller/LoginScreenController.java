@@ -13,8 +13,12 @@ import javafx.stage.Stage;
 import model.User;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+
+import static utils.Queries.createQuery;
+import static utils.Queries.getResult;
 
 public class LoginScreenController {
     Stage stage;
@@ -43,6 +47,23 @@ public class LoginScreenController {
         //show stage
         stage.show();
     }
+
+    // validate user input for login screen
+    public static boolean validateInput(String selectRow, String fromTable, String whereCol, String isValue) throws SQLException, ClassNotFoundException {
+
+        String query = "SELECT " + selectRow + " FROM " + fromTable;
+        createQuery(query);
+        try (ResultSet rs = getResult()) {
+            while (rs.next()) {
+                if (rs.getString(whereCol).equals(isValue)) {
+                    return true;
+                }
+            }} catch (SQLException e) {
+            System.out.println(e.getErrorCode());
+        }
+        return false;
+    }
+
     @FXML
     private void onActionLogin(ActionEvent actionEvent) throws IOException, SQLException, ClassNotFoundException, ParseException {
         // validate email and password
@@ -54,12 +75,12 @@ public class LoginScreenController {
         String password = credentials.getPassword();
 
         // test update
-        UserDao.updateUser("userName", "testtest", 1);
+        UserDao.updateUser("userName", "test", 1);
 
         // validate userName
-        boolean validUserName = UserDao.validateUserInput("*", "user", "userName", userName);
+        boolean validUserName = validateInput("*", "user", "userName", userName);
         // validate password
-        boolean validPassword = UserDao.validateUserInput("*", "user", "password", password);
+        boolean validPassword = validateInput("*", "user", "password", password);
 
         // if userName is true and password is true then switch to main screen
         if(validUserName && validPassword) {
@@ -69,13 +90,7 @@ public class LoginScreenController {
             System.out.println("Invalid Username or Password.");
         }
 
-        // test getAllUsers
-        UserDao.getAllRows();
-
         // else notify user invalid credentials
-
-
-
     }
 
     @FXML

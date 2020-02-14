@@ -24,7 +24,6 @@ public class UserDao {
     private static boolean activeBool;
     private static String sqlStatement;
 
-
     // methods for dynamic creation of TableViews and args for DaoMethods.add()
     public static ObservableList<String> getUserColumns(ResultSet rs) throws SQLException {
         return DaoMethods.getColumnNames(rs);
@@ -34,6 +33,7 @@ public class UserDao {
         return DaoMethods.getColumnValues(rs);
     }
 
+    // get, update, delete, add
     public static User getUser(String userName) throws ClassNotFoundException, SQLException, ParseException {
         DBUtils.startConnection();
         String sqlStatement = "select * FROM user WHERE userName  = '" + userName + "'";
@@ -53,6 +53,7 @@ public class UserDao {
             if (active == 1) {
                 activeBool = true;
             }
+
 //            System.out.println(activeBool);
             String createDate = result.getString("createDate");
 //            System.out.println(createDate);
@@ -104,7 +105,8 @@ public class UserDao {
     public static void updateUser(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
         try {
             // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
-            sqlStatement = "UPDATE user SET " + updateCol + " = " + setColValue + " WHERE userId = " + rowId;
+            // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
+            sqlStatement = "UPDATE user SET " + updateCol + " = '" + setColValue + "' WHERE userId = " + rowId;
             DBUtils.startConnection();
             Queries.createQuery(sqlStatement);
             ResultSet result = Queries.getResult();
@@ -119,7 +121,6 @@ public class UserDao {
         //DELETE FROM `table_name` [WHERE condition];
         sqlStatement = "DELETE FROM user WHERE userId = " + rowId;
     }
-
 
     public static void addUser(int userId, String userName, String password, int active, String createDate, String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException {
         // INSERT INTO `table_name`(column_1,column_2,...) VALUES (value_1,value_2,...);

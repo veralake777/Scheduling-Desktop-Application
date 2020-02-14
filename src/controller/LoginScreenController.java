@@ -1,6 +1,6 @@
 package controller;
 
-import DAO.UserDao;
+import DAO.CustomerDao;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import static DAO.UserDao.updateUser;
 import static utils.Queries.createQuery;
 import static utils.Queries.getResult;
 
@@ -76,10 +75,10 @@ public class LoginScreenController {
         String password = credentials.getPassword();
 
         // test update
-        updateUser("userName", "test", 1);
+        CustomerDao.updateCustomer("customerName", "John Done", 1);
 
         // test add
-        UserDao.addUser(2, "test2", "test2", 1, "NOW()", "test", "NOW()", "test");
+        CustomerDao.addCustomer(10, "test customer", 1, 1, "NOW()", "test", "NOW()", "test");
 
 
         // validate userName
@@ -97,6 +96,7 @@ public class LoginScreenController {
 
         // else notify user invalid credentials
     }
+
 
     @FXML
     private void onActionExit(ActionEvent actionEvent) {

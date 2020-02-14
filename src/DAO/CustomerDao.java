@@ -4,34 +4,33 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.Customer;
 import utils.DBUtils;
-import utils.DaoMethods;
-import utils.Queries;
-import utils.TimeMethods;
+import utils.QueryUtils;
+import utils.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 
-import static utils.Queries.getResult;
+import static utils.QueryUtils.getResult;
 
 public class CustomerDao {
     private static String sqlStatement;
     private static boolean activeBool = false;
 
     public static ObservableList<String> getCustomerColumns(ResultSet rs) throws SQLException {
-        return DaoMethods.getColumnNames(rs);
+        return DAO.getColumnNames(rs);
     }
 
     public static ObservableList<String> getCustomerColumnValues(ResultSet rs) throws SQLException {
-        return DaoMethods.getColumnValues(rs);
+        return DAO.getColumnValues(rs);
     }
 
     // get, update, delete, add
     public static Customer getCustomer(int customerId) throws ClassNotFoundException, SQLException, ParseException {
         DBUtils.startConnection();
         String sqlStatement = "select * FROM customer WHERE customerId  = " + customerId;
-        Queries.createQuery(sqlStatement);
+        QueryUtils.createQuery(sqlStatement);
         Customer customerResult;
         ResultSet result = getResult();
         while (result.next()) {
@@ -46,8 +45,8 @@ public class CustomerDao {
             String createdBy = result.getString("createdBy");
             String lastUpdate = result.getString("lastUpdate");
             String lastUpdateby = result.getString("lastUpdateBy");
-            Calendar createDateCalendar = TimeMethods.stringToCalendar(createDate);
-            Calendar lastUpdateCalendar = TimeMethods.stringToCalendar(lastUpdate);
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
             customerResult = new Customer(customerIdG, customerName, addressId, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
             return customerResult;
         }
@@ -58,8 +57,8 @@ public class CustomerDao {
         ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
         DBUtils.startConnection();
         String sqlStatement = "select * from customer";
-        Queries.createQuery(sqlStatement);
-        ResultSet result = Queries.getResult();
+        QueryUtils.createQuery(sqlStatement);
+        ResultSet result = QueryUtils.getResult();
         while (result.next()) {
             int customerIdG = result.getInt("customerId");
             String customerName = result.getString("customerName");
@@ -72,8 +71,8 @@ public class CustomerDao {
             String createdBy = result.getString("createdBy");
             String lastUpdate = result.getString("lastUpdate");
             String lastUpdateby = result.getString("lastUpdateBy");
-            Calendar createDateCalendar = TimeMethods.stringToCalendar(createDate);
-            Calendar lastUpdateCalendar = TimeMethods.stringToCalendar(lastUpdate);
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
             Customer customerResult = new Customer(customerIdG, customerName, addressId, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
             allCustomers.add(customerResult);
         }
@@ -85,8 +84,8 @@ public class CustomerDao {
             // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
             sqlStatement = "UPDATE customer SET " + updateCol + " = '" + setColValue + "' WHERE customerId = " + rowId;
             DBUtils.startConnection();
-            Queries.createQuery(sqlStatement);
-            ResultSet result = Queries.getResult();
+            QueryUtils.createQuery(sqlStatement);
+            ResultSet result = QueryUtils.getResult();
         } catch (ClassNotFoundException e) {
             System.out.println("CustomerDoa UPDATE CLASS NOT FOUND");
             e.getException();
@@ -102,8 +101,8 @@ public class CustomerDao {
         sqlStatement = "INSERT INTO customer(customerId, customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) " +
                 "VALUES (" + customerId + " , '" + customerName + "' , '" + addressId + "' , " + active + "," + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
         DBUtils.startConnection();
-        Queries.createQuery(sqlStatement);
-        ResultSet result = Queries.getResult();
+        QueryUtils.createQuery(sqlStatement);
+        ResultSet result = QueryUtils.getResult();
     }
 
 }

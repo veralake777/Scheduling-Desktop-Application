@@ -1,6 +1,6 @@
 package controller;
 
-import DAO.CustomerDao;
+import DAO.CityDao;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,8 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import static utils.Queries.createQuery;
-import static utils.Queries.getResult;
+import static utils.QueryUtils.createQuery;
+import static utils.QueryUtils.getResult;
 
 public class LoginScreenController {
     Stage stage;
@@ -74,11 +74,11 @@ public class LoginScreenController {
         String userName = credentials.getUserName();
         String password = credentials.getPassword();
 
-        // test update
-        CustomerDao.updateCustomer("customerName", "John Done", 1);
-
         // test add
-        CustomerDao.addCustomer(10, "test customer", 1, 1, "NOW()", "test", "NOW()", "test");
+        CityDao.addCity(10, "testAddCity", 10, "NOW()", "test", "NOW()", "test");
+
+        // test update
+        CityDao.updateCity("city", "testCity", 10);
 
 
         // validate userName

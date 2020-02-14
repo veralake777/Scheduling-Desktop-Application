@@ -1,9 +1,9 @@
 package controller;
 
-import DAO.CustomerDao;
+import DAO.CityDao;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import model.Customer;
+import model.City;
 
 public class MainScreenController {
 
@@ -17,8 +17,8 @@ public class MainScreenController {
 
     @FXML
     public void initialize() throws Exception {
-        Customer testCustomer = CustomerDao.getCustomer(1);
-        userId.setText(String.valueOf(testCustomer.getCustomerName()));
-        userName.setText(testCustomer.getCustomerName());
+        City testCity = CityDao.getCity("testCity");
+        userId.setText(String.valueOf(testCity.getCity()));
+        userName.setText(String.valueOf(testCity.getCityId()));
     }
 }

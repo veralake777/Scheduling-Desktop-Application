@@ -5,16 +5,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.User;
 import utils.DBUtils;
-import utils.DaoMethods;
-import utils.Queries;
-import utils.TimeMethods;
+import utils.QueryUtils;
+import utils.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 
-import static utils.Queries.getResult;
+import static utils.QueryUtils.getResult;
 
 //import utils.DaoMethods;
 
@@ -26,11 +25,11 @@ public class UserDao {
 
     // methods for dynamic creation of TableViews and args for DaoMethods.add()
     public static ObservableList<String> getUserColumns(ResultSet rs) throws SQLException {
-        return DaoMethods.getColumnNames(rs);
+        return DAO.getColumnNames(rs);
     }
 
     public static ObservableList<String> getUserColumnValues(ResultSet rs) throws SQLException {
-        return DaoMethods.getColumnValues(rs);
+        return DAO.getColumnValues(rs);
     }
 
     // get, update, delete, add
@@ -38,7 +37,7 @@ public class UserDao {
         DBUtils.startConnection();
         String sqlStatement = "select * FROM user WHERE userName  = '" + userName + "'";
         //  String sqlStatement="select FROM address";
-        Queries.createQuery(sqlStatement);
+        QueryUtils.createQuery(sqlStatement);
         User userResult;
         ResultSet result = getResult();
         while (result.next()) {
@@ -63,9 +62,9 @@ public class UserDao {
 //            System.out.println(lastUpdate);
             String lastUpdateby = result.getString("lastUpdateBy");
 //            System.out.println(lastUpdateby);
-            Calendar createDateCalendar = TimeMethods.stringToCalendar(createDate);
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
 //            System.out.println(createDateCalendar);
-            Calendar lastUpdateCalendar = TimeMethods.stringToCalendar(lastUpdate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
 //            System.out.println(lastUpdateCalendar);
             //   s(int addressId, String address, String address2, int cityId, String postalCode, String phone, Calendar createDate, String createdBy, Calendar lastUpdate, String lastUpdateBy)
             userResult = new User(userid, userName1, password, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
@@ -79,8 +78,8 @@ public class UserDao {
         ObservableList<User> allUsers = FXCollections.observableArrayList();
         DBUtils.startConnection();
         String sqlStatement = "select * from user";
-        Queries.createQuery(sqlStatement);
-        ResultSet result = Queries.getResult();
+        QueryUtils.createQuery(sqlStatement);
+        ResultSet result = QueryUtils.getResult();
         while (result.next()) {
             int userid = result.getInt("userid");
             String userNameG = result.getString("userName");
@@ -91,8 +90,8 @@ public class UserDao {
             String createdBy = result.getString("createdBy");
             String lastUpdate = result.getString("lastUpdate");
             String lastUpdateby = result.getString("lastUpdateBy");
-            Calendar createDateCalendar = TimeMethods.stringToCalendar(createDate);
-            Calendar lastUpdateCalendar = TimeMethods.stringToCalendar(lastUpdate);
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
             //   s(int addressId, String address, String address2, int cityId, String postalCode, String phone, Calendar createDate, String createdBy, Calendar lastUpdate, String lastUpdateBy)
             User userResult = new User(userid, userNameG, password, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
             allUsers.add(userResult);
@@ -108,8 +107,8 @@ public class UserDao {
             // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
             sqlStatement = "UPDATE user SET " + updateCol + " = '" + setColValue + "' WHERE userId = " + rowId;
             DBUtils.startConnection();
-            Queries.createQuery(sqlStatement);
-            ResultSet result = Queries.getResult();
+            QueryUtils.createQuery(sqlStatement);
+            ResultSet result = QueryUtils.getResult();
         } catch (ClassNotFoundException e) {
             System.out.println("UserDao UPDATE CLASS NOT FOUND");
             e.getException();
@@ -128,7 +127,7 @@ public class UserDao {
                 "VALUES (" + userId + " , '" + userName + "' , '" + password + "' , " + active + "," + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
         System.out.println(sqlStatement);
         DBUtils.startConnection();
-        Queries.createQuery(sqlStatement);
-        ResultSet result = Queries.getResult();
+        QueryUtils.createQuery(sqlStatement);
+        ResultSet result = QueryUtils.getResult();
     }
 }

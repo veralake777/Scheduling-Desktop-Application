@@ -107,51 +107,7 @@ public class DaoMethods {
 //
 //    }
 //
-    public static ObservableList<String> getColumnNames(ResultSet resultSet) throws SQLException {
-        // builds STRING columnNames for the row to be passed to getColumnValues
-        ObservableList<String> columnNames = FXCollections.observableArrayList( new ArrayList<String>());
-        ResultSetMetaData columns = resultSet.getMetaData();
-        int i = 0;
-        while (i < columns.getColumnCount()) {
-            i++;
-            if(columns.getColumnLabel(i) != null) {
-                System.out.print(columns.getColumnName(i) + "\t");
-                columnNames.add(columns.getColumnName(i));
-            } else {
-                System.out.println("ADDING NULL COLUMN NAME");
-                columnNames.add("null");
-            }
-        }
-        return columnNames;
-    }
 
-    public static ObservableList<String> getColumnValues(ResultSet resultSet) throws SQLException {
-        ObservableList<String> columnNames = getColumnNames(resultSet);
-        ObservableList<String> valuesList = FXCollections.observableArrayList( new ArrayList<String>());
-        int i = 0;
-        if(!resultSet.wasNull()){
-            while (resultSet.next()) {
-                System.out.println("IN WHILE LOOP");
-                i++;
-                String col_name = columnNames.get(i);
-                // TODO: this is returning the column name instead of the value, why?
-                try{
-                valuesList.add(resultSet.getString(col_name));
-                    System.out.println(resultSet.getString(col_name));
-                } catch(Throwable e) {
-                    valuesList.add(String.valueOf(resultSet.getInt(col_name)));
-                    System.out.println(String.valueOf(resultSet.getInt(col_name)));
-                }
-                if (resultSet.getString("active") == "1") {
-                    activeBool = true;
-                }
-            }
-        }else {
-            System.out.println("RESULT SET IS EMPTY");
-        }
-
-        return valuesList;
-    }
 //
 //
 //    public static void add(Object row, String tableName, ObservableList<String> columns, ObservableList<String> values)

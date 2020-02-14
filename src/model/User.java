@@ -36,8 +36,8 @@ public class User {
         return userId;
     }
 
-    public void setUserId(int userId) {
-        // FK check for unique user id
+    public void setUserId(int userId, boolean isUnique) {
+        // PK
         this.userId = userId;
     }
 

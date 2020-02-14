@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import static DAO.UserDao.updateUser;
 import static utils.Queries.createQuery;
 import static utils.Queries.getResult;
 
@@ -75,7 +76,11 @@ public class LoginScreenController {
         String password = credentials.getPassword();
 
         // test update
-        UserDao.updateUser("userName", "test", 1);
+        updateUser("userName", "test", 1);
+
+        // test add
+        UserDao.addUser(2, "test2", "test2", 1, "NOW()", "test", "NOW()", "test");
+
 
         // validate userName
         boolean validUserName = validateInput("*", "user", "userName", userName);

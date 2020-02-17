@@ -20,12 +20,25 @@ public class AddressDao {
     private static String sqlStatement;
 
     // methods for dynamic creation of TableViews and args for DaoMethods.add()
-    public static ObservableList<String> getAddressColumns(ResultSet rs) throws SQLException {
-        return DAO.getColumnNames(rs);
+    public static ObservableList<String> getAddressColumns() throws SQLException, ClassNotFoundException {
+        sqlStatement = "SELECT * FROM address";
+        try {
+            return DAO.getColumnNames(sqlStatement);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
-    public static ObservableList<String> getAddressColumnValues(ResultSet rs) throws SQLException {
-        return DAO.getColumnValues(rs);
+    public static ObservableList<String> getAddressColumnValues() throws SQLException, ClassNotFoundException {
+        sqlStatement = "SELECT * FROM address";
+        try {
+            return DAO.getColumnValues(sqlStatement);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // get, update, delete, add

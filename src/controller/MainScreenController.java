@@ -1,9 +1,9 @@
 package controller;
 
-import DAO.CityDao;
+import DAO.AppointmentDao;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import model.City;
+import model.Appointment;
 
 public class MainScreenController {
 
@@ -17,8 +17,8 @@ public class MainScreenController {
 
     @FXML
     public void initialize() throws Exception {
-        City testCity = CityDao.getCity("testCity");
-        userId.setText(String.valueOf(testCity.getCity()));
-        userName.setText(String.valueOf(testCity.getCityId()));
+        Appointment testappt = AppointmentDao.getAppointment(1);
+        userId.setText(String.valueOf(testappt.getCustomerId()));
+        userName.setText(String.valueOf(testappt.getUrl()));
     }
 }

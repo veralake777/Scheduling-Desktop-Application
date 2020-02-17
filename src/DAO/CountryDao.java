@@ -20,12 +20,22 @@ public class CountryDao {
     private static String sqlStatement;
 
     // methods for dynamic creation of TableViews and args for DaoMethods.add()
-    public static ObservableList<String> getCountryColumns(ResultSet rs) throws SQLException {
-        return DAO.getColumnNames(rs);
+    public static ObservableList<String> getCountryColumns(String query) throws SQLException, ClassNotFoundException {
+        try {
+            return DAO.getColumnNames(query);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static ObservableList<String> getCountryColumnValues(ResultSet rs) throws SQLException {
-        return DAO.getColumnValues(rs);
+    public static ObservableList<String> getCountryColumnValues(String query) throws SQLException, ClassNotFoundException {
+        try {
+            return DAO.getColumnValues(query);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // get, update, delete, add
@@ -53,10 +63,12 @@ public class CountryDao {
 
     public static ObservableList<Country> getAllCountries() throws ClassNotFoundException, SQLException, ParseException {
         ObservableList<Country> allCountries = FXCollections.observableArrayList();
-        DBUtils.startConnection();
         String sqlStatement = "select * from country";
-        QueryUtils.createQuery(sqlStatement);
-        ResultSet result = QueryUtils.getResult();
+
+        getCountryColumns(sqlStatement);
+        getCountryColumnValues(sqlStatement);
+
+        ResultSet result = DAO.getResultSet(sqlStatement);
         while (result.next()) {
             int countryIdG = result.getInt("countryId");
             String countryNameG = result.getString("country");
@@ -75,16 +87,13 @@ public class CountryDao {
     }
 
     public static void updateCountry(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
+        // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
+        // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
+        sqlStatement = "UPDATE country SET " + updateCol + " = '" + setColValue + "' WHERE countryId = " + rowId;
         try {
-            // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
-            // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
-            sqlStatement = "UPDATE country SET " + updateCol + " = '" + setColValue + "' WHERE countryId = " + rowId;
-            DBUtils.startConnection();
-            QueryUtils.createQuery(sqlStatement);
-            ResultSet result = QueryUtils.getResult();
+            ResultSet result = DAO.getResultSet(sqlStatement);
         } catch (ClassNotFoundException e) {
-            System.out.println("CountryDao UPDATE CLASS NOT FOUND");
-            e.getException();
+            e.printStackTrace();
         }
     }
 
@@ -92,15 +101,21 @@ public class CountryDao {
         // Todo: POPUP "Are you sure? This is permanent."
         //DELETE FROM `table_name` [WHERE condition];
         sqlStatement = "DELETE FROM country WHERE countryId = " + rowId;
+        try {
+            ResultSet result = DAO.getResultSet(sqlStatement);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void addCountry(int countryId, String countryName, String createDate, String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException {
         // INSERT INTO `table_name`(column_1,column_2,...) VALUES (value_1,value_2,...);
         sqlStatement = "INSERT INTO country(countryId, country, createDate, createdBy, lastUpdate, lastUpdateBy) " +
                 "VALUES (" + countryId + " , '" + countryName + "' , " + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
-        System.out.println(sqlStatement);
-        DBUtils.startConnection();
-        QueryUtils.createQuery(sqlStatement);
-        ResultSet result = QueryUtils.getResult();
+        try {
+            ResultSet result = DAO.getResultSet(sqlStatement);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

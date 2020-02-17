@@ -1,6 +1,6 @@
 package controller;
 
-import DAO.CityDao;
+import DAO.AppointmentDao;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -75,10 +75,10 @@ public class LoginScreenController {
         String password = credentials.getPassword();
 
         // test add
-        CityDao.addCity(10, "testAddCity", 10, "NOW()", "test", "NOW()", "test");
+        AppointmentDao.addAppointment(10, 1, 1, "testAddAppt", "test description", "location", "test", "newtest", "test.com", "NOW()", "NOW()", "test", "NOW()", "test");
 
         // test update
-        CityDao.updateCity("city", "testCity", 10);
+        AppointmentDao.updateAppointment("title", "testUpdateAppt", 10);
 
 
         // validate userName

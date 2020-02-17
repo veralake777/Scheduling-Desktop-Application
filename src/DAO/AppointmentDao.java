@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 
-import static utils.QueryUtils.getResult;
-
 public class AppointmentDao {
     // TODO: TEST APPOINTMENT CLASS
     // flag for active XXX
@@ -21,21 +19,33 @@ public class AppointmentDao {
     private static String sqlStatement;
 
     // methods for dynamic creation of TableViews and args for DaoMethods.add()
-    public static ObservableList<String> getXXXColumns(ResultSet rs) throws SQLException {
-        return DAO.getColumnNames(rs);
+    public static ObservableList<String> getAppointmentColumns() throws SQLException, ClassNotFoundException {
+        sqlStatement = "SELECT * FROM appointment";
+        try {
+            return DAO.getColumnNames(sqlStatement);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static ObservableList<String> getXXXColumnValues(ResultSet rs) throws SQLException {
-        return DAO.getColumnValues(rs);
+    public static ObservableList<String> getAppointmentColumnValues(String query) throws SQLException, ClassNotFoundException {
+        sqlStatement = "SELECT * FROM appointment";
+
+        try {
+            return DAO.getColumnValues(sqlStatement);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // get, update, delete, add
-    public static Appointment getAppointment(String appointmentId) throws ClassNotFoundException, SQLException, ParseException {
-        DBUtils.startConnection();
-        String sqlStatement = "select * FROM XXX WHERE XXXName  = '" + appointmentId + "'";
-        QueryUtils.createQuery(sqlStatement);
+    public static Appointment getAppointment(int appointmentId) throws ClassNotFoundException, SQLException, ParseException {
+        String sqlStatement = "select * FROM appointment WHERE appointmentId  = '" + appointmentId + "'";
+
         Appointment appointmentResult;
-        ResultSet result = getResult();
+        ResultSet result = DAO.getResultSet(sqlStatement);
         while (result.next()) {
             int appointmnetIdG = result.getInt("appointmentId");
             int customerId  = result.getInt("customerId");
@@ -66,11 +76,10 @@ public class AppointmentDao {
     }
 
     public static ObservableList<Appointment> getAllAppointments() throws ClassNotFoundException, SQLException, ParseException {
-        ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
-        DBUtils.startConnection();
         String sqlStatement = "select * from appointments";
-        QueryUtils.createQuery(sqlStatement);
-        ResultSet result = QueryUtils.getResult();
+
+        ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
+        ResultSet result = DAO.getResultSet(sqlStatement);
         while (result.next()) {
             int appointmnetIdG = result.getInt("appointmentId");
             int customerId  = result.getInt("customerId");
@@ -125,8 +134,6 @@ public class AppointmentDao {
         sqlStatement = "INSERT INTO appointment(appointmentId, customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy) " +
                 "VALUES (" + appointmentId + ", " + customerId + ", " +  userId + ", '" + title + "' , '" + description + "' , '" + location + "' , '" + contact + "' , '" + type + "' , '" + url + "' , " + startDate + ", " + endDate + ", '" + createdBy + "' , " + lastUpdate + ", '" + lastUpdateBy + "')";
         System.out.println(sqlStatement);
-        DBUtils.startConnection();
-        QueryUtils.createQuery(sqlStatement);
-        ResultSet result = QueryUtils.getResult();
+        ResultSet result = DAO.getResultSet(sqlStatement);
     }
 }

@@ -5,15 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import model.User;
 import utils.DBUtils;
-import utils.QueryUtils;
 import utils.DateTimeUtils;
+import utils.QueryUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
-
-import static utils.QueryUtils.getResult;
 
 //import utils.DaoMethods;
 
@@ -24,22 +22,25 @@ public class UserDao {
     private static String sqlStatement;
 
     // methods for dynamic creation of TableViews and args for DaoMethods.add()
-    public static ObservableList<String> getUserColumns(ResultSet rs) throws SQLException {
-        return DAO.getColumnNames(rs);
+    public static ObservableList<String> getUserColumns(String query) throws SQLException, ClassNotFoundException {
+        return DAO.getColumnNames(query);
     }
 
-    public static ObservableList<String> getUserColumnValues(ResultSet rs) throws SQLException {
-        return DAO.getColumnValues(rs);
+    public static ObservableList<String> getUserColumnValues(String query) throws SQLException, ClassNotFoundException {
+        return DAO.getColumnValues(query);
     }
 
     // get, update, delete, add
     public static User getUser(String userName) throws ClassNotFoundException, SQLException, ParseException {
-        DBUtils.startConnection();
-        String sqlStatement = "select * FROM user WHERE userName  = '" + userName + "'";
-        //  String sqlStatement="select FROM address";
-        QueryUtils.createQuery(sqlStatement);
+        ResultSet result = null;
+        try {
+            result = DAO.getResultSet("select * FROM user WHERE userName  = '" + userName + "'");
+        } catch (ClassNotFoundException e) {
+            System.out.println("getUser() DAO not found.");
+            e.printStackTrace();
+        }
         User userResult;
-        ResultSet result = getResult();
+        assert result != null;
         while (result.next()) {
             int userid = result.getInt("userId");
 //            System.out.println(userid);
@@ -76,10 +77,13 @@ public class UserDao {
 
     public static ObservableList<User> getAllUsers() throws ClassNotFoundException, SQLException, ParseException {
         ObservableList<User> allUsers = FXCollections.observableArrayList();
-        DBUtils.startConnection();
-        String sqlStatement = "select * from user";
-        QueryUtils.createQuery(sqlStatement);
-        ResultSet result = QueryUtils.getResult();
+        ResultSet result = null;
+        try {
+            result = DAO.getResultSet("SELECT * FROM user");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        assert result != null;
         while (result.next()) {
             int userid = result.getInt("userid");
             String userNameG = result.getString("userName");
@@ -126,6 +130,7 @@ public class UserDao {
         sqlStatement = "INSERT INTO user(userId, userName, password, active, createDate, createdBy, lastUpdate, lastUpdateBy) " +
                 "VALUES (" + userId + " , '" + userName + "' , '" + password + "' , " + active + "," + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
         System.out.println(sqlStatement);
+        // TODO figure out best practice for add row
         DBUtils.startConnection();
         QueryUtils.createQuery(sqlStatement);
         ResultSet result = QueryUtils.getResult();

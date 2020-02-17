@@ -27,10 +27,19 @@ public abstract class DAO {
         return QueryUtils.getResult();
     };
 
-    static ObservableList<String> getColumnValues(ResultSet rs) throws SQLException {
-        ObservableList<String> columnNames = getColumnNames(rs);
+    static ObservableList<String> getColumnValues(String query) throws SQLException, ClassNotFoundException {
+        ResultSet rs = null;
+        try {
+            rs = getResultSet(query);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        ObservableList<String> columnNames = getColumnNames(query);
         ObservableList<String> valuesList = FXCollections.observableArrayList( new ArrayList<String>());
+
         int i = 0;
+        assert rs != null;
         if(!rs.wasNull()){
             while (rs.next()) {
                 System.out.println("IN WHILE LOOP");
@@ -42,22 +51,28 @@ public abstract class DAO {
                     System.out.println(rs.getString(col_name));
                 } catch(Throwable e) {
                     valuesList.add(String.valueOf(rs.getInt(col_name)));
-                    System.out.println(String.valueOf(rs.getInt(col_name)));
                 }
-                if (rs.getString("active") == "1") {
+                if (rs.getString("active").equals("1")) {
                     activeBool = true;
                 }
             }
         }else {
             System.out.println("RESULT SET IS EMPTY");
         }
-        columnNames = valuesList;
         return valuesList;
     };
 
-    static ObservableList<String> getColumnNames(ResultSet rs) throws SQLException {
+    static ObservableList<String> getColumnNames(String query) throws SQLException, ClassNotFoundException {
         // builds STRING columnNames for the row to be passed to getColumnValues
         ObservableList<String> columnNames = FXCollections.observableArrayList( new ArrayList<String>());
+        ResultSet rs = null;
+        try {
+            rs = getResultSet(query);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        assert rs != null;
         ResultSetMetaData columns = rs.getMetaData();
         int i = 0;
         while (i < columns.getColumnCount()) {

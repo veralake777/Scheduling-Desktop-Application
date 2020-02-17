@@ -11,6 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.User;
+import utils.Internationalization;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -33,10 +34,7 @@ public class LoginScreenController {
         Parent scene;
         // return to main menu
         // build stage
-        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
-
-        // load add part view
-        stage = (Stage)((Button)actionEvent.getSource()).getScene().getWindow();
+        stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
 
         // load add part view
         scene = FXMLLoader.load(getClass().getResource("/view/mainScreen.fxml"));
@@ -58,7 +56,8 @@ public class LoginScreenController {
                 if (rs.getString(whereCol).equals(isValue)) {
                     return true;
                 }
-            }} catch (SQLException e) {
+            }
+        } catch (SQLException e) {
             System.out.println(e.getErrorCode());
         }
         return false;
@@ -87,7 +86,7 @@ public class LoginScreenController {
         boolean validPassword = validateInput("*", "user", "password", password);
 
         // if userName is true and password is true then switch to main screen
-        if(validUserName && validPassword) {
+        if (validUserName && validPassword) {
             // switch to main screen
             goToMainScreen(actionEvent);
         } else {
@@ -103,6 +102,8 @@ public class LoginScreenController {
         System.exit(0);
     }
 
-
-//    Font.loadFont(getClass().getResourceAsStream([fontpath...]), [Some font-size, for example 12]);
+    @FXML
+    public void initialize() {
+        Internationalization.setLocale();
+    }
 }

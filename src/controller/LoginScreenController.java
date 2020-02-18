@@ -104,6 +104,6 @@ public class LoginScreenController {
 
     @FXML
     public void initialize() {
-        Internationalization.setLocale();
+        Internationalization.setLocaleToFR();
     }
 }

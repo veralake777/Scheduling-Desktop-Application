@@ -2,7 +2,7 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.stage.Stage;
-import model.CalendarPane;
+import view.CalendarPane;
 
 import java.util.Locale;
 

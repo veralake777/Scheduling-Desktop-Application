@@ -1,0 +1,9 @@
+.borderPane {
+    -fx-font-size: 50px;
+    -fx-padding: 50px;
+}
+
+.days {
+    -fx-font-size: 20px;
+    -fx-alignment: CENTER;
+}

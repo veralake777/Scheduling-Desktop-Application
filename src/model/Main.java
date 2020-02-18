@@ -17,6 +17,7 @@ public class Main extends Application {
 
 
         Parent root = FXMLLoader.load(getClass().getResource("../view/mainScreen.fxml"));
+        root.getStylesheets().addAll("/CSS/calendarPane.css", "/CSS/loginStyle.css");
         primaryStage.setTitle("ACMECo Scheduling System");
         primaryStage.setMaximized(true);
         primaryStage.setScene(new Scene(root));

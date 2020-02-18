@@ -4,22 +4,25 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import model.CalendarPane;
 import utils.Internationalization;
+import view.CalendarPane2;
+
+import java.sql.SQLException;
+import java.text.ParseException;
 
 public class MainScreenController {
 
     public TabPane mainTabPane;
-    public BorderPane testBorderPane;
-    public GridPane mainGridPane;
-
-    private void createCalendar() {
-
-    }
 
     public MainScreenController() throws Exception {
+    }
+
+    private void setCalendarTab() throws ParseException, SQLException, ClassNotFoundException {
+        Tab calendar = new Tab();
+        calendar.setText("Calendar");
+        calendar.setContent(new CalendarPane2());
+        mainTabPane.getTabs().add(calendar);
+
     }
 
     @FXML
@@ -32,10 +35,8 @@ public class MainScreenController {
         Internationalization.setCurrentLocale();
         Internationalization.getCurrentLocale();
 
-        Tab calendar = new Tab();
-        calendar.setText("Calendar");
-        calendar.setContent(new CalendarPane());
-        mainTabPane.getTabs().add(calendar);
+        setCalendarTab();
+
     }
 
     public void onActionCalender(ActionEvent actionEvent) {

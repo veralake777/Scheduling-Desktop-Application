@@ -76,7 +76,7 @@ public class AppointmentDao {
     }
 
     public static ObservableList<Appointment> getAllAppointments() throws ClassNotFoundException, SQLException, ParseException {
-        String sqlStatement = "select * from appointments";
+        sqlStatement = "select * from appointments";
 
         ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
         ResultSet result = DAO.getResultSet(sqlStatement);
@@ -107,6 +107,87 @@ public class AppointmentDao {
         }
         DBUtils.closeConnection();
         return allAppointments;
+    }
+
+    public static ObservableList<Appointment> getAppointmentsWithinMonth(int month) throws ClassNotFoundException, SQLException, ParseException {
+        switch (month) {
+            case 0:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-01-01 00:00:00' AND start <= '2020-01-30 12:59:59'";
+                break;
+            case 1:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2019-01-01 00:00:00' AND start <= '2020-02-31 12:59:59'";
+                break;
+            case 2:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 3:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 4:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 5:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 6:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 7:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 8:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 9:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 11:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            case 12:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
+                break;
+            default:
+                break;
+        }
+        ObservableList<Appointment> monthAppointments = FXCollections.observableArrayList();
+        ResultSet result = null;
+        try {
+            result = DAO.getResultSet(sqlStatement);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        assert result != null;
+        while (result.next()) {
+            int appointmnetIdG = result.getInt("appointmentId");
+            int customerId = result.getInt("customerId");
+            int userId = result.getInt("userId");
+            String title = result.getString("title");
+            String description = result.getString("description");
+            String location = result.getString("location");
+            String contact = result.getString("contact");
+            String type = result.getString("type");
+            String url = result.getString("url");
+            String start = result.getString("start");
+            String end = result.getString("end");
+
+            String createDate = result.getString("createDate");
+            String createdBy = result.getString("createdBy");
+            String lastUpdate = result.getString("lastUpdate");
+            String lastUpdateby = result.getString("lastUpdateBy");
+
+            Calendar startCalendar = DateTimeUtils.stringToCalendar(start);
+            Calendar endCalendar = DateTimeUtils.stringToCalendar(end);
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
+            Appointment a = new Appointment(appointmnetIdG, customerId, userId, title, description, location, contact, type, url, startCalendar, endCalendar, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
+            monthAppointments.add(a);
+//            Calendar startDate = a.getStart();
+//            int startMonth = startDate.get(Calendar.DAY_OF_MONTH);
+//            int startDay = startDate.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+//            System.out.println("a start: " + startMonth + startDay);
+        }
+        return monthAppointments;
     }
 
     public static void updateAppointment(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {

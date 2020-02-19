@@ -16,7 +16,8 @@ public class Main extends Application {
 //        Font.loadFont(getClass().getResourceAsStream("../CSS/Fonts/LeagueSpartan-Bold.otf"), 35);
 
 
-        Parent root = FXMLLoader.load(getClass().getResource("../view/loginScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../view/mainScreen.fxml"));
+        root.getStylesheets().addAll("/CSS/calendarPane.css", "/CSS/loginStyle.css");
         primaryStage.setTitle("ACMECo Scheduling System");
         primaryStage.setMaximized(true);
         primaryStage.setScene(new Scene(root));

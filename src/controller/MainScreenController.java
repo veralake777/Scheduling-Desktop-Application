@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import utils.Internationalization;
-import view.CalendarPane2;
+import view.CalendarPane;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -20,7 +20,7 @@ public class MainScreenController {
     private void setCalendarTab() throws ParseException, SQLException, ClassNotFoundException {
         Tab calendar = new Tab();
         calendar.setText("Calendar");
-        calendar.setContent(new CalendarPane2());
+        calendar.setContent(new CalendarPane());
         mainTabPane.getTabs().add(calendar);
 
     }

@@ -2,219 +2,223 @@ package view;
 
 import DAO.AppointmentDao;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import model.Appointment;
 
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class CalendarPane extends BorderPane {
-    // The header label
-    private Label lblHeader = new Label();
-
-    // Maximum number of labels to display day names and days
-    private Label[] lblDay = new Label[49];
-
-    // Appointment labels
-    private Label[] lblAppointment = new Label[300];
-
-    private Calendar calendar;
-    private int month;  // The specified month
-    private int year;  // The specified year
-    private int today; // The specified current day
-    // TODO user Internationalization util class
+    // Locale
     private Locale locale = Locale.getDefault();
 
+    // CALENDAR PARTS
+    // Calendar data getters
+    private Calendar calendar;
+    private int currentMonth;
+    private int currentYear;
+    private int totalDaysInCurrentMonth;
+    private int today;
+    private String currentMonthString;
+
+    // Month and Year Header
+    private Label monthYearHeader = new Label();
+    // Number for Days List
+    private Label[] dayLabels = new Label[49];
+    // List for Appointment Labels
+    private Label[] appointments = new Label[1000];
+
+
+    // Circle with 10px radius used to flag user of appointment on a given day
+    private boolean isAppointment = false;
+    private Circle isAppointmentCircle = new Circle(10);
+
+    public Circle getIsAppointmentCircle() {
+        return isAppointmentCircle;
+    }
+
+    public void setIsAppointmentCircle(Circle isAppointmentCircle, Color color) {
+        if(isAppointment) {
+            isAppointmentCircle.setFill(color);
+            this.isAppointmentCircle = isAppointmentCircle;
+        } else {
+            this.isAppointmentCircle = null;
+        }
+    }
+
+    // Constructor
     public CalendarPane() throws ParseException, SQLException, ClassNotFoundException {
-        // Create labels for displaying days
-        for (int i = 0; i < 49; i++) {
-            lblDay[i] = new Label();
-            lblDay[i].setTextAlignment(TextAlignment.RIGHT);
-        }
-
-        showDayNames(); // Display day names for the locale
-
-        GridPane dayPane = new GridPane();
-        dayPane.setAlignment(Pos.CENTER);
-        dayPane.getStyleClass().addAll("days");
-
-        // 7 columns
-        ColumnConstraints column = new ColumnConstraints();
-        column.setPercentWidth(14);
-        dayPane.getColumnConstraints().add(column);
-        dayPane.getColumnConstraints().add(column);
-        dayPane.getColumnConstraints().add(column);
-        dayPane.getColumnConstraints().add(column);
-        dayPane.getColumnConstraints().add(column);
-        dayPane.getColumnConstraints().add(column);
-        dayPane.getColumnConstraints().add(column);
-
-        // 6 rows
-        RowConstraints row = new RowConstraints();
-        row.setPercentHeight(12);
-        dayPane.getRowConstraints().add(row);
-        dayPane.getRowConstraints().add(row);
-        dayPane.getRowConstraints().add(row);
-        dayPane.getRowConstraints().add(row);
-        dayPane.getRowConstraints().add(row);
-        dayPane.getRowConstraints().add(row);
-
-        // add day numbers to dayPane
-         for (int i = 0; i < 49; i++) {
-                dayPane.add(lblDay[i], i % 7, i / 7);
-        }
-
-//        // add appointments to dayPane
-//        for(int i = 0; i < 300; i ++) {
-//            dayPane.add(lblAppointment[i], 1, 1);
-//        }
-
-
-        // Place header and calendar body in the pane
-        this.getStyleClass().add("borderPane");
-        this.setTop(lblHeader);
-        BorderPane.setAlignment(lblHeader, Pos.CENTER);
-        this.setCenter(dayPane);
-
-        // Set current month and year and day
+        // Update Calendar with current data
         calendar = new GregorianCalendar();
-        month = calendar.get(Calendar.MONTH);
-        year = calendar.get(Calendar.YEAR);
+        currentMonth = calendar.get(Calendar.MONTH);
+        currentMonthString =  calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+        currentYear = calendar.get(Calendar.YEAR);
         today = calendar.get(Calendar.DAY_OF_MONTH);
         updateCalendar();
 
-        // Show calendar
+        // Create DayPane
+        GridPane dayPane = new GridPane();
+        dayPane.setAlignment(Pos.CENTER);
+        dayPane.getStyleClass().addAll("days");
+//        dayPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
+//        dayPane.setHgap(3);
+//        dayPane.setVgap(3);
+
+
+        // 7 columns
+        ColumnConstraints column = new ColumnConstraints(130);
+        column.setHgrow(Priority.ALWAYS);
+        dayPane.getColumnConstraints().addAll(column, column, column, column, column, column, column);
+
+        // 5 rows
+        RowConstraints row1 = new RowConstraints(30);
+        row1.setValignment(VPos.CENTER);
+        RowConstraints row = new RowConstraints(column.getPrefWidth() -40);
+        dayPane.getRowConstraints().addAll( row1, row, row, row, row, row, row);
+        dayPane.setGridLinesVisible(true);
+
+        // Create BorderPane
+        // Place header and calendar body in the pane
+        this.getStyleClass().add("borderPane");
+
+        // header
+        this.setTop(monthYearHeader);
+        BorderPane.setAlignment(monthYearHeader, Pos.CENTER);
+
+        // calendar
+        this.setCenter(dayPane);
+
+        // previous month and next month buttons
+
+        // create button bar instance
+        ButtonBar prevNextBtnBar = new ButtonBar();
+
+        // create the buttons to go into ButtonBar
+        Button nextMonthBtn = new Button("NEXT MONTH");
+        ButtonBar.setButtonData(nextMonthBtn, ButtonBar.ButtonData.NEXT_FORWARD);
+        nextMonthBtn.setAlignment(Pos.CENTER);
+        nextMonthBtn.setFont(new Font(18));
+        nextMonthBtn.setPrefSize(250, 10);
+
+        Button prevMonthBtn = new Button("LAST MONTH");
+        ButtonBar.setButtonData(prevMonthBtn, ButtonBar.ButtonData.BACK_PREVIOUS);
+        prevMonthBtn.setAlignment(Pos.CENTER);
+        prevMonthBtn.setFont(new Font(18));
+        prevMonthBtn.setPrefSize(250, 10);
+
+        // add buttons to button bar
+        prevNextBtnBar.getButtons().addAll(nextMonthBtn, prevMonthBtn);
+        prevNextBtnBar.setTranslateX(-460);
+
+
+        this.setAlignment(prevMonthBtn, Pos.CENTER);
+        this.setBottom(prevNextBtnBar);
+
+
+
+        // setTop to MONTH YEAR
+
+        // setCenter to days & appointments
+
+        // Set labels for Day Numbers
+        for (int i = 0; i < 49; i++) {
+            dayLabels[i] = new Label();
+            dayLabels[i].setTextAlignment(TextAlignment.LEFT);
+
+            appointments[i] = new Label();
+            appointments[i].setTextAlignment(TextAlignment.RIGHT);
+
+        }
+
+        for (int i = 0; i < 49; i++) {
+            dayPane.add(dayLabels[i], i % 7, i / 7);
+            dayPane.add(appointments[i], i % 7, i / 7);
+        }
+
         showHeader();
+        showDaysOfWeek();
         showDays();
+
+        // Add appointments to ListView
+
+        // Add each ListView to corresponding day
     }
 
-    /** Update the day names based on locale */
-    private void showDayNames() {
+    private void showHeader() {
+        monthYearHeader.setText(this.currentMonthString + " " + String.valueOf(currentYear));
+    }
+
+    private void showDaysOfWeek() {
         DateFormatSymbols dfs = new DateFormatSymbols(locale);
         String[] dayNames = dfs.getWeekdays();
 
         // jlblDay[0], jlblDay[1], ..., jlblDay[6] for day names
         for (int i = 0; i < 7; i++) {
-            lblDay[i].setText(dayNames[i + 1]);
+//            dayLabels[i].setTextAlignment(TextAlignment.CENTER);
+            dayLabels[i].setText(dayNames[i + 1]);
+
+            // Center text horizontally and vertically
+            GridPane.setConstraints(dayLabels[i],  i,  0,  1,  1, HPos.CENTER, VPos.CENTER);
         }
     }
-
-    /** Update the header based on locale */
-    private void showHeader() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", locale);
-        String header = sdf.format(calendar.getTime());
-        lblHeader.setText(header);
-    }
-
     public void showDays() throws ParseException, SQLException, ClassNotFoundException {
-        // Get the day of the first day in a month
         int startingDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK);
+        ObservableList<Appointment> appts = null;
 
-        // Fill the calendar with the days before this month
-        Calendar cloneCalendar = (Calendar) calendar.clone();
-        cloneCalendar.add(Calendar.DATE, -1); // Becomes preceding month
-        int daysInPrecedingMonth = cloneCalendar.getActualMaximum(
-                Calendar.DAY_OF_MONTH);
-//
-//        for (int i = 0; i < startingDayOfMonth - 1; i++) {
-//            lblDay[i + 7].setTextFill(Color.LIGHTGRAY);
-//            lblDay[i + 7].setText(daysInPrecedingMonth
-//                    - startingDayOfMonth + 2 + i + "");
-//        }
+        // get appointments for current month
+        try {
+            appts = AppointmentDao.getAppointmentsWithinMonth(currentMonth);
+        } catch (ClassNotFoundException | SQLException | ParseException e) {
+            e.printStackTrace();
+        }
+        int appointmentDate;
 
         // Display days of this month
         int daysInCurrentMonth = calendar.getActualMaximum(
                 Calendar.DAY_OF_MONTH);
         for (int i = 1; i <= daysInCurrentMonth; i++) {
+            int index = i + 1 + startingDayOfMonth + 7;
+            // offset with starting day of month
+            dayLabels[index].setText(i + "");
+            dayLabels[index].setPadding(new Insets(-60, 0, 0, 10));
 
-            lblDay[i - 2 + startingDayOfMonth + 7].setText(i + "");
+            // map appointments to correct dayNumber
+            for(Appointment a : appts){
+                int startDate = a.getStart().get(Calendar.DAY_OF_MONTH);
+//                appointments[index].setText(a.getTitle());
+                if(startDate == i) {
+                    isAppointment = true;
 
-            if(isAppointment(calendar.get(Calendar.MONTH), i - 2 + startingDayOfMonth + 7)){
-                lblDay[i - 2 + startingDayOfMonth + 7].setTextFill(Color.RED);
-            } else {
-                lblDay[i - 2 + startingDayOfMonth + 7].setTextFill(Color.BLACK);
+                    // TODO color differences based on type
+                    setIsAppointmentCircle(isAppointmentCircle, Color.LIGHTCORAL);
+                    appointments[index].setGraphic(getIsAppointmentCircle());
+                    appointments[index].setPadding(new Insets( -60, 0, 0, 25));
+                    isAppointment = false;
+                }
             }
         }
-        lblDay[today + daysInPrecedingMonth - 6].setTextFill(Color.RED);
-
-
-        // Fill the calendar with the days after this month
-//        int j = 1;
-//        for (int i = daysInCurrentMonth - 1 + startingDayOfMonth + 7;
-//             i < 49; i++) {
-//            lblDay[i].setTextFill(Color.LIGHTGRAY);
-//            lblDay[i].setText(j++ + "");
-//        }
     }
-
-    private boolean isAppointment(int month, int day) throws ParseException, SQLException, ClassNotFoundException {
-        // get appointments in this month
-        ObservableList<Appointment> apptsThisMonth = AppointmentDao.getAppointmentsWithinMonth(2);
-
-        // show appointments that match lblDay
-        for(Appointment appointment: apptsThisMonth){
-            Calendar startDate = appointment.getStart();
-            int startMonth = startDate.get(Calendar.MONTH);
-            int startDay = startDate.get(Calendar.DAY_OF_MONTH);
-
-            if(month == startMonth && day == startDay){
-                lblAppointment[startDay - 1].setTextFill(Color.RED);
-                lblAppointment[startDay - 1].setText(appointment.getContact());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /** Set the calendar to the first day of the
-     * specified month and year
-     */
+    // CRUD helper methods
     public void updateCalendar() {
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.YEAR, currentYear);
+        calendar.set(Calendar.MONTH, currentMonth);
         calendar.set(Calendar.DATE, 1);
         calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, today);
     }
 
-    public int getMonth() {
-        return month;
-    }
-
-    public void setMonth(int newMonth) throws ParseException, SQLException, ClassNotFoundException {
-        month = newMonth;
-        updateCalendar();
-        showHeader();
-        showDays();
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int newYear) throws ParseException, SQLException, ClassNotFoundException {
-        year = newYear;
-        updateCalendar();
-        showHeader();
-        showDays();
-    }
-
-    public void setLocale(Locale locale) throws ParseException, SQLException, ClassNotFoundException {
-        this.locale = locale;
-        updateCalendar();
-        showDayNames();
-        showHeader();
-        showDays();
-    }
 }

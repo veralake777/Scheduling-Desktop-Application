@@ -111,11 +111,14 @@ public class AppointmentDao {
 
     public static ObservableList<Appointment> getAppointmentsWithinMonth(int month) throws ClassNotFoundException, SQLException, ParseException {
         switch (month) {
-            case 1:
+            case 0:
                 sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-01-01 00:00:00' AND start <= '2020-01-30 12:59:59'";
                 break;
-            case 2:
+            case 1:
                 sqlStatement = "SELECT * FROM appointment WHERE start >= '2019-01-01 00:00:00' AND start <= '2020-02-31 12:59:59'";
+                break;
+            case 2:
+                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
                 break;
             case 3:
                 sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
@@ -136,9 +139,6 @@ public class AppointmentDao {
                 sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
                 break;
             case 9:
-                sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
-                break;
-            case 10:
                 sqlStatement = "SELECT * FROM appointment WHERE start >= '2020-02-01' AND start <= '2020-02-30'";
                 break;
             case 11:

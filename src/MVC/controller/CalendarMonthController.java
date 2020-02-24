@@ -1,4 +1,4 @@
-package controller;
+package MVC.controller;
 
 import DAO.AppointmentDao;
 import javafx.collections.ObservableList;
@@ -17,15 +17,18 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import model.Appointment;
+import DAO.POJO.Appointment;
+import MVC.model.CalendarMonthModel;
+import utils.Internationalization;
 
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class CalendarPaneController {
+public class CalendarMonthController {
     @FXML
     private BorderPane borderPane;
 
@@ -41,10 +44,21 @@ public class CalendarPaneController {
     Circle isAppointmentCircle = new Circle(10);
     Label[] appointmentLabels = new Label[49];
 
-    // todo return this at the end of everything
-    model.CalendarPane c = new model.CalendarPane(Locale.getDefault(), dayLabels, appointmentLabels);
+    Internationalization getLocale = new Internationalization(Locale.getDefault());
+    Locale locale  = getLocale.getCurrentLocale();
+    GregorianCalendar calendar = new GregorianCalendar();
+    int currentMonth = calendar.get(Calendar.MONTH);
+    int currentYear = calendar.get(Calendar.YEAR);
+    int today = calendar.get(Calendar.DAY_OF_MONTH);;
+    String currentMonthString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale);
+    Label monthYearHeader = new Label(currentMonthString + " " + String.valueOf(currentYear));
+    int totalDaysInCurrentMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-    public void updateMonth(int i) throws ParseException, SQLException, ClassNotFoundException {
+    CalendarMonthModel c = new CalendarMonthModel(locale, calendar, currentMonth, currentYear, totalDaysInCurrentMonth,
+            today, currentMonthString, monthYearHeader, dayLabels, appointmentLabels,
+            false, null);
+
+    private void updateMonth(int i) throws ParseException, SQLException, ClassNotFoundException {
         // update month
         c.getCalendar().add(Calendar.MONTH, i);
         c.setCurrentMonth(Calendar.MONTH);
@@ -56,7 +70,6 @@ public class CalendarPaneController {
 
         // update days
         getDayPane();
-        c.setDayLabels(dayLabels);
 
         // update calendar
         createAndConfigureCalendar();
@@ -81,7 +94,6 @@ public class CalendarPaneController {
                 } catch (ParseException | ClassNotFoundException | SQLException e) {
                     e.printStackTrace();
                 }
-                borderPane.setTop(c.getMonthYearHeader());
             }
         });
 
@@ -100,7 +112,6 @@ public class CalendarPaneController {
                 } catch (ParseException | ClassNotFoundException | SQLException e) {
                     e.printStackTrace();
                 }
-                borderPane.setTop(c.getMonthYearHeader());
             }
         });
 
@@ -118,7 +129,7 @@ public class CalendarPaneController {
         borderPane.setTop(c.getMonthYearHeader());
         BorderPane.setAlignment(c.getMonthYearHeader(), Pos.CENTER);
 
-        // center - calendar view
+        // center - calendar MVC.view
         borderPane.setCenter(getDayPane());
 
         // bottom prev next btnBar
@@ -186,17 +197,9 @@ public class CalendarPaneController {
         }
     }
 
-    public void showDays() throws ParseException, SQLException, ClassNotFoundException {
+    public void showDays() throws ParseException, SQLException {
         int startingDayOfMonth = c.getCalendar().get(Calendar.DAY_OF_WEEK);
-        ObservableList<Appointment> appts = null;
-
-        // get appointments for current month
-        try {
-            appts = AppointmentDao.getAppointmentsWithinMonth(c.getCurrentMonth());
-        } catch (ClassNotFoundException | SQLException | ParseException e) {
-            e.printStackTrace();
-        }
-        int appointmentDate;
+        ObservableList<Appointment> appts = AppointmentDao.getAppointmentsWithinMonth(c);
 
         // Display days of this month
         int daysInCurrentMonth = c.getCalendar().getActualMaximum(

@@ -4,15 +4,18 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Internationalization {
-    private static Locale currentLocale;
-    private static Locale localeFR;
+    private Locale currentLocale;
+    private Locale localeFR;
 
+    public Internationalization(Locale currentLocale) {
+        this.currentLocale = currentLocale;
+    }
 
-    public static Locale getLocaleFR() {
+    public Locale getLocaleFR() {
         return localeFR;
     }
 
-    public static void setLocaleToFR() {
+    public void setLocaleToFR() {
         // For users working out of London - French
         Locale france = new Locale("fr", "FR");
 //        Scanner keyboard = new Scanner(System.in);
@@ -32,8 +35,11 @@ public class Internationalization {
             localeFR = france;
         }
     }
+    public void setCurrentLocale(Locale currentLocale) {
+       this.currentLocale = currentLocale;
+    }
 
-    public static Locale getCurrentLocale(){
+    public Locale getCurrentLocale() {
 //        System.out.println(currentLocale.getDisplayLanguage());
 //        System.out.println(currentLocale.getDisplayCountry());
 //
@@ -42,14 +48,10 @@ public class Internationalization {
 //
 //        System.out.println(System.getProperty("user.country"));
 //        System.out.println(System.getProperty("user.language"));
-        if(currentLocale.getLanguage().equals("fr")){
-            return localeFR;
+        if (this.currentLocale.getLanguage().equals("fr")) {
+            return this.localeFR;
         } else {
-            return currentLocale;
+            return this.currentLocale;
         }
-}
-
-    public static void setCurrentLocale(){
-        currentLocale = Locale.getDefault();
     }
 }

@@ -3,7 +3,7 @@ package DAO;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.User;
+import DAO.POJO.User;
 import utils.DBUtils;
 import utils.DateTimeUtils;
 import utils.QueryUtils;

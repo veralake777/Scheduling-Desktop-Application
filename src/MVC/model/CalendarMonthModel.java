@@ -1,4 +1,4 @@
-package model;
+package MVC.model;
 
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -8,13 +8,13 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class CalendarPane {
+public class CalendarMonthModel {
     // Locale
     private Locale locale;
 
     // CALENDAR PARTS
     // Calendar data getters
-    private Calendar calendar;
+    private GregorianCalendar calendar;
     private int currentMonth;
     private int currentYear;
     private int totalDaysInCurrentMonth;
@@ -32,21 +32,22 @@ public class CalendarPane {
     private boolean isAppointment = false;
     private Circle isAppointmentCircle = new Circle(10);
 
-    public CalendarPane(Locale locale, Label[] dayLabels, Label[] appointments) {
+    public CalendarMonthModel(Locale locale, GregorianCalendar calendar, int currentMonth, int currentYear,
+                              int totalDaysInCurrentMonth, int today, String currentMonthString, Label monthYearHeader,
+                              Label[] dayLabels, Label[] appointments, boolean isAppointment,
+                              Circle isAppointmentCircle) {
         this.locale = locale;
-
-        // Controller is dependent on GregorianCalendar
-        this.calendar = new GregorianCalendar();
-        this.currentMonth = this.calendar.get(Calendar.MONTH);
-        this.currentYear = this.calendar.get(Calendar.YEAR);
-        this.totalDaysInCurrentMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-        this.today = calendar.get(Calendar.DAY_OF_MONTH);;
-        this.currentMonthString = this.calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, this.locale);
-        this.monthYearHeader = new Label(this.currentMonthString + " " + this.currentYear);
+        this.calendar = calendar;
+        this.currentMonth = currentMonth;
+        this.currentYear = currentYear;
+        this.totalDaysInCurrentMonth = totalDaysInCurrentMonth;
+        this.today = today;
+        this.currentMonthString = currentMonthString;
+        this.monthYearHeader = monthYearHeader;
         this.dayLabels = dayLabels;
         this.appointments = appointments;
-        this.isAppointment = false;
-        this.isAppointmentCircle = null;
+        this.isAppointment = isAppointment;
+        this.isAppointmentCircle = isAppointmentCircle;
     }
 
     public String getCurrentMonthString() {
@@ -69,7 +70,7 @@ public class CalendarPane {
         return calendar;
     }
 
-    public void setCalendar(Calendar calendar) {
+    public void setCalendar(GregorianCalendar calendar) {
         this.calendar = calendar;
     }
 

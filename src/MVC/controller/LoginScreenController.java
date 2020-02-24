@@ -1,6 +1,7 @@
-package controller;
+package MVC.controller;
 
 import DAO.AppointmentDao;
+import DAO.POJO.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,8 +11,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import model.User;
-import utils.Internationalization;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -36,8 +35,8 @@ public class LoginScreenController {
         // build stage
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
 
-        // load add part view
-        scene = FXMLLoader.load(getClass().getResource("/view/mainScreen.fxml"));
+        // load add part MVC.view
+        scene = FXMLLoader.load(getClass().getResource("/MVC/view/mainScreenView.fxml"));
 
         // add scene to stage
         stage.setScene(new Scene(scene));
@@ -104,6 +103,6 @@ public class LoginScreenController {
 
     @FXML
     public void initialize() {
-        Internationalization.setLocaleToFR();
+
     }
 }

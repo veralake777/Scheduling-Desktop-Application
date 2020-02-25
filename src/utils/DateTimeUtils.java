@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class DateTimeUtils {
     public static Calendar stringToCalendar(String stringDate) throws ParseException {
+        System.out.println("DateTimeUtils: " + stringDate);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date date = sdf.parse(stringDate);
         Calendar calendar=Calendar.getInstance();

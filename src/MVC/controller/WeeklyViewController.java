@@ -39,15 +39,10 @@ public class WeeklyViewController {
         TableColumn day7 = new TableColumn<>("Day7");
         day7.setCellValueFactory(new PropertyValueFactory<Appointment, String>("title"));
 
-//        day1.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
-//        day2.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
-//        day3.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
-//        day4.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
-//        day5.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
-//        day6.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
-//        day7.prefWidthProperty().bind(tableView.widthProperty().multiply(1/7));
 
         tableView.getColumns().addAll(day1, day2, day3, day4, day5, day6, day7);
+
+        // equal width columns
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         try {

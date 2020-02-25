@@ -1,6 +1,7 @@
 # ItelliJ Files
 /DAODemo2
 /C195DB2TableViewExample
+/src/utils/db.properties
 /.idea
 *.iml
 /out

@@ -5,29 +5,26 @@ package iluwatar.POJO;
  */
 
 public class Appointment {
-    private int id; //PK
-    private int customerId; //FK
-    private int userId; //FK
-    private String title; // FK as appointment_ibfk_1 -- on update and delete restrict
+    private int id; // PK
+    private int customerId;
+    private int userId;
+
+    private String title;
     private String description;
     private String location;
     private String contact;
     private String type;
     private String url;
+
     private String start;
     private String end;
+
     private String createDate;
     private String createdBy;
     private String lastUpdate;
     private String lastUpdateBy;
 
-    /*
-    Creates an instance of appointment
-     */
-
-    public Appointment(int id, int customerId, int userId, String title, String description, String location,
-                       String contact, String type, String url, String start, String end, String createDate,
-                       String createdBy, String lastUpdate, String lastUpdateBy) {
+    public Appointment(int id, int customerId, int userId, String title, String description, String location, String contact, String type, String url, String start, String end, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
         this.id = id;
         this.customerId = customerId;
         this.userId = userId;
@@ -167,7 +164,7 @@ public class Appointment {
 
     @Override
     public String toString() {
-       return   "Appointment{" +
+        return   "Appointment{" +
                 "appointmentId=" + getId() +
                 ", customerId='" + getCustomerId() + '\'' +
                 ", userId=" + getUserId() + '\'' +
@@ -183,7 +180,7 @@ public class Appointment {
                 ", createdBy=" + getCreatedBy()  +'\'' +
                 ", lastUpdate=" + getLastUpdate()  +'\'' +
                 ", lastUpdateBy=" + getLastUpdateBy()  +'\'' +
-               '}';
+                '}';
     }
 
     @Override
@@ -192,8 +189,8 @@ public class Appointment {
         if (this == that) {
             isEqual = true;
         } else if( that != null && getClass() == that.getClass()) {
-            final var appointment = (Appointment) that;
-            if (getId() == appointment.getId()) {
+            final var address = (iluwatar.POJO.Address) that;
+            if (getId() == address.getId()) {
                 isEqual = true;
             }
         }

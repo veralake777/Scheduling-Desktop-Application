@@ -7,9 +7,9 @@ import iluwatar.Interface.AddressDao;
 import iluwatar.POJO.Address;
 
 import javax.sql.DataSource;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -135,21 +135,18 @@ public class DbAddressDao implements AddressDao {
             return false;
         }
 
-
-
         try (var connection = getConnection();
              var statement = connection.prepareStatement("INSERT INTO address VALUES (?,?,?,?,?,?,?,?,?,?)")) {
             // dates to strings
-            // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
             statement.setInt(1, address.getId());
             statement.setString(2, address.getAddress());
             statement.setString(3, address.getAddress2());
             statement.setInt(4, address.getCityId());
             statement.setString(5, address.getPostalCode());
             statement.setString(6, address.getPhone());
-            statement.setDate(7, Date.valueOf(address.getCreateDate()));
+            statement.setTimestamp(7, Timestamp.valueOf(address.getCreateDate()));
             statement.setString(8, address.getCreatedBy());
-            statement.setDate(9, Date.valueOf(address.getLastUpdate()));
+            statement.setTimestamp(9, Timestamp.valueOf(address.getLastUpdate()));
             statement.setString(10, address.getLastUpdateBy());
             statement.execute();
             return true;

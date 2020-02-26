@@ -7,9 +7,9 @@ import iluwatar.Interface.AppointmentDao;
 import iluwatar.POJO.Appointment;
 
 import javax.sql.DataSource;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * An implementation of {@link AppointmentDao} that persists appointments in RDBMS.
+ * An implementation of {@link AppointmentDao} that persists appointmentes in RDBMS.
  */
 public class DbAppointmentDao implements AppointmentDao {
 //TODO fix logger using Logger.util class
@@ -38,9 +38,9 @@ public class DbAppointmentDao implements AppointmentDao {
     }
 
     /**
-     * Get all appointments as Java Stream.
+     * Get all appointmentes as Java Stream.
      *
-     * @return a lazily populated stream of appointments. Note the stream returned must be closed to free
+     * @return a lazily populated stream of appointmentes. Note the stream returned must be closed to free
      *     all the acquired resources. The stream keeps an open connection to the database till it is
      *     complete or is closed manually.
      */
@@ -90,6 +90,7 @@ public class DbAppointmentDao implements AppointmentDao {
         return new Appointment(resultSet.getInt("appointmentId"),
                 resultSet.getInt("customerId"),
                 resultSet.getInt("userId"),
+
                 resultSet.getString("title"),
                 resultSet.getString("description"),
                 resultSet.getString("location"),
@@ -140,30 +141,24 @@ public class DbAppointmentDao implements AppointmentDao {
             return false;
         }
 
-
-
         try (var connection = getConnection();
              var statement = connection.prepareStatement("INSERT INTO appointment VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             // dates to strings
-            // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
             statement.setInt(1, appointment.getId());
             statement.setInt(2, appointment.getCustomerId());
             statement.setInt(3, appointment.getUserId());
-
             statement.setString(4, appointment.getTitle());
             statement.setString(5, appointment.getDescription());
             statement.setString(6, appointment.getLocation());
             statement.setString(7, appointment.getContact());
             statement.setString(8, appointment.getType());
             statement.setString(9, appointment.getUrl());
-            statement.setDate(10, Date.valueOf(appointment.getStart()));
-            statement.setDate(11, Date.valueOf(appointment.getEnd()));
-
-            statement.setDate(12, Date.valueOf(appointment.getCreateDate()));
+            statement.setTimestamp(10, Timestamp.valueOf(appointment.getStart()));
+            statement.setTimestamp(11,Timestamp.valueOf((appointment.getEnd())));
+            statement.setTimestamp(12,  Timestamp.valueOf((appointment.getCreateDate())));
             statement.setString(13, appointment.getCreatedBy());
-            statement.setDate(14, Date.valueOf(appointment.getLastUpdate()));
+            statement.setTimestamp(14, Timestamp.valueOf((appointment.getLastUpdate())));
             statement.setString(15, appointment.getLastUpdateBy());
-
             statement.execute();
             return true;
         } catch (SQLException ex) {
@@ -179,9 +174,11 @@ public class DbAppointmentDao implements AppointmentDao {
         try (var connection = getConnection();
              var statement =
                      connection
-                             .prepareStatement("UPDATE appointment SET title = ? WHERE ID = ?")) {
+                             .prepareStatement("UPDATE appointment SET appointment = ?, appointment2 = ? WHERE ID = ?")) {
             //TODO add all updates you would like to make based on UI
-            statement.setString(1, appointment.getTitle());
+            statement.setString(1, appointment.getStart());
+            statement.setString(2, appointment.getEnd());
+            statement.setInt(3, appointment.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new CustomException(ex.getMessage(), ex);

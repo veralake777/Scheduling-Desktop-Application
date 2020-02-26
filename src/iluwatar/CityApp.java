@@ -1,9 +1,9 @@
 package iluwatar;
 
-import iluwatar.DbDao.DbAddressDao;
-import iluwatar.InMemory.InMemoryAddressDao;
-import iluwatar.Interface.AddressDao;
-import iluwatar.POJO.Address;
+import iluwatar.DbDao.DbCityDao;
+import iluwatar.InMemory.InMemoryCityDao;
+import iluwatar.Interface.CityDao;
+import iluwatar.POJO.City;
 import utils.DBUtils;
 
 import javax.sql.DataSource;
@@ -26,11 +26,11 @@ import java.util.Optional;
  * operations: select, add, update, and delete.
  */
 
-public class DaoApp {
+public class CityApp {
     private static final String DB_URL = "";
     // TODO fix logger
 //    private static Logger log = LoggerFactory.getLogger(App.class);
-    private static final String ALL_ADDRESSES = "addressDao.getAllAddresses(): ";
+    private static final String ALL_CITIES = "cityDao.getAllCities(): ";
 
     /**
      * Program entry point
@@ -40,12 +40,12 @@ public class DaoApp {
      */
 
     public static void main(final String[] args) throws Exception {
-        final var inMemoryDao = new InMemoryAddressDao();
+        final var inMemoryDao = new InMemoryCityDao();
         performOperationsUsing(inMemoryDao);
 
         final var dataSource = createDataSource();
 //        createSchema(dataSource);
-        final var dbDao = new DbAddressDao(dataSource);
+        final var dbDao = new DbCityDao(dataSource);
         performOperationsUsing(dbDao);
         printTest();
 //        deleteSchema(dataSource);
@@ -53,14 +53,14 @@ public class DaoApp {
 //        private static void deleteSchema(DataSource dataSource) throws SQLException {
 //            try (var connection = dataSource.getConnection();
 //            var statement = connection.createStatement()) {
-//                statement.execute(AppointmentSchemaSql.DELTE_SCHEMA_SQL);
+//                statement.execute(CitySchemaSql.DELETE_SCHEMA_SQL);
 //            }
 //        }
 //
 //        private static void createSchema(DataSource dataSource) throws SQLException {
 //            try (var connection = dataSource.getConnection();
 //            var statement = connection.createStatement()) {
-//            statement.execute(AppointmentSchemaSql.CREATE_SCHEMA_SQL);
+//            statement.execute(CitySchemaSql.CREATE_SCHEMA_SQL);
 //            }
 //        }
 //    }
@@ -68,51 +68,51 @@ public class DaoApp {
 //    private static void deleteSchema(DataSource dataSource) throws SQLException {
 //        try (var connection = dataSource.getConnection();
 //             var statement = connection.createStatement()) {
-//            statement.execute(AppointmentSchemaSql.DELETE_SCHEMA_SQL);
+//            statement.execute(CitySchemaSql.DELETE_SCHEMA_SQL);
 //        }
 //    }
 //
 //    private static void createSchema(DataSource dataSource) throws SQLException {
 //        try (var connection = dataSource.getConnection();
 //             var statement = connection.createStatement()) {
-//            statement.execute(AppointmentSchemaSql.CREATE_SCHEMA_SQL);
+//            statement.execute(CitySchemaSql.CREATE_SCHEMA_SQL);
 //        }
 //    }
     }
 
     private static void printTest() throws Exception {
-        DbAddressDao test = new DbAddressDao(createDataSource());
-        Optional<Address> test1 = test.getById(1);
-        System.out.println("printTest  " + test1.get().getAddress());
+        DbCityDao test = new DbCityDao(createDataSource());
+        Optional<City> test1 = test.getById(1);
+        System.out.println("printTest  " + test1.get().getCity());
     }
 
     private static DataSource createDataSource () throws ClassNotFoundException, IOException {
         return DBUtils.getMySQLDataSource();
     }
 
-        private static void performOperationsUsing ( final AddressDao addressDao) throws Exception {
-            addAddress(addressDao);
-//            log.info(ALL_APPOINTMENTS);
-//            try (var customerStream = appointmentDao.getAll()) {
+        private static void performOperationsUsing ( final CityDao cityDao) throws Exception {
+            addCity(cityDao);
+//            log.info(ALL_CITIES);
+//            try (var customerStream = cityDao.getAll()) {
 //                customerStream.forEach((customer) -> log.info(customer.toString()));
 //            }
-//            log.info("appointmentDao.getByAppointmentId(2): " + appointmentDao.getById(2));
-//            final var appointment = new Appointment(4, "Dan", "Danson");
-//            appointmentDao.add(appointment);
-//            log.info(ALL_APPOINTMENTS + appointmentDao.getAll());
-//            appointment.setType("Daniel");
-//            appointment.update(appointment);
-//            log.info(ALL_APPOINTMENTS);
-//            try (var appointmentStream = appointmentDao.getAll()) {
-//                appointmentStream.forEach((addr) -> log.info(addr.toString()));
+//            log.info("cityDao.getByCityId(2): " + cityDao.getById(2));
+//            final var city = new City(4, "Dan", "Danson");
+//            cityDao.add(city);
+//            log.info(ALL_CITIES + cityDao.getAll());
+//            city.setType("Daniel");
+//            city.update(city);
+//            log.info(ALL_CITIES);
+//            try (var cityStream = cityDao.getAll()) {
+//                cityStream.forEach((addr) -> log.info(addr.toString()));
 //            }
-//            appointmentDao.delete(appointment);
-//            log.info(ALL_APPOINTMENTS + appointmentDao.getAll());
+//            cityDao.delete(city);
+//            log.info(ALL_CITIES + cityDao.getAll());
         }
 
-        private static void addAddress (AddressDao addressDao) throws Exception {
-            for (var address : generateSampleAddresses()) {
-                addressDao.add(address);
+        private static void addCity (CityDao cityDao) throws Exception {
+            for (var city : generateSampleCities()) {
+                cityDao.add(city);
             }
         }
 
@@ -121,14 +121,10 @@ public class DaoApp {
          *
          * @return list of appointments.
          */
-        public static List<Address> generateSampleAddresses () throws ParseException {
+        public static List<City> generateSampleCities () throws ParseException {
             // todo fix date inputs getting IllegalArgumentException error
-//            final var appointment1 = new Appointment(11, 1, 1, "title", "descrip",
-//                    "here", "9999999", "new", "url", "2020-02-25 00:00:00",
-//                    "2020-02-25 00:00:00", "2020-02-25 00:00:00", "test", "2020-02-25 00:00:00",
-//                    "test");
-            final var address1 = new Address(11, "test", "test", 1, "88888", "8888888",
-                    "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00", "test");
-            return List.of(address1);
+            final var city1 = new City(11, "test", 1, "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00",
+                    "test");
+            return List.of(city1);
         }
     }

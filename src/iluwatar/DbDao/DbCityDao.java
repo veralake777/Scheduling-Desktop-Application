@@ -7,9 +7,9 @@ import iluwatar.Interface.CityDao;
 import iluwatar.POJO.City;
 
 import javax.sql.DataSource;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -142,9 +142,9 @@ public class DbCityDao implements CityDao {
             statement.setString(2, city.getCity());
             statement.setInt(3, city.getCountryId());
 
-            statement.setDate(7, Date.valueOf(city.getCreateDate()));
+            statement.setTimestamp(7, Timestamp.valueOf(city.getCreateDate()));
             statement.setString(8, city.getCreatedBy());
-            statement.setDate(9, Date.valueOf(city.getLastUpdate()));
+            statement.setTimestamp(9, Timestamp.valueOf(city.getLastUpdate()));
             statement.setString(10, city.getLastUpdateBy());
 
             statement.execute();

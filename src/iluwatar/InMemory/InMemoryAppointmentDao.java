@@ -19,7 +19,7 @@ public class InMemoryAppointmentDao implements AppointmentDao {
     private Map<Integer, Appointment> idToAppointment = new HashMap<>();
 
     /**
-     * An eagerly evaluated stream of addresses stored in memory.
+     * An eagerly evaluated stream of appointments stored in memory.
      */
     @Override
     public Stream<Appointment> getAll() {

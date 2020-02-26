@@ -1,9 +1,9 @@
 package iluwatar;
 
-import iluwatar.DbDao.DbAddressDao;
-import iluwatar.InMemory.InMemoryAddressDao;
-import iluwatar.Interface.AddressDao;
-import iluwatar.POJO.Address;
+import iluwatar.DbDao.DbAppointmentDao;
+import iluwatar.InMemory.InMemoryAppointmentDao;
+import iluwatar.Interface.AppointmentDao;
+import iluwatar.POJO.Appointment;
 import utils.DBUtils;
 
 import javax.sql.DataSource;
@@ -26,11 +26,11 @@ import java.util.Optional;
  * operations: select, add, update, and delete.
  */
 
-public class DaoApp {
+public class ApptApp {
     private static final String DB_URL = "";
     // TODO fix logger
 //    private static Logger log = LoggerFactory.getLogger(App.class);
-    private static final String ALL_ADDRESSES = "addressDao.getAllAddresses(): ";
+    private static final String ALL_APPOINTMENTS = "appointmentDao.getAllAppointments(): ";
 
     /**
      * Program entry point
@@ -40,12 +40,12 @@ public class DaoApp {
      */
 
     public static void main(final String[] args) throws Exception {
-        final var inMemoryDao = new InMemoryAddressDao();
+        final var inMemoryDao = new InMemoryAppointmentDao();
         performOperationsUsing(inMemoryDao);
 
         final var dataSource = createDataSource();
 //        createSchema(dataSource);
-        final var dbDao = new DbAddressDao(dataSource);
+        final var dbDao = new DbAppointmentDao(dataSource);
         performOperationsUsing(dbDao);
         printTest();
 //        deleteSchema(dataSource);
@@ -81,17 +81,17 @@ public class DaoApp {
     }
 
     private static void printTest() throws Exception {
-        DbAddressDao test = new DbAddressDao(createDataSource());
-        Optional<Address> test1 = test.getById(1);
-        System.out.println("printTest  " + test1.get().getAddress());
+        DbAppointmentDao test = new DbAppointmentDao(createDataSource());
+        Optional<Appointment> test1 = test.getById(1);
+        System.out.println("printTest  " + test1.get().getType());
     }
 
     private static DataSource createDataSource () throws ClassNotFoundException, IOException {
         return DBUtils.getMySQLDataSource();
     }
 
-        private static void performOperationsUsing ( final AddressDao addressDao) throws Exception {
-            addAddress(addressDao);
+        private static void performOperationsUsing ( final AppointmentDao appointmentDao) throws Exception {
+            addAppointment(appointmentDao);
 //            log.info(ALL_APPOINTMENTS);
 //            try (var customerStream = appointmentDao.getAll()) {
 //                customerStream.forEach((customer) -> log.info(customer.toString()));
@@ -110,9 +110,9 @@ public class DaoApp {
 //            log.info(ALL_APPOINTMENTS + appointmentDao.getAll());
         }
 
-        private static void addAddress (AddressDao addressDao) throws Exception {
-            for (var address : generateSampleAddresses()) {
-                addressDao.add(address);
+        private static void addAppointment (AppointmentDao appointmentDao) throws Exception {
+            for (var appointment : generateSampleAppointments()) {
+                appointmentDao.add(appointment);
             }
         }
 
@@ -121,14 +121,14 @@ public class DaoApp {
          *
          * @return list of appointments.
          */
-        public static List<Address> generateSampleAddresses () throws ParseException {
+        public static List<Appointment> generateSampleAppointments () throws ParseException {
             // todo fix date inputs getting IllegalArgumentException error
-//            final var appointment1 = new Appointment(11, 1, 1, "title", "descrip",
-//                    "here", "9999999", "new", "url", "2020-02-25 00:00:00",
-//                    "2020-02-25 00:00:00", "2020-02-25 00:00:00", "test", "2020-02-25 00:00:00",
-//                    "test");
-            final var address1 = new Address(11, "test", "test", 1, "88888", "8888888",
-                    "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00", "test");
-            return List.of(address1);
+            final var appointment1 = new Appointment(11, 1, 1, "title", "descrip",
+                    "here", "9999999", "new", "url", "2020-02-26 00:00:00",
+                    "2020-02-26 00:00:00", "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00",
+                    "test");
+//            final var address1 = new Address(11, "test", "test", 1, "88888", "8888888",
+//                    "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00", "test");
+            return List.of(appointment1);
         }
     }

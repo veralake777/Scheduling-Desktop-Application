@@ -1,24 +1,24 @@
 package iluwatar.POJO;
 
 public class User {
-    private int userId;
+    private int id;
     private String userName;
     private String password;
     private boolean active = false;
     private String createDate;
     private String createdBy;
     private String lastUpdate;
-    private String getLastUpdate;
+    private String lastUpdateBy;
 
-    public User(int userId, String userName, String password, boolean active, String createDate, String createdBy, String lastUpdate, String getLastUpdate) {
-        this.userId = userId;
+    public User(int id, String userName, String password, boolean active, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
+        this.id = id;
         this.userName = userName;
         this.password = password;
         this.active = active;
         this.createDate = createDate;
         this.createdBy = createdBy;
         this.lastUpdate = lastUpdate;
-        this.getLastUpdate = getLastUpdate;
+        this.lastUpdateBy = lastUpdateBy;
     }
 
     public User(String userName, String password) {
@@ -30,13 +30,13 @@ public class User {
         this.userName = userName;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getId() {
+        return id;
     }
 
-    public void setUserId(int userId, boolean isUnique) {
+    public void setId(int userId, boolean isUnique) {
         // PK
-        this.userId = userId;
+        this.id = userId;
     }
 
     public boolean getActive() {
@@ -71,12 +71,12 @@ public class User {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getGetLastUpdate() {
-        return getLastUpdate;
+    public String getLastUpdateBy() {
+        return lastUpdateBy;
     }
 
-    public void setGetLastUpdate(String getLastUpdate) {
-        this.getLastUpdate = getLastUpdate;
+    public void setLastUpdateBy(String lastUpdateBy) {
+        this.lastUpdateBy = lastUpdateBy;
     }
 
     public String getUserName() {

@@ -1,7 +1,7 @@
 package iluwatar.POJO;
 
 public class Customer {
-    private int customerId; // PK
+    private int id; // PK
     private String customerName;
     private int addressId; // FK --> customer --customer_ibfk_1 -- on update & delete restrict
     private boolean active; // 1 = active, 0 = inactive
@@ -10,8 +10,8 @@ public class Customer {
     private String lastUpdate;
     private String lastUpdateBy; // userName
 
-    public Customer(int customerId, String customerName, int addressId, boolean active, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
-        this.customerId = customerId;
+    public Customer(int id, String customerName, int addressId, boolean active, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
+        this.id = id;
         this.customerName = customerName;
         this.addressId = addressId;
         this.active = active;
@@ -21,13 +21,13 @@ public class Customer {
         this.lastUpdateBy = lastUpdateBy;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public int getId() {
+        return id;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setId(int id) {
         // PK check
-        this.customerId = customerId;
+        this.id = id;
     }
 
     public String getCustomerName() {

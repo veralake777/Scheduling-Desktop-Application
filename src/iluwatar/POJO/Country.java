@@ -1,14 +1,14 @@
 package iluwatar.POJO;
 
 public class Country {
-    private int countryId; // PK
+    private int id; // PK
     private String country;
     private String createDate;
     private String createdBy; // userName
     private String lastUpdate;
 
-    public Country(int countryId, String country, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
-        this.countryId = countryId;
+    public Country(int id, String country, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
+        this.id = id;
         this.country = country;
         this.createDate = createDate;
         this.createdBy = createdBy;
@@ -16,13 +16,13 @@ public class Country {
         this.lastUpdateBy = lastUpdateBy;
     }
 
-    public int getCountryId() {
-        return countryId;
+    public int getId() {
+        return id;
     }
 
-    public void setCountryId(int countryId) {
+    public void setId(int id) {
         // PK check
-        this.countryId = countryId;
+        this.id = id;
     }
 
     public String getCountry() {

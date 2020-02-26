@@ -1,9 +1,9 @@
 package iluwatar;
 
-import iluwatar.DbDao.DbAddressDao;
-import iluwatar.InMemory.InMemoryAddressDao;
-import iluwatar.Interface.AddressDao;
-import iluwatar.POJO.Address;
+import iluwatar.DbDao.DbCountryDao;
+import iluwatar.InMemory.InMemoryCountryDao;
+import iluwatar.Interface.CountryDao;
+import iluwatar.POJO.Country;
 import utils.DBUtils;
 
 import javax.sql.DataSource;
@@ -26,11 +26,11 @@ import java.util.Optional;
  * operations: select, add, update, and delete.
  */
 
-public class DaoApp {
+public class CountryApp {
     private static final String DB_URL = "";
     // TODO fix logger
 //    private static Logger log = LoggerFactory.getLogger(App.class);
-    private static final String ALL_ADDRESSES = "addressDao.getAllAddresses(): ";
+    private static final String ALL_APPOINTMENTS = "countryDao.getAllCountrys(): ";
 
     /**
      * Program entry point
@@ -40,12 +40,12 @@ public class DaoApp {
      */
 
     public static void main(final String[] args) throws Exception {
-        final var inMemoryDao = new InMemoryAddressDao();
+        final var inMemoryDao = new InMemoryCountryDao();
         performOperationsUsing(inMemoryDao);
 
         final var dataSource = createDataSource();
 //        createSchema(dataSource);
-        final var dbDao = new DbAddressDao(dataSource);
+        final var dbDao = new DbCountryDao(dataSource);
         performOperationsUsing(dbDao);
         printTest();
 //        deleteSchema(dataSource);
@@ -53,14 +53,14 @@ public class DaoApp {
 //        private static void deleteSchema(DataSource dataSource) throws SQLException {
 //            try (var connection = dataSource.getConnection();
 //            var statement = connection.createStatement()) {
-//                statement.execute(AppointmentSchemaSql.DELTE_SCHEMA_SQL);
+//                statement.execute(CountrySchemaSql.DELTE_SCHEMA_SQL);
 //            }
 //        }
 //
 //        private static void createSchema(DataSource dataSource) throws SQLException {
 //            try (var connection = dataSource.getConnection();
 //            var statement = connection.createStatement()) {
-//            statement.execute(AppointmentSchemaSql.CREATE_SCHEMA_SQL);
+//            statement.execute(CountrySchemaSql.CREATE_SCHEMA_SQL);
 //            }
 //        }
 //    }
@@ -68,67 +68,65 @@ public class DaoApp {
 //    private static void deleteSchema(DataSource dataSource) throws SQLException {
 //        try (var connection = dataSource.getConnection();
 //             var statement = connection.createStatement()) {
-//            statement.execute(AppointmentSchemaSql.DELETE_SCHEMA_SQL);
+//            statement.execute(CountrySchemaSql.DELETE_SCHEMA_SQL);
 //        }
 //    }
 //
 //    private static void createSchema(DataSource dataSource) throws SQLException {
 //        try (var connection = dataSource.getConnection();
 //             var statement = connection.createStatement()) {
-//            statement.execute(AppointmentSchemaSql.CREATE_SCHEMA_SQL);
+//            statement.execute(CountrySchemaSql.CREATE_SCHEMA_SQL);
 //        }
 //    }
     }
 
     private static void printTest() throws Exception {
-        DbAddressDao test = new DbAddressDao(createDataSource());
-        Optional<Address> test1 = test.getById(1);
-        System.out.println("printTest  " + test1.get().getAddress());
+        DbCountryDao test = new DbCountryDao(createDataSource());
+        Optional<Country> test1 = test.getById(1);
+        System.out.println("printTest  " + test1.get().getCountry());
     }
 
     private static DataSource createDataSource () throws ClassNotFoundException, IOException {
         return DBUtils.getMySQLDataSource();
     }
 
-        private static void performOperationsUsing ( final AddressDao addressDao) throws Exception {
-            addAddress(addressDao);
+        private static void performOperationsUsing ( final CountryDao countryDao) throws Exception {
+            addCountry(countryDao);
 //            log.info(ALL_APPOINTMENTS);
-//            try (var customerStream = appointmentDao.getAll()) {
+//            try (var customerStream = countryDao.getAll()) {
 //                customerStream.forEach((customer) -> log.info(customer.toString()));
 //            }
-//            log.info("appointmentDao.getByAppointmentId(2): " + appointmentDao.getById(2));
-//            final var appointment = new Appointment(4, "Dan", "Danson");
-//            appointmentDao.add(appointment);
-//            log.info(ALL_APPOINTMENTS + appointmentDao.getAll());
-//            appointment.setType("Daniel");
-//            appointment.update(appointment);
+//            log.info("countryDao.getByCountryId(2): " + countryDao.getById(2));
+//            final var country = new Country(4, "Dan", "Danson");
+//            countryDao.add(country);
+//            log.info(ALL_APPOINTMENTS + countryDao.getAll());
+//            country.setType("Daniel");
+//            country.update(country);
 //            log.info(ALL_APPOINTMENTS);
-//            try (var appointmentStream = appointmentDao.getAll()) {
-//                appointmentStream.forEach((addr) -> log.info(addr.toString()));
+//            try (var countryStream = countryDao.getAll()) {
+//                countryStream.forEach((addr) -> log.info(addr.toString()));
 //            }
-//            appointmentDao.delete(appointment);
-//            log.info(ALL_APPOINTMENTS + appointmentDao.getAll());
+//            countryDao.delete(country);
+//            log.info(ALL_APPOINTMENTS + countryDao.getAll());
         }
 
-        private static void addAddress (AddressDao addressDao) throws Exception {
-            for (var address : generateSampleAddresses()) {
-                addressDao.add(address);
+        private static void addCountry (CountryDao countryDao) throws Exception {
+            for (var country : generateSampleCountrys()) {
+                countryDao.add(country);
             }
         }
 
         /**
-         * Generate appointments.
+         * Generate countrys.
          *
-         * @return list of appointments.
+         * @return list of countrys.
          */
-        public static List<Address> generateSampleAddresses () throws ParseException {
+        public static List<Country> generateSampleCountrys () throws ParseException {
             // todo fix date inputs getting IllegalArgumentException error
-//            final var appointment1 = new Appointment(11, 1, 1, "title", "descrip",
-//                    "here", "9999999", "new", "url", "2020-02-25 00:00:00",
-//                    "2020-02-25 00:00:00", "2020-02-25 00:00:00", "test", "2020-02-25 00:00:00",
-//                    "test");
-            final var address1 = new Address(11, "test", "test", 1, "88888", "8888888",
+            final var country1 = new Country(11, "TST",
                     "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00", "test");
-            return List.of(address1);
+//            final var address1 = new Address(11, "test", "test", 1, "88888", "8888888",
+//                    "2020-02-26 00:00:00", "test", "2020-02-26 00:00:00", "test");
+            return List.of(country1);
         }
     }

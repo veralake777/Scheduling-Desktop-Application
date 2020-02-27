@@ -24,6 +24,11 @@ public class MainScreenController {
     }
 
     private void setTabs() throws ParseException, SQLException, ClassNotFoundException, IOException {
+        //overview view
+        Tab overview = new Tab("Overview");
+        overview.setContent(FXMLLoader.load(this.getClass().getResource("/MVC/view/overview.fxml")));
+
+        //calendar view
         Tab calendar = new Tab("Calendar");
         calendar.setContent(FXMLLoader.load(this.getClass().getResource("/MVC/view/calendarMonthView.fxml")));
 
@@ -34,7 +39,7 @@ public class MainScreenController {
         // Customer View on Customers Tab
         Tab customers = new Tab("Customers");
 
-        mainTabPane.getTabs().addAll(calendar, weekly, customers);
+        mainTabPane.getTabs().addAll(overview, calendar, weekly, customers);
     }
 
 //    @FXML

@@ -3,8 +3,8 @@ package DAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import DAO.POJO.Customer;
-import utils.DBUtils;
-import utils.DateTimeUtils;
+import utils.Database.DBUtils;
+import utils.DateTime.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

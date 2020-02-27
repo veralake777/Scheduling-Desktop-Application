@@ -4,7 +4,7 @@ import iluwatar.DbDao.DbAppointmentDao;
 import iluwatar.InMemory.InMemoryAppointmentDao;
 import iluwatar.Interface.AppointmentDao;
 import iluwatar.POJO.Appointment;
-import utils.DBUtils;
+import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;

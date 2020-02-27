@@ -4,7 +4,7 @@ import iluwatar.DbDao.DbCustomerDao;
 import iluwatar.InMemory.InMemoryCustomerDao;
 import iluwatar.Interface.CustomerDao;
 import iluwatar.POJO.Customer;
-import utils.DBUtils;
+import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;

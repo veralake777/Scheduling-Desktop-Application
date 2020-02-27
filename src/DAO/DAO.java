@@ -3,8 +3,8 @@ package DAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import DAO.POJO.User;
-import utils.DBUtils;
-import utils.QueryUtils;
+import utils.Database.DBUtils;
+import utils.Database.QueryUtils;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

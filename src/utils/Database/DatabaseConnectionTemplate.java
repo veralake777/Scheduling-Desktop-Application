@@ -3,7 +3,7 @@
 *   Read more about this on Stack Overflow -> source: https://stackoverflow.com/questions/30651830/use-jdbc-mysql-connector-in-intellij-idea
 */
 
-package utils;
+package utils.Database;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

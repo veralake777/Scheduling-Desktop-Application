@@ -4,7 +4,7 @@ import iluwatar.DbDao.DbCityDao;
 import iluwatar.InMemory.InMemoryCityDao;
 import iluwatar.Interface.CityDao;
 import iluwatar.POJO.City;
-import utils.DBUtils;
+import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;

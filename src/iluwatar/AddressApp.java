@@ -4,7 +4,7 @@ import iluwatar.DbDao.DbAddressDao;
 import iluwatar.InMemory.InMemoryAddressDao;
 import iluwatar.Interface.AddressDao;
 import iluwatar.POJO.Address;
-import utils.DBUtils;
+import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;

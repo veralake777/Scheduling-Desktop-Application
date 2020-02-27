@@ -1,13 +1,15 @@
 package MVC.model;
 
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+/**
+ * CalendarMonthModel contains the CalendarMonth data.
+ */
 public class CalendarMonthModel {
     // Locale
     private Locale locale;
@@ -144,14 +146,7 @@ public class CalendarMonthModel {
         return isAppointmentCircle;
     }
 
-    public void setIsAppointmentCircle(Circle isAppointmentCircle, Color color) {
-        if (this.isAppointment()) {
-            isAppointmentCircle.setFill(color);
-            this.isAppointmentCircle = isAppointmentCircle;
-        } else {
-            this.isAppointmentCircle = null;
-        }
+    public void setIsAppointmentCircle(Circle isAppointmentCircle) {
+        this.isAppointmentCircle = isAppointmentCircle;
     }
-
-
 }

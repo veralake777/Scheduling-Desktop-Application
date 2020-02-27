@@ -137,8 +137,6 @@ public class DbUserDao implements UserDao {
 
         try (var connection = getConnection();
              var statement = connection.prepareStatement("INSERT INTO user VALUES (?,?,?,?,?,?,?,?)")) {
-            // dates to strings
-            // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
             statement.setInt(1, user.getId());
             statement.setString(2, user.getUserName());
             statement.setString(3, user.getPassword());

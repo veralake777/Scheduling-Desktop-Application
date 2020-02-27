@@ -17,8 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import static utils.QueryUtils.createQuery;
-import static utils.QueryUtils.getResult;
+import static utils.Database.QueryUtils.createQuery;
+import static utils.Database.QueryUtils.getResult;
 
 public class LoginScreenController {
     Stage stage;

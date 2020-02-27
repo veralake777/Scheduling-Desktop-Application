@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 
-<TabPane fx:id="mainTabPane" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE"
+<TabPane fx:id="mainTabPane" prefHeight="Infinity" prefWidth="Infinity" tabClosingPolicy="UNAVAILABLE"
          xmlns="http://javafx.com/javafx/10.0.2-internal"
          xmlns:fx="http://javafx.com/fxml/1"
          fx:controller="MVC.controller.MainScreenController" />

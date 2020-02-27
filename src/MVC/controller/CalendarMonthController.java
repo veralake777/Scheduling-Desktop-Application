@@ -1,6 +1,8 @@
 package MVC.controller;
 
 import DAO.AppointmentDao;
+import DAO.POJO.Appointment;
+import MVC.model.CalendarMonthModel;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,14 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import DAO.POJO.Appointment;
-import MVC.model.CalendarMonthModel;
-import utils.Internationalization;
+import utils.DateTime.Internationalization;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -28,14 +28,30 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+/**
+ * CalendarMonthController can update the CalendarMonthModel data and redraw it using the view.
+ */
+
 public class CalendarMonthController {
     @FXML
     private BorderPane borderPane;
+
+    public CalendarMonthController() throws IOException {
+    }
 
     @FXML
     public void initialize() throws Exception {
         createAndConfigureCalendar();
     }
+
+//    private CalendarMonthModel c;
+//    private FXMLLoader view = FXMLLoader.load(this.getClass().getResource("../view/calendarMonthView.fxml"));
+//
+//    // constructor
+//    public CalendarMonthController(CalendarMonthModel calendar, FXMLLoader view) throws IOException {
+//        this.c = calendar;
+//        this.view = view;
+//    }
 
     // calendar parts
     Label[] dayLabels = new Label[49];
@@ -218,7 +234,7 @@ public class CalendarMonthController {
                 if(startDate == i) {
                     c.setAppointment(true);
                     // TODO color differences based on type
-                    c.setIsAppointmentCircle(isAppointmentCircle, Color.LIGHTCORAL);
+                    c.setIsAppointmentCircle(isAppointmentCircle);
                     appointmentLabels[index].setGraphic(c.getIsAppointmentCircle());
                     appointmentLabels[index].setPadding(new Insets( -60, 0, 0, 25));
                     c.setAppointment(false);

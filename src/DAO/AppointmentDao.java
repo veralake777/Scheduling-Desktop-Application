@@ -4,9 +4,9 @@ import DAO.POJO.Appointment;
 import MVC.model.CalendarMonthModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import utils.DBUtils;
-import utils.DateTimeUtils;
-import utils.QueryUtils;
+import utils.Database.DBUtils;
+import utils.DateTime.DateTimeUtils;
+import utils.Database.QueryUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

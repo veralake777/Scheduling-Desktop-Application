@@ -1,0 +1,32 @@
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+SEVERE: Oh no! Bad Things are happening!
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+SEVERE: More Severe things are happening!
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+WARNING: This is just a warning
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+WARNING: Here is another warning
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+INFO: This message is informational
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+INFO: So is this one
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+CONFIG: Something needs to be reconfigured
+Feb 27, 2020 11:26:45 AM utils.LoggerInfo main
+CONFIG: Something else needs to be reconfigured
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+SEVERE: Oh no! Bad Things are happening!
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+SEVERE: More Severe things are happening!
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+WARNING: This is just a warning
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+WARNING: Here is another warning
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+INFO: This message is informational
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+INFO: So is this one
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+CONFIG: Something needs to be reconfigured
+Feb 27, 2020 11:27:14 AM utils.LoggerInfo main
+CONFIG: Something else needs to be reconfigured

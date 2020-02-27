@@ -4,7 +4,7 @@ import iluwatar.DbDao.DbCountryDao;
 import iluwatar.InMemory.InMemoryCountryDao;
 import iluwatar.Interface.CountryDao;
 import iluwatar.POJO.Country;
-import utils.DBUtils;
+import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;

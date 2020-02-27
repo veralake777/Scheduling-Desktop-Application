@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import utils.DBUtils;
+import utils.Database.DBUtils;
 
 
 public class Main extends Application {
@@ -19,7 +19,11 @@ public class Main extends Application {
         primaryStage.setTitle("ACMECo Scheduling System");
         primaryStage.setMaximized(true);
         primaryStage.setScene(new Scene(root));
-        primaryStage.show();
+        try {
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

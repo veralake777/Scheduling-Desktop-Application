@@ -39,7 +39,8 @@ public class MainScreenController {
         // Customer View on Customers Tab
         Tab customers = new Tab("Customers");
 
-        mainTabPane.getTabs().addAll(overview, calendar, weekly, customers);
+//        mainTabPane.getTabs().addAll(overview, calendar, weekly, customers);
+        mainTabPane.getTabs().setAll(overview, calendar, customers);
     }
 
 //    @FXML

@@ -19,11 +19,7 @@ public class Main extends Application {
         primaryStage.setTitle("ACMECo Scheduling System");
         primaryStage.setMaximized(true);
         primaryStage.setScene(new Scene(root));
-        try {
-            primaryStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        primaryStage.show();
     }
 
 

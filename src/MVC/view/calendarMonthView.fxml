@@ -3,6 +3,6 @@
 <?import javafx.scene.layout.*?>
 
 
-<BorderPane fx:id="borderPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.CalendarMonthController">
+<BorderPane fx:id="calendarMonthView" prefHeight="Infinity" prefWidth="Infinity" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.CalendarMonthController">
 
 </BorderPane>

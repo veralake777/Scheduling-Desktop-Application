@@ -160,4 +160,25 @@ public class Appointment {
         this.lastUpdateBy = lastUpdateBy;
     }
 
+    @Override
+    public String toString() {
+        return   "Appointment{" +
+                "appointmentId=" + getAppointmentId() + System.lineSeparator() +
+                "customerId='" + getCustomerId() + '\'' + System.lineSeparator() +
+                "userId=" + getUserId() + '\'' + System.lineSeparator() +
+                "title=" + getTitle() + '\'' + System.lineSeparator() +
+                "description=" + getDescription() +'\'' + System.lineSeparator() +
+                "location=" + getLocation()  +'\'' + System.lineSeparator() +
+                "contact=" + getContact()  +'\'' + System.lineSeparator() +
+                "type=" + getType()  +'\'' + System.lineSeparator() +
+                "url=" + getUrl()  +'\'' + System.lineSeparator() +
+                "start=" + getStart()  +'\'' + System.lineSeparator() +
+                "end=" + getEnd()  +'\'' + System.lineSeparator() +
+                "createDate=" + getCreateDate()  + '\'' + System.lineSeparator() +
+                "createdBy=" + getCreatedBy()  +'\'' + System.lineSeparator() +
+                "lastUpdate=" + getLastUpdate()  +'\'' + System.lineSeparator() +
+                "lastUpdateBy=" + getLastUpdateBy()  +'\'' + System.lineSeparator() +
+                '}';
+    }
+
 }

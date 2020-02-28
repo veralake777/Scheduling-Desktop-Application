@@ -14,12 +14,16 @@ import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import utils.DateTime.Internationalization;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
@@ -34,7 +38,7 @@ import java.util.Locale;
 
 public class CalendarMonthController {
     @FXML
-    private BorderPane borderPane;
+    private BorderPane calendarMonthView;
 
     public CalendarMonthController() throws IOException {
     }
@@ -57,7 +61,9 @@ public class CalendarMonthController {
     Label[] dayLabels = new Label[49];
 
     // appointment parts
-    Circle isAppointmentCircle = new Circle(10);
+    Color circleColor = new Color(.941, .502, .502, .5);
+    Circle isAppointmentCircle = new Circle(10, 10, 15, circleColor);
+
     Label[] appointmentLabels = new Label[49];
 
     Internationalization getLocale = new Internationalization(Locale.getDefault());
@@ -74,33 +80,46 @@ public class CalendarMonthController {
             today, currentMonthString, monthYearHeader, dayLabels, appointmentLabels,
             false, null);
 
-    private void updateMonth(int i) throws ParseException, SQLException, ClassNotFoundException {
-        // update month
-        c.getCalendar().add(Calendar.MONTH, i);
-        c.setCurrentMonth(Calendar.MONTH);
-        c.setCurrentMonthString(c.getCalendar().getDisplayName(Calendar.MONTH, Calendar.LONG, c.getLocale()));
 
-        // update header
-        c.getMonthYearHeader().setText(c.getCurrentMonthString() + " " + c.getCurrentYear());
-        c.setMonthYearHeader(c.getMonthYearHeader());
+    public void createAndConfigureCalendar() throws ParseException, SQLException, ClassNotFoundException {
+        calendarMonthView.getStyleClass().add("borderPane");
 
-        // update days
-        getDayPane();
+        // header
+        HBox header = new HBox(5);
+        c.getMonthYearHeader().setFont(new Font(14));
+        header.setPrefHeight(20);
+//        header.setMaxSize(200, 20);
+        header.getChildren().addAll(c.getMonthYearHeader(), getPrevNextBtnBar());
+        calendarMonthView.setTop(header);
+        BorderPane.setAlignment(c.getMonthYearHeader(), Pos.BASELINE_LEFT);
 
-        // update calendar
-        createAndConfigureCalendar();
+        // center - calendar MVC.view
+        calendarMonthView.setCenter(getDayPane());
+
+        // bottom prev next btnBar
+//        calendarMonthView.setBottom(getPrevNextBtnBar());
+        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.BASELINE_RIGHT);
+        calendarMonthView.setMaxHeight(200);
+        calendarMonthView.setMaxHeight(200);
     }
 
     private ButtonBar getPrevNextBtnBar() {
         // create button bar instance
         ButtonBar prevNextBtnBar = new ButtonBar();
+        Image btnImg = new Image(String.valueOf(new File("/images/arrow-btn.PNG")),15, 15, true, false);
 
-        // create the buttons to go into ButtonBar
-        Button nextMonthBtn = new Button("NEXT MONTH");
+        // style next button
+        ImageView nextBtn = new ImageView(btnImg);
+        nextBtn.setStyle("-fx-padding: 0;");
+        Button nextMonthBtn = new Button();
+        nextMonthBtn.setPadding(Insets.EMPTY);
+
+        nextMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0); -fx-translate-x: -30;");
+
+
         ButtonBar.setButtonData(nextMonthBtn, ButtonBar.ButtonData.NEXT_FORWARD);
+        nextMonthBtn.setGraphic(nextBtn);
         nextMonthBtn.setAlignment(Pos.CENTER);
-        nextMonthBtn.setFont(new Font(18));
-        nextMonthBtn.setPrefSize(250, 10);
         nextMonthBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -114,11 +133,21 @@ public class CalendarMonthController {
         });
 
 
-        Button prevMonthBtn = new Button("LAST MONTH");
+        Button prevMonthBtn = new Button();
+
+        // style and reverse prevBtn
+        ImageView prevBtn = new ImageView(btnImg);
+        prevBtn.setScaleX(-1);
+        prevMonthBtn.setGraphic(prevBtn);
+        prevMonthBtn.setPadding(Insets.EMPTY);
+        prevMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0); -fx-translate-x: 30;");
+
+        prevMonthBtn.setPrefSize(btnImg.getRequestedWidth(), btnImg.getRequestedHeight());
+
+
+
         ButtonBar.setButtonData(prevMonthBtn, ButtonBar.ButtonData.BACK_PREVIOUS);
         prevMonthBtn.setAlignment(Pos.CENTER);
-        prevMonthBtn.setFont(new Font(18));
-        prevMonthBtn.setPrefSize(250, 10);
         prevMonthBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -133,26 +162,12 @@ public class CalendarMonthController {
 
         // add buttons to button bar
         prevNextBtnBar.getButtons().addAll(nextMonthBtn, prevMonthBtn);
-        prevNextBtnBar.setTranslateX(-460);
-
+        prevNextBtnBar.setPrefSize(btnImg.getWidth(), btnImg.getHeight());
+        prevNextBtnBar.setPadding(Insets.EMPTY);
+        prevNextBtnBar.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
         return prevNextBtnBar;
     }
 
-    private void createAndConfigureCalendar() throws ParseException, SQLException, ClassNotFoundException {
-        borderPane.getStyleClass().add("borderPane");
-
-        // header
-        borderPane.setTop(c.getMonthYearHeader());
-        BorderPane.setAlignment(c.getMonthYearHeader(), Pos.CENTER);
-
-        // center - calendar MVC.view
-        borderPane.setCenter(getDayPane());
-
-        // bottom prev next btnBar
-        borderPane.setBottom(getPrevNextBtnBar());
-        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.CENTER);
-
-    }
     private GridPane getDayPane() throws ParseException, SQLException, ClassNotFoundException {
         // build lists
         for (int i = 0; i < 49; i++) {
@@ -173,16 +188,16 @@ public class CalendarMonthController {
         dayPane.getStyleClass().addAll("days");
 
         // 7 columns
-        ColumnConstraints column = new ColumnConstraints(130);
+        ColumnConstraints column = new ColumnConstraints(40);
         column.setHgrow(Priority.ALWAYS);
         dayPane.getColumnConstraints().addAll(column, column, column, column, column, column, column);
 
         // 5 rows
-        RowConstraints row1 = new RowConstraints(30);
+        RowConstraints row1 = new RowConstraints(40);
         row1.setValignment(VPos.CENTER);
-        RowConstraints row = new RowConstraints(column.getPrefWidth() -40);
+        RowConstraints row = new RowConstraints(column.getPrefWidth());
         dayPane.getRowConstraints().addAll( row1, row, row, row, row, row, row);
-        dayPane.setGridLinesVisible(true);
+//        dayPane.setGridLinesVisible(true);
 
         // LIST dayPane
         Label[] d = c.getDayLabels();
@@ -196,6 +211,7 @@ public class CalendarMonthController {
         }
         showDays();
         showDaysOfWeek();
+
         return dayPane;
     }
 
@@ -203,10 +219,12 @@ public class CalendarMonthController {
         DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
         String[] dayNames = dfs.getWeekdays();
 
+
         // jlblDay[0], jlblDay[1], ..., jlblDay[6] for day names
         for (int i = 0; i < 7; i++) {
 //            dayLabels[i].setTextAlignment(TextAlignment.CENTER);
-            dayLabels[i].setText(dayNames[i + 1]);
+            String name = String.valueOf(dayNames[i + 1].charAt(0));
+            dayLabels[i].setText(name);
 
             // Center text horizontally and vertically
             GridPane.setConstraints(dayLabels[i],  i,  0,  1,  1, HPos.CENTER, VPos.CENTER);
@@ -224,7 +242,7 @@ public class CalendarMonthController {
             int index = i + 3 + startingDayOfMonth + 7;
             // offset with starting day of month
             dayLabels[index].setText(i + "");
-            dayLabels[index].setPadding(new Insets(-60, 0, 0, 10));
+//            dayLabels[index].setPadding(new Insets(-55, 0, 0, 10));
 
             // map appointments to correct dayNumber
             assert appts != null;
@@ -236,10 +254,27 @@ public class CalendarMonthController {
                     // TODO color differences based on type
                     c.setIsAppointmentCircle(isAppointmentCircle);
                     appointmentLabels[index].setGraphic(c.getIsAppointmentCircle());
-                    appointmentLabels[index].setPadding(new Insets( -60, 0, 0, 25));
+//                    appointmentLabels[index].setPadding(new Insets( -52.5, 0, 0, 6));
                     c.setAppointment(false);
                 }
             }
         }
+    }
+
+    private void updateMonth(int i) throws ParseException, SQLException, ClassNotFoundException {
+        // update month
+        c.getCalendar().add(Calendar.MONTH, i);
+        c.setCurrentMonth(Calendar.MONTH);
+        c.setCurrentMonthString(c.getCalendar().getDisplayName(Calendar.MONTH, Calendar.LONG, c.getLocale()));
+
+        // update header
+        c.getMonthYearHeader().setText(c.getCurrentMonthString() + " " + c.getCurrentYear());
+        c.setMonthYearHeader(c.getMonthYearHeader());
+
+        // update days
+        getDayPane();
+
+        // update calendar
+        createAndConfigureCalendar();
     }
 }

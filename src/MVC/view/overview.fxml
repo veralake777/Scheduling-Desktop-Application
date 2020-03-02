@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--TODO CalendarMonthView not showing elements in window-->
+
+<GridPane fx:id="overview" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.OverviewController">
+   <columnConstraints>
+      <ColumnConstraints maxWidth="Infinity" minWidth="100" prefWidth="400" percentWidth="25" />
+      <ColumnConstraints maxWidth="Infinity" minWidth="300" percentWidth="75" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="Infinity" />
+   </rowConstraints>
+   <children>
+      <BorderPane fx:id="calendarPane" prefHeight="200" prefWidth="200.0">
+         <left>
+             <fx:include fx:id="calendarMonthView" source="calendarMonthView.fxml" />
+         </left>
+      </BorderPane>
+       <GridPane fx:id="weeklyView" prefHeight="419.0" prefWidth="382.0" GridPane.columnIndex="1">
+           <columnConstraints>
+               <ColumnConstraints fx:id="day1" prefWidth="Infinity" />
+               <ColumnConstraints fx:id="day2" prefWidth="Infinity" />
+               <ColumnConstraints fx:id="day3" prefWidth="Infinity" />
+               <ColumnConstraints fx:id="day4" prefWidth="Infinity" />
+               <ColumnConstraints fx:id="day5" prefWidth="Infinity" />
+               <ColumnConstraints fx:id="day6" prefWidth="Infinity" />
+               <ColumnConstraints fx:id="day7" prefWidth="Infinity" />
+           </columnConstraints>
+           <rowConstraints>
+               <RowConstraints maxHeight="Infinity"/>
+           </rowConstraints>
+       </GridPane>
+<!--      <TableView fx:id="weeklyView" prefHeight="419.0" prefWidth="382.0" GridPane.columnIndex="1">-->
+<!--        <columns>-->
+<!--          <TableColumn fx:id="weekDayCol1" prefWidth="75.0" text="day1" />-->
+<!--          <TableColumn fx:id="weekDayCol2" prefWidth="75.0" text="day2" />-->
+<!--            <TableColumn fx:id="weekDayCol3" prefWidth="75.0" text="day3" />-->
+<!--            <TableColumn fx:id="weekDayCol4" prefWidth="75.0" text="day4" />-->
+<!--            <TableColumn fx:id="weekDayCol5" prefWidth="75.0" text="day5" />-->
+<!--            <TableColumn fx:id="weekDayCol6" prefWidth="75.0" text="day6" />-->
+<!--            <TableColumn fx:id="weekDayCol7" prefWidth="75.0" text="day7" />-->
+<!--        </columns>-->
+<!--      </TableView>-->
+   </children>
+</GridPane>

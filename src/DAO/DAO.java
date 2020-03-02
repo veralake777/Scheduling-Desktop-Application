@@ -2,9 +2,9 @@ package DAO;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.User;
-import utils.DBUtils;
-import utils.QueryUtils;
+import DAO.POJO.User;
+import utils.Database.DBUtils;
+import utils.Database.QueryUtils;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -23,7 +23,7 @@ public abstract class DAO {
         DBUtils.startConnection();
         //  String sqlStatement="select FROM address";
         QueryUtils.createQuery(sqlStatement);
-        User userResult;
+//        User userResult;
         return QueryUtils.getResult();
     };
 

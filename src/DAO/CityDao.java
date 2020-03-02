@@ -2,10 +2,10 @@ package DAO;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.City;
-import utils.DBUtils;
-import utils.DateTimeUtils;
-import utils.QueryUtils;
+import DAO.POJO.City;
+import utils.Database.DBUtils;
+import utils.DateTime.DateTimeUtils;
+import utils.Database.QueryUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,10 +42,8 @@ public class CityDao {
     }
 
     // get, update, delete, add
-    public static City getCity(String city) throws ClassNotFoundException, SQLException, ParseException {
-        String sqlStatement = "select * FROM city WHERE city  = '" + city + "'";
-        getCityColumns(sqlStatement);
-        getCityColumnValues(sqlStatement);
+    public static City getCity(int cityId) throws ClassNotFoundException, SQLException, ParseException {
+        String sqlStatement = "select * FROM city WHERE cityId  = '" + cityId + "'";
         City cityResult;
         ResultSet result = null;
         try {

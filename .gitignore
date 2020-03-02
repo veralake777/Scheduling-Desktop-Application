@@ -1,8 +1,10 @@
 # ItelliJ Files
 /DAODemo2
+/C195DB2TableViewExample
+/src/utils/Database/db.properties
 /.idea
 *.iml
 /out
 /CodeExamples
-/src/utils/DBUtils.java
+/src/utils/Database/DBUtils.java
 /src/DAO/DaoTemplate.java

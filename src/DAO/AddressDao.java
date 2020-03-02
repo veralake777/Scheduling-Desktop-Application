@@ -1,18 +1,16 @@
 package DAO;
 
+import DAO.POJO.Address;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.Address;
-import utils.DBUtils;
-import utils.DateTimeUtils;
-import utils.QueryUtils;
+import utils.Database.DBUtils;
+import utils.Database.QueryUtils;
+import utils.DateTime.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
-
-import static utils.QueryUtils.getResult;
 
 public class AddressDao {
     // flag for active address
@@ -42,12 +40,10 @@ public class AddressDao {
     }
 
     // get, update, delete, add
-    public static Address getAddress(String address) throws ClassNotFoundException, SQLException, ParseException {
-        DBUtils.startConnection();
-        String sqlStatement = "select * FROM address WHERE XXXName  = '" + address + "'";
-        QueryUtils.createQuery(sqlStatement);
+    public static Address getAddress(int addressId) throws ClassNotFoundException, SQLException, ParseException {
+        String sqlStatement = "select * FROM address WHERE addressId = '" + addressId + "'";
         Address addressResult;
-        ResultSet result = getResult();
+        ResultSet result = DAO.getResultSet(sqlStatement);
         while (result.next()) {
             int addressIdG = result.getInt("addressId");
             String address1 = result.getString("address");

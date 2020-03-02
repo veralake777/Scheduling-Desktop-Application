@@ -1,7 +1,7 @@
 package MVC.controller;
 
-import DAO.AppointmentDao;
-import DAO.POJO.Appointment;
+import DAO.CustomerDao;
+import MVC.view.AppointmentVBox;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -9,10 +9,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.util.Calendar;
 
@@ -66,9 +70,6 @@ public class OverviewController {
     public ColumnConstraints day7;
 
 
-
-
-
     public OverviewController() throws IOException {
     }
 
@@ -86,20 +87,18 @@ public class OverviewController {
         calendarMonthView.setMaxWidth(200);
         calendarMonthView.prefHeightProperty().bind(calendarPane.heightProperty());
         calendarMonthView.prefWidthProperty().bind(calendarPane.widthProperty());
-//
-//        weekDayCol1.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//        weekDayCol2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//        weekDayCol3.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//        weekDayCol4.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//        weekDayCol5.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//        weekDayCol6.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//        weekDayCol7.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-//
-//        weeklyView.getColumns().set(0, AppointmentDao.getAppointment(1));
-//        weekDayCol1.setCellValueFactory(
-//                new PropertyValueFactory<Appointment,String>("firstName")
-//        );
-        // set column widths
+
+        /**
+         * Appointment View
+         */
+        VBox appointmentBox = new AppointmentVBox().getAppointmentBox();
+        appointmentBox.getChildren().add(appointmentBox.getChildren().size(), new Separator());
+        appointmentBox.getChildren().add(appointmentBox.getChildren().size(), new Button("Add Appointment"));
+        calendarMonthView.setBottom(appointmentBox);
+
+        /**
+         * Week View
+         */
         day1.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
         day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
         day3.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
@@ -109,28 +108,55 @@ public class OverviewController {
         day7.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
 
         // create day labels
-        Label test = new Label("DAY1");
-        test.setAlignment(Pos.CENTER);
-        test.setFont(new Font(20));
-        Label test2 = new Label("DAY2");
-        test2.setAlignment(Pos.CENTER);
-        test2.setFont(new Font(20));
+        // TODO set days dynamically based on calendar
+        CalendarMonthController calendarController = new CalendarMonthController();
+        int today = calendarController.c.getToday();
+        String currentName;
+//        DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
+
+        // set day names
+        for (int i = 0; i < 7; i++) {
+
+            Calendar cal = calendarController.c.getCalendar();
+            DateFormatSymbols dfs = new DateFormatSymbols(calendarController.c.getLocale());
+            String[] dayNames = dfs.getWeekdays();
+
+            String firstLetter = String.valueOf(String.valueOf(dayNames[i + 1]).charAt(0));
+            String secondLetter = String.valueOf(String.valueOf(dayNames[i + 1]).charAt(1));
+            String thirdLetter = String.valueOf(String.valueOf(dayNames[i + 1]).charAt(2));
+
+            // date label
+            Text dateText = new Text(String.valueOf(today + i));
+            Circle dateCircle = new Circle(30);
+            dateCircle.setFill(new Color(Math.random(), Math.random(), Math.random(), 1));
+            StackPane dateStack = new StackPane();
+            dateStack.getChildren().addAll(dateCircle, dateText);
+            dateStack.alignmentProperty().setValue(Pos.CENTER);
+            dateStack.translateXProperty().setValue(-15);
+            dateStack.paddingProperty().setValue(new Insets(20, 10 , 20, 10));
+
+            // weekday name label
+            Label nameLbl = new Label(firstLetter + secondLetter + thirdLetter);
+            nameLbl.alignmentProperty().setValue(Pos.CENTER);
+            nameLbl.translateXProperty().setValue(50);
+            nameLbl.setFont(new Font(20));
+            nameLbl.paddingProperty().setValue(new Insets(20, 0, 10, 0));
+
+            // add both
+            weeklyView.add(dateStack, i, 0);
+            weeklyView.add(nameLbl, i, 1);
+        }
+//        Label test = new Label(String.valueOf(today));
+//        test.setAlignment(Pos.CENTER);
+//        test.setFont(new Font(20));
+//        Label test2 = new Label("DAY2");
+//        test2.setAlignment(Pos.CENTER);
+//        test2.setFont(new Font(20));
 
         // add labels
-        weeklyView.add(test, 0, 0);
-        day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.14));
-        weeklyView.add(test2, 1,0);
-
-        // create appointment
-        Appointment appt = AppointmentDao.getAppointment(1);
-        Appointment appt2 = AppointmentDao.getAppointment(2);
-        VBox apptBox = new VBox(5);
-//        apptBox.setStyle("-fx-border-style: none none solid none; -fx-border-width: 0 0 1 0; -fx-border-color: LIGHTCORAL; -fx-padding: 10;");
-        apptBox.getChildren().addAll(
-                new Label(appt.getContact()),
-                new Label(String.valueOf(appt.getStart().get(Calendar.HOUR) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM))),
-                new Label(String.valueOf(appt.getEnd().get(Calendar.HOUR_OF_DAY) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM)))
-        );
+//        weeklyView.add(test, 0, 0);
+//        day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.14));
+//        weeklyView.add(test2, 1,0);
 
         // create separator
         Separator horSep = new Separator();
@@ -140,20 +166,14 @@ public class OverviewController {
         weeklyView.add(horSep, 0, 2);
         VBox apptBox2 = new VBox(5);
 //        apptBox2.setStyle("-fx-border-style: none none solid none; -fx-border-width: 0 0 1 0; -fx-border-color: LIGHTCORAL; -fx-padding: 10; -fx-start-margin: 10; -fx-end-margin: 10;");
-        apptBox2.getChildren().addAll(
-                new Label(appt.getContact()),
-                new Label(String.valueOf(appt.getStart().get(Calendar.HOUR) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM))),
-                new Label(String.valueOf(appt.getEnd().get(Calendar.HOUR_OF_DAY) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM)))
-        );
-        weeklyView.add(apptBox, 0, 1);
-        weeklyView.add(apptBox2, 1, 1);
-//        weeklyView.add(horSep, 1, 2);
-//        weeklyView.add(test, 2, 0);
-//        weeklyView.add(test, 3, 0);
-//        weeklyView.add(test, 4, 0);
-//        weeklyView.add(test, 5, 0);
-//        weeklyView.add(test, 6, 0);
-
+//        apptBox2.getChildren().addAll(
+//                new Label(appt.getContact()),
+//                new Label(String.valueOf(appt.getStart().get(Calendar.HOUR) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM))),
+//                new Label(String.valueOf(appt.getEnd().get(Calendar.HOUR_OF_DAY) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM)))
+//        );
+        Label custTest = new Label(CustomerDao.getAllCustomers().get(1).getAddress());
+        weeklyView.add(custTest, 0, 2);
+        weeklyView.add(new AppointmentVBox().getAppointmentBox(), 1, 2);
 
     }
 

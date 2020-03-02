@@ -69,7 +69,15 @@ public class CustomerDao {
 
     public static ObservableList<Customer> getAllCustomers() throws ClassNotFoundException, SQLException, ParseException {
         ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
-        sqlStatement = "select * from customer";
+        sqlStatement = "select cust.customerId, cust.customerName, cust.active, a.address, a.address2, c.city, count.country " +
+                "from customer cust " +
+                "inner join address a " +
+                "on cust.addressId = a.addressId " +
+                "inner join city c " +
+                "on a.cityId = c.cityId " +
+                "inner join country count " +
+                "on c.countryId = count.countryId";
+
         ResultSet result = null;
         try {
             result = DAO.getResultSet(sqlStatement);
@@ -80,18 +88,18 @@ public class CustomerDao {
         while (result.next()) {
             int customerIdG = result.getInt("customerId");
             String customerName = result.getString("customerName");
-            int addressId = result.getInt("addressId");
             int active = result.getInt("active");
             if (active == 1) {
                 activeBool = true;
             }
-            String createDate = result.getString("createDate");
-            String createdBy = result.getString("createdBy");
-            String lastUpdate = result.getString("lastUpdate");
-            String lastUpdateby = result.getString("lastUpdateBy");
-            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
-            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
-            Customer customerResult = new Customer(customerIdG, customerName, addressId, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
+
+            // group address and address2
+            String address = result.getString("address") + "\n" + result.getString("address2");
+
+
+            String city = result.getString("city");
+            String country = result.getString("country");
+            Customer customerResult = new Customer(customerIdG, customerName, address, city, country);
             allCustomers.add(customerResult);
         }
         DBUtils.closeConnection();

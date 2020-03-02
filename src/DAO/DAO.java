@@ -23,7 +23,7 @@ public abstract class DAO {
         DBUtils.startConnection();
         //  String sqlStatement="select FROM address";
         QueryUtils.createQuery(sqlStatement);
-        User userResult;
+//        User userResult;
         return QueryUtils.getResult();
     };
 

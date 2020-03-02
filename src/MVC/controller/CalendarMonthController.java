@@ -35,7 +35,14 @@ import java.util.Locale;
 /**
  * CalendarMonthController can update the CalendarMonthModel data and redraw it using the view.
  */
+// TODO new classes with methods to generate views
+    // type of controller for menu
+    // when action takes place
+    // component to instatiate grid for calendar
+    // user actions
 
+    // menu -> populate cells
+        // track cells based on grid list - track each cell
 public class CalendarMonthController {
     @FXML
     private BorderPane calendarMonthView;
@@ -71,7 +78,7 @@ public class CalendarMonthController {
     GregorianCalendar calendar = new GregorianCalendar();
     int currentMonth = calendar.get(Calendar.MONTH);
     int currentYear = calendar.get(Calendar.YEAR);
-    int today = calendar.get(Calendar.DAY_OF_MONTH);;
+    int today = calendar.get(Calendar.DAY_OF_MONTH);
     String currentMonthString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale);
     Label monthYearHeader = new Label(currentMonthString + " " + String.valueOf(currentYear));
     int totalDaysInCurrentMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -215,7 +222,7 @@ public class CalendarMonthController {
         return dayPane;
     }
 
-    private void showDaysOfWeek() {
+    public void showDaysOfWeek() {
         DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
         String[] dayNames = dfs.getWeekdays();
 
@@ -260,6 +267,7 @@ public class CalendarMonthController {
             }
         }
     }
+
 
     private void updateMonth(int i) throws ParseException, SQLException, ClassNotFoundException {
         // update month

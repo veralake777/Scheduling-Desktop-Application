@@ -42,10 +42,8 @@ public class CityDao {
     }
 
     // get, update, delete, add
-    public static City getCity(String city) throws ClassNotFoundException, SQLException, ParseException {
-        String sqlStatement = "select * FROM city WHERE city  = '" + city + "'";
-        getCityColumns(sqlStatement);
-        getCityColumnValues(sqlStatement);
+    public static City getCity(int cityId) throws ClassNotFoundException, SQLException, ParseException {
+        String sqlStatement = "select * FROM city WHERE cityId  = '" + cityId + "'";
         City cityResult;
         ResultSet result = null;
         try {

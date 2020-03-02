@@ -11,6 +11,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+// TODO week from selected date or today
+
 public class WeeklyViewController {
     @FXML
     public TableView tableView;

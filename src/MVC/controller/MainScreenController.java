@@ -38,6 +38,7 @@ public class MainScreenController {
 
         // Customer View on Customers Tab
         Tab customers = new Tab("Customers");
+        customers.setContent(FXMLLoader.load(this.getClass().getResource("/MVC/view/customerView.fxml")));
 
 //        mainTabPane.getTabs().addAll(overview, calendar, weekly, customers);
         mainTabPane.getTabs().setAll(overview, calendar, customers);

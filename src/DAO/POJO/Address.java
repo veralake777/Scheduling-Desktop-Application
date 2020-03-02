@@ -1,5 +1,13 @@
 package DAO.POJO;
 
+import DAO.CityDao;
+import DAO.CountryDao;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Calendar;
 
 public class Address {
@@ -107,5 +115,50 @@ public class Address {
 
     public void setLastUpdateBy(String lastUpdateBy) {
         this.lastUpdateBy = lastUpdateBy;
+    }
+
+    @Override
+    public String toString() {
+        // get city name
+        City city = null;
+        int cityId;
+        try {
+            city = CityDao.getCity(this.cityId);
+        } catch (ClassNotFoundException | ParseException | SQLException e) {
+            e.printStackTrace();
+        }
+
+        // get country name
+        Country country = null;
+        try {
+            assert city != null;
+            country = CountryDao.getCountry(city.getCountryId());
+        } catch (ClassNotFoundException | ParseException | SQLException e) {
+            e.printStackTrace();
+        }
+        String cityName = city.getCity();
+        String countryName = country.getCountry();
+        Text addressTitle = new Text("Address: ");
+        addressTitle.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 25));
+        String address;
+        if(address2.equals("")) {
+            address = addressTitle.getText() + System.lineSeparator() +
+                    getAddress() + System.lineSeparator() +
+                    cityName + System.lineSeparator() +
+                    getPostalCode() + System.lineSeparator() +
+                    countryName + System.lineSeparator() +
+                    System.lineSeparator() +
+                    "Phone:" + getPhone();
+        } else {
+            address = "Address: " +
+                    getAddress() + System.lineSeparator() +
+                    getAddress2() + System.lineSeparator() +
+                    city + System.lineSeparator() +
+                    getPostalCode() + System.lineSeparator() +
+                    country + System.lineSeparator() +
+                    System.lineSeparator() +
+                    "Phone:" + getPhone();
+        }
+        return address;
     }
 }

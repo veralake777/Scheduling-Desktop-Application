@@ -78,7 +78,7 @@ public class AppointmentDao {
     }
 
     public static ObservableList<Appointment> getAllAppointments() throws ClassNotFoundException, SQLException, ParseException {
-        sqlStatement = "select * from appointments";
+        sqlStatement = "select * from appointment";
 
         ObservableList<Appointment> allAppointments = FXCollections.observableArrayList();
         ResultSet result = DAO.getResultSet(sqlStatement);

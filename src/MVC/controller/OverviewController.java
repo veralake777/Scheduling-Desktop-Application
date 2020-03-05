@@ -1,10 +1,8 @@
 package MVC.controller;
 
-import DAO.CustomerDao;
 import MVC.view.AppointmentVBox;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -12,11 +10,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import utils.DateTime.DateTimeUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.util.Calendar;
 
@@ -54,6 +53,9 @@ public class OverviewController {
     @FXML
     public BorderPane calendarMonthView;
     public ButtonBar prevNextBtnBar;
+
+    @FXML
+    public ColumnConstraints hours;
     @FXML
     public ColumnConstraints day1;
     @FXML
@@ -70,6 +72,7 @@ public class OverviewController {
     public ColumnConstraints day7;
 
 
+
     public OverviewController() throws IOException {
     }
 
@@ -77,6 +80,8 @@ public class OverviewController {
     public void initialize() throws Exception {
         setOverview();
     }
+
+    CalendarMonthController calendarController = new CalendarMonthController();
 
 
     public GridPane getOverview() {
@@ -99,13 +104,26 @@ public class OverviewController {
         /**
          * Week View
          */
-        day1.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-        day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-        day3.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-        day4.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-        day5.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-        day6.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
-        day7.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.142857));
+//        hours.setPercentWidth(5);
+//        day1.setPercentWidth(13.5714286);
+//        day2.setPercentWidth(13.5714286);
+//        day3.setPercentWidth(13.5714286);
+//        day4.setPercentWidth(13.5714286);
+//        day5.setPercentWidth(13.5714286);
+//        day6.setPercentWidth(13.5714286);
+//        day7.setPercentWidth(13.5714286);
+
+        hours.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.07));
+        day1.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        day3.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        day4.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        day5.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        day6.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        day7.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+
+//        weeklyView.add(new Label("HOURS"), 0, 2);
+        addCurrentHours();
 
         // create day labels
         // TODO set days dynamically based on calendar
@@ -115,66 +133,70 @@ public class OverviewController {
 //        DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
 
         // set day names
-        for (int i = 0; i < 7; i++) {
+        String[] dayNames = DateTimeUtils.getDaysOfWeek(today);
 
-            Calendar cal = calendarController.c.getCalendar();
-            DateFormatSymbols dfs = new DateFormatSymbols(calendarController.c.getLocale());
-            String[] dayNames = dfs.getWeekdays();
 
-            String firstLetter = String.valueOf(String.valueOf(dayNames[i + 1]).charAt(0));
-            String secondLetter = String.valueOf(String.valueOf(dayNames[i + 1]).charAt(1));
-            String thirdLetter = String.valueOf(String.valueOf(dayNames[i + 1]).charAt(2));
-
+        for (int i = 1; i < 7; i++) {
             // date label
             Text dateText = new Text(String.valueOf(today + i));
+            dateText.setFill(Color.WHITE);
+            dateText.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
             Circle dateCircle = new Circle(30);
-            dateCircle.setFill(new Color(Math.random(), Math.random(), Math.random(), 1));
+            dateCircle.setFill(new Color(0.97931841398198070, 0.32340070014395870, 0.48078956516474713, .5));
             StackPane dateStack = new StackPane();
             dateStack.getChildren().addAll(dateCircle, dateText);
             dateStack.alignmentProperty().setValue(Pos.CENTER);
             dateStack.translateXProperty().setValue(-15);
-            dateStack.paddingProperty().setValue(new Insets(20, 10 , 20, 10));
+            dateStack.paddingProperty().setValue(new Insets(20, 10, 20, 10));
 
             // weekday name label
-            Label nameLbl = new Label(firstLetter + secondLetter + thirdLetter);
+            Label nameLbl = new Label(dayNames[i]);
             nameLbl.alignmentProperty().setValue(Pos.CENTER);
             nameLbl.translateXProperty().setValue(50);
             nameLbl.setFont(new Font(20));
-            nameLbl.paddingProperty().setValue(new Insets(20, 0, 10, 0));
+            nameLbl.paddingProperty().setValue(new Insets(0, 0, 10, 0));
 
             // add both
             weeklyView.add(dateStack, i, 0);
             weeklyView.add(nameLbl, i, 1);
-        }
-//        Label test = new Label(String.valueOf(today));
-//        test.setAlignment(Pos.CENTER);
-//        test.setFont(new Font(20));
-//        Label test2 = new Label("DAY2");
-//        test2.setAlignment(Pos.CENTER);
-//        test2.setFont(new Font(20));
 
-        // add labels
-//        weeklyView.add(test, 0, 0);
-//        day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.14));
-//        weeklyView.add(test2, 1,0);
+            weeklyView.add(addAppointment(), 5, 3);
+        }
 
         // create separator
-        Separator horSep = new Separator();
-        horSep.setMaxWidth(day1.getPrefWidth() + 100);
-        horSep.setHalignment(HPos.CENTER);
-        horSep.setPadding(new Insets(10, 10, 10, 10));
-        weeklyView.add(horSep, 0, 2);
-        VBox apptBox2 = new VBox(5);
-//        apptBox2.setStyle("-fx-border-style: none none solid none; -fx-border-width: 0 0 1 0; -fx-border-color: LIGHTCORAL; -fx-padding: 10; -fx-start-margin: 10; -fx-end-margin: 10;");
-//        apptBox2.getChildren().addAll(
-//                new Label(appt.getContact()),
-//                new Label(String.valueOf(appt.getStart().get(Calendar.HOUR) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM))),
-//                new Label(String.valueOf(appt.getEnd().get(Calendar.HOUR_OF_DAY) + ":" + appt.getStart().get(Calendar.MINUTE) + appt.getStart().get(Calendar.AM_PM)))
-//        );
-        Label custTest = new Label(CustomerDao.getAllCustomers().get(1).getAddress());
-        weeklyView.add(custTest, 0, 2);
-        weeklyView.add(new AppointmentVBox().getAppointmentBox(), 1, 2);
+//        Separator horSep = new Separator();
+//        horSep.setMaxWidth(day1.getPrefWidth() + 100);
+//        horSep.setHalignment(HPos.CENTER);
+//        horSep.setPadding(new Insets(10, 10, 10, 10));
+//        weeklyView.add(horSep, 0, 2);
+//
+//        // Next Appointment
+//        VBox apptBox2 = new VBox(5);
+//        Label custTest = new Label(CustomerDao.getAllCustomers().get(1).getAddress());
+//        weeklyView.add(custTest, 0, 2);
+//        weeklyView.add(new AppointmentVBox().getAppointmentBox(), 1, 2);
 
+    }
+
+    private void addCurrentHours() {
+        // get current time
+        Calendar calendar = calendarController.c.getCalendar();
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int rowIndex = 2;
+        // go til 11:59PM
+        while(currentHour < 24) {
+            Label currentHourLbl = new Label(String.valueOf(currentHour));
+            currentHourLbl.setPadding(new Insets(50, 10, 0, 50));
+            weeklyView.add(currentHourLbl, 0, rowIndex);
+            currentHour++;
+            rowIndex++;
+        }
+    }
+
+    private VBox addAppointment() throws ParseException, SQLException, ClassNotFoundException {
+//        AppointmentDao.addAppointment(20, 1, 1, "Vbox Test", "test", "", "555-5555", "Video Call", "...", "NOW()", "NOW()", "test", "NOW()", "test");
+        //        weeklyView.add(new AppointmentVBox().getAppointmentById(1), 1, 4);
+        return new AppointmentVBox().getAppointmentById(1);
     }
 
     public void onActionGetPrevMonth(ActionEvent actionEvent) {

@@ -21,6 +21,7 @@
       </BorderPane>
        <GridPane fx:id="weeklyView" prefHeight="419.0" prefWidth="382.0" GridPane.columnIndex="1">
            <columnConstraints>
+               <ColumnConstraints fx:id="hours" prefWidth="Infinity" />
                <ColumnConstraints fx:id="day1" prefWidth="Infinity" />
                <ColumnConstraints fx:id="day2" prefWidth="Infinity" />
                <ColumnConstraints fx:id="day3" prefWidth="Infinity" />
@@ -33,16 +34,5 @@
                <RowConstraints maxHeight="Infinity"/>
            </rowConstraints>
        </GridPane>
-<!--      <TableView fx:id="weeklyView" prefHeight="419.0" prefWidth="382.0" GridPane.columnIndex="1">-->
-<!--        <columns>-->
-<!--          <TableColumn fx:id="weekDayCol1" prefWidth="75.0" text="day1" />-->
-<!--          <TableColumn fx:id="weekDayCol2" prefWidth="75.0" text="day2" />-->
-<!--            <TableColumn fx:id="weekDayCol3" prefWidth="75.0" text="day3" />-->
-<!--            <TableColumn fx:id="weekDayCol4" prefWidth="75.0" text="day4" />-->
-<!--            <TableColumn fx:id="weekDayCol5" prefWidth="75.0" text="day5" />-->
-<!--            <TableColumn fx:id="weekDayCol6" prefWidth="75.0" text="day6" />-->
-<!--            <TableColumn fx:id="weekDayCol7" prefWidth="75.0" text="day7" />-->
-<!--        </columns>-->
-<!--      </TableView>-->
    </children>
 </GridPane>

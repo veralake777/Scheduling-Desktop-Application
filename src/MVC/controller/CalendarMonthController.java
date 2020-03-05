@@ -12,18 +12,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.*;
 import utils.DateTime.Internationalization;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormatSymbols;
@@ -55,14 +50,6 @@ public class CalendarMonthController {
         createAndConfigureCalendar();
     }
 
-//    private CalendarMonthModel c;
-//    private FXMLLoader view = FXMLLoader.load(this.getClass().getResource("../view/calendarMonthView.fxml"));
-//
-//    // constructor
-//    public CalendarMonthController(CalendarMonthModel calendar, FXMLLoader view) throws IOException {
-//        this.c = calendar;
-//        this.view = view;
-//    }
 
     // calendar parts
     Label[] dayLabels = new Label[49];
@@ -79,7 +66,7 @@ public class CalendarMonthController {
     int currentMonth = calendar.get(Calendar.MONTH);
     int currentYear = calendar.get(Calendar.YEAR);
     int today = calendar.get(Calendar.DAY_OF_MONTH);
-    String currentMonthString = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, locale);
+    String currentMonthString = calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, locale);
     Label monthYearHeader = new Label(currentMonthString + " " + String.valueOf(currentYear));
     int totalDaysInCurrentMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
@@ -89,43 +76,41 @@ public class CalendarMonthController {
 
 
     public void createAndConfigureCalendar() throws ParseException, SQLException, ClassNotFoundException {
-        calendarMonthView.getStyleClass().add("borderPane");
-
-        // header
-        HBox header = new HBox(5);
-        c.getMonthYearHeader().setFont(new Font(14));
-        header.setPrefHeight(20);
-//        header.setMaxSize(200, 20);
-        header.getChildren().addAll(c.getMonthYearHeader(), getPrevNextBtnBar());
-        calendarMonthView.setTop(header);
-        BorderPane.setAlignment(c.getMonthYearHeader(), Pos.BASELINE_LEFT);
+        calendarMonthView.setTop(createAndConfigureHeader());
 
         // center - calendar MVC.view
-        calendarMonthView.setCenter(getDayPane());
+        calendarMonthView.setCenter(createAndConfigureDayPane());
 
         // bottom prev next btnBar
 //        calendarMonthView.setBottom(getPrevNextBtnBar());
-        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.BASELINE_RIGHT);
+//        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.BASELINE_RIGHT);
         calendarMonthView.setMaxHeight(200);
         calendarMonthView.setMaxHeight(200);
     }
 
-    private ButtonBar getPrevNextBtnBar() {
-        // create button bar instance
-        ButtonBar prevNextBtnBar = new ButtonBar();
-        Image btnImg = new Image(String.valueOf(new File("/images/arrow-btn.PNG")),15, 15, true, false);
+    private HBox createAndConfigureHeader() {
+        // header
+        HBox header = new HBox();
 
-        // style next button
-        ImageView nextBtn = new ImageView(btnImg);
-        nextBtn.setStyle("-fx-padding: 0;");
-        Button nextMonthBtn = new Button();
-        nextMonthBtn.setPadding(Insets.EMPTY);
+        // styling
+        Font monthYearFont = Font.font("Verdana", FontWeight.BOLD, 25);
+        Font btnFont = Font.font("Veranda", FontWeight.MEDIUM, 25);
+        Insets btnPadding = new Insets(0, 5, 5,0);
 
-        nextMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0); -fx-translate-x: -30;");
+        // month and year
+        String monthAndYearTxt = c.getMonthYearHeader().getText();
+        Label monthAndYearLbl = new Label(monthAndYearTxt);
+        monthAndYearLbl.setFont(monthYearFont);
+        monthAndYearLbl.paddingProperty().setValue(new Insets(0, 75, 0, 0));
 
+        // buttons
+        Text btnTxt = new Text(">");
+        btnTxt.setFill(Color.DARKGREY);
+        Button nextMonthBtn = new Button(btnTxt.getText());
+        nextMonthBtn.setFont(btnFont);
+        nextMonthBtn.setPadding(btnPadding);
+        nextMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
 
-        ButtonBar.setButtonData(nextMonthBtn, ButtonBar.ButtonData.NEXT_FORWARD);
-        nextMonthBtn.setGraphic(nextBtn);
         nextMonthBtn.setAlignment(Pos.CENTER);
         nextMonthBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -138,22 +123,12 @@ public class CalendarMonthController {
                 }
             }
         });
+        btnTxt.setText("<");
+        Button prevMonthBtn = new Button(btnTxt.getText());
+        prevMonthBtn.setPadding(btnPadding);
+        prevMonthBtn.setFont(btnFont);
+        prevMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
 
-
-        Button prevMonthBtn = new Button();
-
-        // style and reverse prevBtn
-        ImageView prevBtn = new ImageView(btnImg);
-        prevBtn.setScaleX(-1);
-        prevMonthBtn.setGraphic(prevBtn);
-        prevMonthBtn.setPadding(Insets.EMPTY);
-        prevMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0); -fx-translate-x: 30;");
-
-        prevMonthBtn.setPrefSize(btnImg.getRequestedWidth(), btnImg.getRequestedHeight());
-
-
-
-        ButtonBar.setButtonData(prevMonthBtn, ButtonBar.ButtonData.BACK_PREVIOUS);
         prevMonthBtn.setAlignment(Pos.CENTER);
         prevMonthBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -167,15 +142,14 @@ public class CalendarMonthController {
             }
         });
 
-        // add buttons to button bar
-        prevNextBtnBar.getButtons().addAll(nextMonthBtn, prevMonthBtn);
-        prevNextBtnBar.setPrefSize(btnImg.getWidth(), btnImg.getHeight());
-        prevNextBtnBar.setPadding(Insets.EMPTY);
-        prevNextBtnBar.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
-        return prevNextBtnBar;
+        header.getChildren().addAll(monthAndYearLbl, prevMonthBtn, nextMonthBtn);
+        header.alignmentProperty().setValue(Pos.CENTER);
+        calendarMonthView.setTop(header);
+
+        return header;
     }
 
-    private GridPane getDayPane() throws ParseException, SQLException, ClassNotFoundException {
+    private GridPane createAndConfigureDayPane() throws ParseException, SQLException, ClassNotFoundException {
         // build lists
         for (int i = 0; i < 49; i++) {
             dayLabels[i] = new Label();
@@ -234,9 +208,10 @@ public class CalendarMonthController {
             dayLabels[i].setText(name);
 
             // Center text horizontally and vertically
-            GridPane.setConstraints(dayLabels[i],  i,  0,  1,  1, HPos.CENTER, VPos.CENTER);
+            GridPane.setConstraints(dayLabels[i], i, 0, 1, 1, HPos.CENTER, VPos.CENTER);
         }
     }
+
 
     public void showDays() throws ParseException, SQLException {
         int startingDayOfMonth = c.getCalendar().get(Calendar.DAY_OF_WEEK);
@@ -252,7 +227,6 @@ public class CalendarMonthController {
 //            dayLabels[index].setPadding(new Insets(-55, 0, 0, 10));
 
             // map appointments to correct dayNumber
-            assert appts != null;
             for(Appointment a : appts){
                 int startDate = a.getStart().get(Calendar.DAY_OF_MONTH);
 //                appointments[index].setText(a.getTitle());
@@ -273,14 +247,14 @@ public class CalendarMonthController {
         // update month
         c.getCalendar().add(Calendar.MONTH, i);
         c.setCurrentMonth(Calendar.MONTH);
-        c.setCurrentMonthString(c.getCalendar().getDisplayName(Calendar.MONTH, Calendar.LONG, c.getLocale()));
+        c.setCurrentMonthString(c.getCalendar().getDisplayName(Calendar.MONTH, Calendar.SHORT, c.getLocale()));
 
         // update header
         c.getMonthYearHeader().setText(c.getCurrentMonthString() + " " + c.getCurrentYear());
         c.setMonthYearHeader(c.getMonthYearHeader());
 
         // update days
-        getDayPane();
+        createAndConfigureDayPane();
 
         // update calendar
         createAndConfigureCalendar();

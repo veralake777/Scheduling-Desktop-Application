@@ -103,34 +103,33 @@ public class AppointmentVBox extends VBox {
         return this;
     }
 
-    public VBox getAppointmentByDate(int dayOfMonth, int startHour) throws ParseException, SQLException, ClassNotFoundException {
+    public void getAppointmentByDate(int dayOfMonth, int startHour) throws ParseException, SQLException, ClassNotFoundException {
         // get all appointments
-        ObservableList<Appointment> allAppointments = new AppointmentDao().getAllAppointments();
+        new AppointmentDao();
+        ObservableList<Appointment> allAppointments = AppointmentDao.getAllAppointments();
         for(Appointment a : allAppointments) {
             if(a.getStart().get(Calendar.HOUR_OF_DAY) == startHour && a.getStart().get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
-                vboxID = a.getAppointmentId();
-                titleLbl = new Label(a.getType());
-                contactLbl = new Label(a.getContact());
-                appointment = a;
-                startHour = a.getStart().get(Calendar.HOUR_OF_DAY);
-                startMinutes = a.getStart().get(Calendar.MINUTE);
-                startTimeLbl = new Label(startHour + ":" + startMinutes);
-                endHour = a.getEnd().get(Calendar.HOUR_OF_DAY);
-                endMinutes = a.getEnd().get(Calendar.MINUTE);
-                meridian = a.getStart().get(Calendar.AM_PM);
-                vbox = new VBox();
+                this.vboxID = a.getAppointmentId();
+                this.titleLbl = new Label(a.getType());
+                this.contactLbl = new Label(a.getContact());
+                this.appointment = a;
+                this.startHour = a.getStart().get(Calendar.HOUR_OF_DAY);
+                this.startMinutes = a.getStart().get(Calendar.MINUTE);
+                this.startTimeLbl = new Label(startHour + ":" + startMinutes);
+                this.endHour = a.getEnd().get(Calendar.HOUR_OF_DAY);
+                this.endMinutes = a.getEnd().get(Calendar.MINUTE);
+                this.meridian = a.getStart().get(Calendar.AM_PM);
+                this.vbox = new VBox();
                 vbox.getChildren().addAll(titleLbl, contactLbl, startTimeLbl);
             } else {
-                vbox = new VBox();
+                this.vbox = new VBox();
                 vbox.getChildren().add(new Label("CANNOT FIND MATCH"));
             }
         }
-
-        return vbox;
     }
 
 
-    public VBox getAppointmentBox() throws ParseException, SQLException, ClassNotFoundException {
+    public void getAppointmentBox() throws ParseException, SQLException, ClassNotFoundException {
         VBox apptVBox = new VBox();
         // VBox Title
         Separator horSep = new Separator();
@@ -165,8 +164,62 @@ public class AppointmentVBox extends VBox {
 
         apptVBox.getChildren().addAll(horSep, vboxTitle, title, contact, startTime);
 
-        return apptVBox;
+       this.vbox = apptVBox;
     }
 
+    public VBox getVbox() {
+        return vbox;
+    }
 
+    public int getVboxID() {
+        return vboxID;
+    }
+
+    public Separator getHorSep() {
+        return horSep;
+    }
+
+    public Label getTitleLbl() {
+        return titleLbl;
+    }
+
+    public Label getContactLbl() {
+        return contactLbl;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public Text getContactTxt() {
+        return contactTxt;
+    }
+
+    public Text getTypeTxt() {
+        return typeTxt;
+    }
+
+    public int getStartHour() {
+        return startHour;
+    }
+
+    public int getStartMinutes() {
+        return startMinutes;
+    }
+
+    public Label getStartTimeLbl() {
+        return startTimeLbl;
+    }
+
+    public int getEndHour() {
+        return endHour;
+    }
+
+    public int getEndMinutes() {
+        return endMinutes;
+    }
+
+    public int getMeridian() {
+        return meridian;
+    }
 }

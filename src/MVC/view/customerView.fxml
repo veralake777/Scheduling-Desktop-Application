@@ -3,11 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane fx:id="gridPane" prefHeight="1250" prefWidth="750" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.CustomerViewController">
+<GridPane fx:id="gridPane" prefHeight="1250" prefWidth="750" stylesheets="@../../CSS/tableView.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.CustomerViewController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" />
-      <TableView fx:id="customerTableView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
-      <BorderPane fx:id="dynamicView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
+      <TableView fx:id="customerTableView" GridPane.columnIndex="1" />
+      <BorderPane fx:id="dynamicView" GridPane.columnIndex="2" />
    </children>
    <columnConstraints>
       <ColumnConstraints />

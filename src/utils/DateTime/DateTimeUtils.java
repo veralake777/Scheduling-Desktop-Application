@@ -29,30 +29,25 @@ public class DateTimeUtils {
     public static String[] getDaysOfWeek(int startDay) {
 
         String[] dayNames = new DateFormatSymbols().getShortWeekdays();
-        String[] daysList = new String[7];
-        int index;
-
-        // VAR j = Sunday = 1
-        int j = 1;
-        // first day is today
-        daysList[0] = dayNames[startDay + 1];
-        daysList[1] = dayNames[startDay + 2];
-
-        for(int i=0; i < 7; i++) {
-
-            // IF startDay + i > dayNames
-            // startDay + i = 0
-            // increment until i = 7
-            if(startDay + i >= dayNames.length) {
-                index = j;
-                j++;
-                daysList[i] = dayNames[index];
-            }else{
-                index = startDay + i;
-                daysList[i] = dayNames[index];
-            }
-            System.out.println(dayNames[i]);
-        }
-        return daysList;
+//        String[] daysList = new String[7];
+//        int index;
+//
+//        // VAR j = Sunday = 1
+//        int j = 1;
+//
+//        for(int i=0; i < 7; i++) {
+//
+////            if(startDay + i <= dayNames.length) {
+////                index = startDay - 1 + i;
+////                daysList[i] = dayNames[index];
+////            }else{
+////                index = j;
+////                j++;
+////                daysList[i] = dayNames[index];
+////            }
+////            System.out.println(dayNames[i]);
+//            daysList[i] = dayNames[i];
+//        }
+        return dayNames;
     }
 }

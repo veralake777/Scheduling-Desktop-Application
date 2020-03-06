@@ -5,7 +5,9 @@
 
 <!--TODO CalendarMonthView not showing elements in window-->
 
-<GridPane fx:id="overview" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.OverviewController">
+<ScrollPane prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MVC.controller.OverviewController">
+<GridPane fx:id="overview">
    <columnConstraints>
       <ColumnConstraints maxWidth="Infinity" minWidth="100" prefWidth="400" percentWidth="25" />
       <ColumnConstraints maxWidth="Infinity" minWidth="300" percentWidth="75" />
@@ -19,7 +21,7 @@
              <fx:include fx:id="calendarMonthView" source="calendarMonthView.fxml" />
          </left>
       </BorderPane>
-       <GridPane fx:id="weeklyView" prefHeight="419.0" prefWidth="382.0" GridPane.columnIndex="1">
+       <GridPane fx:id="weeklyView" prefHeight="419.0" prefWidth="750" GridPane.columnIndex="1">
            <columnConstraints>
                <ColumnConstraints fx:id="hours" prefWidth="Infinity" />
                <ColumnConstraints fx:id="day1" prefWidth="Infinity" />
@@ -36,3 +38,4 @@
        </GridPane>
    </children>
 </GridPane>
+</ScrollPane>

@@ -48,6 +48,7 @@ public class CustomerViewController {
     // Customer Table View
     public TableView<Customer> customerTableView;
     private void buildCustomerTableView() throws ParseException, SQLException, ClassNotFoundException {
+        customerTableView.getStylesheets().add("tableView.css");
         try {
             customerTableView.setItems(CustomerDao.getAllCustomers());
         } catch (ClassNotFoundException | SQLException | ParseException e) {

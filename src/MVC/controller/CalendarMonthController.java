@@ -79,13 +79,15 @@ public class CalendarMonthController {
         calendarMonthView.setTop(createAndConfigureHeader());
 
         // center - calendar MVC.view
-        calendarMonthView.setCenter(createAndConfigureDayPane());
+        calendarMonthView.setCenter(createAndConfigureDayPanes());
 
         // bottom prev next btnBar
 //        calendarMonthView.setBottom(getPrevNextBtnBar());
 //        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.BASELINE_RIGHT);
         calendarMonthView.setMaxHeight(200);
         calendarMonthView.setMaxHeight(200);
+        calendarMonthView.paddingProperty().setValue(new Insets(100, 0, 20, 50));
+
     }
 
     private HBox createAndConfigureHeader() {
@@ -149,7 +151,7 @@ public class CalendarMonthController {
         return header;
     }
 
-    private GridPane createAndConfigureDayPane() throws ParseException, SQLException, ClassNotFoundException {
+    private GridPane createAndConfigureDayPanes() throws ParseException, SQLException, ClassNotFoundException {
         // build lists
         for (int i = 0; i < 49; i++) {
             dayLabels[i] = new Label();
@@ -254,7 +256,7 @@ public class CalendarMonthController {
         c.setMonthYearHeader(c.getMonthYearHeader());
 
         // update days
-        createAndConfigureDayPane();
+        createAndConfigureDayPanes();
 
         // update calendar
         createAndConfigureCalendar();

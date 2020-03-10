@@ -1,14 +1,19 @@
 package MVC.controller;
 
+import DAO.AppointmentDao;
+import DAO.POJO.Appointment;
 import MVC.view.AppointmentVBox;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -103,14 +108,6 @@ public class OverviewController {
         calendarMonthView.prefWidthProperty().bind(calendarPane.widthProperty());
 
         /**
-         * Appointment View
-         */
-//        AppointmentVBox appointmentBox = new AppointmentVBox();
-//        appointmentBox.getAppointmentBox();
-//        appointmentBox.getChildren().add(appointmentBox.getChildren().size(), new Button("Add Appointment"));
-//        calendarMonthView.setBottom(appointmentBox);
-
-        /**
          * Week View
          */
 
@@ -158,9 +155,31 @@ public class OverviewController {
                     addBox.setBorder(new Border(leftBorder));
                 }
 
-                addBox.setOnMouseClicked(mouseEvent -> onMouseClickedEmptyAppointmentPopup(mouseEvent, addBox));
+//                addBox.setOnMouseClicked(mouseEvent -> onMouseClickedEmptyAppointmentPopup(mouseEvent, addBox));
                 weeklyView.add(addBox, i, j);
             }
+
+            /**
+             * Appointment View
+             */
+            Appointment appointment = AppointmentDao.getAppointment(1);
+
+            VBox apptBox = new VBox();
+            apptBox.getChildren().addAll(new Label(appointment.getType()));
+            apptBox.setId(String.valueOf(appointment.getAppointmentId()));
+            apptBox.setOnMouseClicked(mouseEvent -> {
+                try {
+                    UpdateAppointmentController updateAppointmentController = new UpdateAppointmentController();
+                    updateAppointmentController.setAppointment(appointment);
+                    updateAppointmentController.openUpdateAppointment(mouseEvent, appointment);
+
+
+                } catch (IOException | ClassNotFoundException | SQLException | ParseException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            weeklyView.add(apptBox, 3, 5 );
         }
 
         // create day labels
@@ -217,7 +236,7 @@ public class OverviewController {
 
     }
 
-    private void addCurrentHours() {
+    private void addCurrentHours() throws ParseException, SQLException, ClassNotFoundException, IOException {
         // get current time - use for onLoad
         Calendar calendar = calendarController.c.getCalendar();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -271,113 +290,151 @@ public class OverviewController {
         AppointmentVBox appointment = new AppointmentVBox();
         appointment.getAppointmentById(1);
         popup.getContent().addAll(appointment);
-        appointment.setOnMouseClicked(mouseEvent -> onMouseClickedAppointmentPopup(appointment));
+//        appointment.setOnMouseClicked(mouseEvent -> onMouseClickedAppointmentPopup());
         return appointment;
     }
 
     // popups
-    public static void onMouseClickedEmptyAppointmentPopup(Event event, VBox vbox) {
+    public static void onMouseClickedEmptyAppointmentPopup(MouseEvent event, Appointment appointment) throws IOException, ParseException, SQLException, ClassNotFoundException {
         // use for getting current date and time
-        Node source = (Node)event.getSource();
-        Integer colIndex = GridPane.getColumnIndex(source);
-        Integer rowIndex = GridPane.getRowIndex(source);
+//        Node source = (Node)event.getSource();
+//        Integer colIndex = GridPane.getColumnIndex(source);
+//        Integer rowIndex = GridPane.getRowIndex(source);
 
-        Stage popupwindow = new Stage();
+//        FXMLLoader loader = new FXMLLoader();
+//        URL location = OverviewController.class.getResource("../view/updateAppointment.fxml");
+//        loader.setLocation(location);
+//        loader.load();
+//
+//
+//        UpdateAppointmentController updateAppointmentController = loader.getController();
+//        updateAppointmentController.recieveAppointment(appointment);
 
-        popupwindow.initModality(Modality.APPLICATION_MODAL);
-        popupwindow.setTitle("Add Appointment");
+        Stage stage;
+        Parent scene;
+        // return to main menu
+        // build stage
+        stage = (Stage)((VBox)event.getSource()).getScene().getWindow();
 
-        AppointmentVBox appt = new AppointmentVBox();
+        // load add part view
+        FXMLLoader loader = FXMLLoader.load(OverviewController.class.getResource("../view/updateAppointment.fxml"));
+//        UpdateAppointmentController controller = loader.getController();
+//        controller.receiveAppointment(appointment);
+        loader.getController();
+        scene = loader.load();
 
+        // add scene to stage
+        stage.setScene(new Scene(scene));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setTitle("Add Appointment");
 
         Button closeWindow = new Button("Close this pop up window");
 
-        // TODO edit appointment and update database
-        // type
-        Label typeLbl = new Label("Type");
-        TextField typeTxt = new TextField("What type of appointment is this?");
-        // TODO add to appointment
-        HBox typeHBox = new HBox();
-        typeHBox.getChildren().addAll(typeLbl, typeTxt);
-
-        // Contact
-        Label contactLbl = new Label("Contact");
-        TextField contactTxt = new TextField("Who is this appointment for?");
-        HBox contactHBox = new HBox();
-        typeHBox.getChildren().addAll(contactLbl, contactTxt);
-
-        // Date and Time
-        // TODO get MM-DD-YYYY based on grid pane location
-        Label startDateLbl = new Label("Start Time");
-        TextField startDateTxt = new TextField("What time does this appointment start?");
-        HBox startDateHBox = new HBox();
-        typeHBox.getChildren().addAll(startDateLbl, startDateTxt);
-
-
-
-        closeWindow.setOnAction(e -> popupwindow.close());
+//        // TODO edit appointment and update database
+//        // type
+//        Label typeLbl = new Label("Type");
+//        TextField typeTxt = new TextField("What type of appointment is this?");
+//        // TODO add to appointment
+//        HBox typeHBox = new HBox();
+//        typeHBox.getChildren().addAll(typeLbl, typeTxt);
+//
+//        // Contact
+//        Label contactLbl = new Label("Contact");
+//        TextField contactTxt = new TextField("Who is this appointment for?");
+//        HBox contactHBox = new HBox();
+//        typeHBox.getChildren().addAll(contactLbl, contactTxt);
+//
+//        // Date and Time
+//        // TODO get MM-DD-YYYY based on grid pane location
+//        Label startDateLbl = new Label("Start Time");
+//        TextField startDateTxt = new TextField("What time does this appointment start?");
+//        HBox startDateHBox = new HBox();
+//        typeHBox.getChildren().addAll(startDateLbl, startDateTxt);
 
 
-        VBox layout = new VBox();
+
+        closeWindow.setOnAction(e -> stage.close());
 
 
-        layout.getChildren().addAll(typeHBox, contactHBox, startDateHBox, closeWindow);
-        layout.setFillWidth(false);
-        layout.setAlignment(Pos.CENTER);
+//        VBox layout = new VBox();
+//
+//
+//
+//        layout.getChildren().addAll(typeHBox, contactHBox, startDateHBox, closeWindow);
+//        layout.setFillWidth(false);
+//        layout.setAlignment(Pos.CENTER);
 
-        Scene scene1 = new Scene(layout, 750, 750);
+//        Scene scene1 = new Scene(updateAppointmentController.getScene(), 750, 750);
 
-        popupwindow.setScene(scene1);
+//        popupwindow.setScene(scene1);
 
-        popupwindow.showAndWait();
+        stage.showAndWait();
 
     }
-    public static void onMouseClickedAppointmentPopup(AppointmentVBox vbox) {
-        Stage popupwindow = new Stage();
-
-        popupwindow.initModality(Modality.APPLICATION_MODAL);
-        popupwindow.setTitle("Edit Appointment");
-
-
-
-        Button closeWindow = new Button("Close this pop up window");
-
-        // TODO edit appointment and update database
-        // type
-        Label typeLbl = new Label("Type");
-        TextField typeTxt = new TextField(vbox.getTypeTxt().getText());
-        HBox typeHBox = new HBox();
-        typeHBox.getChildren().addAll(typeLbl, typeTxt);
-
-        // Contact
-        Label contactLbl = new Label("Contact");
-        TextField contactTxt = new TextField(vbox.getContactTxt().getText());
-        HBox contactHBox = new HBox();
-        typeHBox.getChildren().addAll(contactLbl, contactTxt);
-
-        // Date and Time
-        Label startDateLbl = new Label("Start Date");
-        TextField startDateTxt = new TextField(vbox.getStartTimeLbl().getText());
-        HBox startDateHBox = new HBox();
-        typeHBox.getChildren().addAll(startDateLbl, startDateTxt);
+    public void onMouseClickedAppointmentPopup(Appointment a) throws IOException, ParseException, SQLException, ClassNotFoundException {
+        // Load in the .fxml file:
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/updateAppointment.fxml"));
+        // get controller
+        UpdateAppointmentController controller = new UpdateAppointmentController();
+        // set appointment details
 
 
+        // set appointment details
+        Parent root = loader.load();
 
-        closeWindow.setOnAction(e -> popupwindow.close());
+        // Set the scene:
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root, 550, 232));
+        stage.setTitle("Update Appointment");
+        stage.resizableProperty().setValue(false);
+//        stage.getIcons().add(new Image("file:icon.png"));
+        stage.showAndWait();
 
+        // Handle creation of the Account object:
+//        if (updateAppointmentController.isSuccess())
+//        {
+//            Account newAccount = accountControl.getAccount();
+//            return newAccount;
+//        } else
+//            throw new Exception("User quit.");
 
-        VBox layout = new VBox();
-
-
-        layout.getChildren().addAll(typeHBox, contactHBox, startDateHBox, closeWindow);
-        layout.setFillWidth(false);
-        layout.setAlignment(Pos.CENTER);
-
-        Scene scene1 = new Scene(layout, 750, 750);
-
-        popupwindow.setScene(scene1);
-
-        popupwindow.showAndWait();
+        //        Stage popupWindow = new Stage();
+//        popupWindow.initModality(Modality.APPLICATION_MODAL);
+//        popupWindow.setTitle("Edit Appointment");
+//
+//        Button closeWindow = new Button("Close this pop up window");
+//
+//        Stage stage;
+//        Parent scene;
+//        // return to main menu
+//        // build stage
+//        stage = (Stage)((VBox)event.getSource()).getScene().getWindow();
+//        GridPane test = new GridPane();
+//        Label type = new Label(a.getType());
+//        test.getChildren().addAll(type);
+//
+//
+//        // load add part view
+////        FXMLLoader loader = FXMLLoader.load(getClass().getResource("../view/updateAppointment.fxml"));
+////        UpdateAppointmentController controller = loader.getController();
+////        controller.recieveAppointment(a);
+////        scene = loader.getRoot();
+//
+//        // add scene to stage
+//        stage.setScene(new Scene(test));
+////        stage.initModality(Modality.APPLICATION_MODAL);
+//        stage.setTitle("Add Appointment");
+//
+//        closeWindow.setOnAction(e -> popupWindow.close());
+//
+////        VBox layout = new VBox();
+////
+////
+////        layout.getChildren().addAll(closeWindow);
+////        layout.setFillWidth(false);
+////        layout.setAlignment(Pos.CENTER);
+//
+//        stage.showAndWait();
     }
         public void handleOnMouseClicked(MouseEvent event) {
 //        VBox fxmlContainer  = new VBox();

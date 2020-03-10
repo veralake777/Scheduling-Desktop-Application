@@ -29,7 +29,7 @@ public class Internationalization {
 //        }
 
 
-        ResourceBundle rb = ResourceBundle.getBundle("utils/Nat", Locale.getDefault());
+        ResourceBundle rb = ResourceBundle.getBundle("utils/DateTime/Nat", Locale.getDefault());
 
         if(Locale.getDefault().getLanguage().equals("fr")){
             localeFR = france;

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="CENTER" hgap="10.0" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PresentationState.Appointment.UpdateAppointmentController">
+   <columnConstraints>
+      <ColumnConstraints prefWidth="75.0" />
+      <ColumnConstraints />
+      <ColumnConstraints minWidth="200.0" prefWidth="150.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Label prefHeight="18.0" prefWidth="24.0" text="ID" textAlignment="RIGHT">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Customer" GridPane.rowIndex="1">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="UserID" GridPane.rowIndex="2">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Title" GridPane.rowIndex="3">
+         <GridPane.margin>
+            <Insets />
+         </GridPane.margin>
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Description" GridPane.rowIndex="4">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Location" GridPane.rowIndex="5">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Contact" GridPane.rowIndex="6">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Type" GridPane.rowIndex="7">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="URL" GridPane.rowIndex="8">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="Start Time" GridPane.rowIndex="9">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <Label text="End Time" GridPane.rowIndex="10">
+         <padding>
+            <Insets left="10.0" />
+         </padding></Label>
+      <TextField fx:id="userIdTxt" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <TextField fx:id="idTxt" text="auto" GridPane.columnIndex="2" />
+      <TextField fx:id="customerTxt" text="get customer by name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <TextField fx:id="titleTxt" text="title" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+      <TextField fx:id="descriptionTxt" text="description" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <TextField fx:id="locationTxt" text="where will you have this meeting?" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+      <TextField fx:id="contactTxt" text="customer contact info" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+      <TextField fx:id="typeTxt" text="what type of appointment is this?" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+      <TextField fx:id="urlTxt" text="not needed" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+      <TextField fx:id="startDateTxt" text="get time from current cell selection, if edited update to correct cell" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+      <TextField fx:id="endDateTxt" text="When will the appointment end?" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+      <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11">
+        <buttons>
+          <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onActionUpdate" text="Update" />
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onActionExit" text="Cancel" />
+        </buttons>
+      </ButtonBar>
+   </children>
+   <opaqueInsets>
+      <Insets left="10.0" />
+   </opaqueInsets>
+   <padding>
+      <Insets bottom="25.0" left="10.0" right="10.0" top="25.0" />
+   </padding>
+</GridPane>

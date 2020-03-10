@@ -1,5 +1,6 @@
 package utils.DateTime;
 
+import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,5 +50,10 @@ public class DateTimeUtils {
 //            daysList[i] = dayNames[i];
 //        }
         return dayNames;
+    }
+
+    public static String getHoursAndMinutes(Calendar calendar) {
+        DateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(calendar.getTime());
     }
 }

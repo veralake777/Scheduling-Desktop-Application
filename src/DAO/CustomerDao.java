@@ -88,18 +88,18 @@ public class CustomerDao {
         while (result.next()) {
             int customerIdG = result.getInt("customerId");
             String customerName = result.getString("customerName");
+            int addressId = result.getInt("addressId");
             int active = result.getInt("active");
             if (active == 1) {
                 activeBool = true;
             }
-
-            // group address and address2
-            String address = result.getString("address") + "\n" + result.getString("address2");
-
-
-            String city = result.getString("city");
-            String country = result.getString("country");
-            Customer customerResult = new Customer(customerIdG, customerName, address, city, country);
+            String createDate = result.getString("createDate");
+            String createdBy = result.getString("createdBy");
+            String lastUpdate = result.getString("lastUpdate");
+            String lastUpdateby = result.getString("lastUpdateBy");
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
+            Customer customerResult = new Customer(customerIdG, customerName, addressId, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
             allCustomers.add(customerResult);
         }
         DBUtils.closeConnection();

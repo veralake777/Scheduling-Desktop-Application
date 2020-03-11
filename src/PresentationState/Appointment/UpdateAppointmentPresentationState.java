@@ -10,6 +10,7 @@ import utils.DateTime.DateTimeUtils;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -58,7 +59,6 @@ public class UpdateAppointmentPresentationState {
 //				e.printStackTrace();
 			}
 		});
-		// TODO bind application id to its other data members
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class UpdateAppointmentPresentationState {
 		appointment = AppointmentDao.getAppointment(appointmentId);
 		// get customerName
 		assert appointment != null;
-		Customer cust = CustomerDao.getCustomer(appointment.getCustomerId());
+		Customer cust = CustomerDao.getCustomerById(appointment.getCustomerId());
 
 		id.setValue(String.valueOf(appointment.getAppointmentId()));
 
@@ -89,8 +89,17 @@ public class UpdateAppointmentPresentationState {
 
 		// DateTime elements
 		// format YYYY/MM/DD
-		startDate.setValue(String.valueOf(appointment.getStart().get(Calendar.DATE)));
-		endDate.setValue(String.valueOf(appointment.getEnd().get(Calendar.DATE)));
+
+		//TODO fix me
+
+		Calendar startCal = appointment.getStart();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String dateStr = format.format(startCal.getTime());
+		startDate.setValue(dateStr);
+
+		Calendar endCal = appointment.getEnd();
+		dateStr = format.format(endCal.getTime());
+		endDate.setValue(dateStr);
 		// format HH:mm
 		startTime.setValue(DateTimeUtils.getHoursAndMinutes(appointment.getStart()));
 		endTime.setValue(DateTimeUtils.getHoursAndMinutes(appointment.getEnd()));

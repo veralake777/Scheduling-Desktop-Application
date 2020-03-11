@@ -76,7 +76,7 @@ public class LoginScreenController {
         AppointmentDao.addAppointment(10, 1, 1, "testAddAppt", "test description", "location", "test", "newtest", "test.com", "NOW()", "NOW()", "test", "NOW()", "test");
 
         // test update
-        AppointmentDao.updateAppointment("title", "testUpdateAppt", 10);
+        AppointmentDao.updateAppointmentWithString("title", "testUpdateAppt", 10);
 
 
         // validate userName

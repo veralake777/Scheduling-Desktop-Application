@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -39,9 +40,14 @@ public class UpdateAppointmentController implements Initializable {
     @FXML
     public TextField urlTxt;
     @FXML
-    public TextField startDateTxt; //get date from selected cell
+    public DatePicker startDatePicker; //get date from selected cell
     @FXML
-    public TextField endDateTxt;
+    public TextField startTimeTxt;
+    @FXML
+    public DatePicker endDatePicker;
+    @FXML
+    public TextField endTimeTxt;
+
 
     public void onActionUpdate(ActionEvent actionEvent) {
         // See UpdateAppointmentActionHandlers

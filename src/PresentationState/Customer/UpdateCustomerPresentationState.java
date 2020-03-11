@@ -33,7 +33,7 @@ public class UpdateCustomerPresentationState {
 
 	public void initData(int customerId) throws ParseException, SQLException, ClassNotFoundException {
 		// get customerData
-		customerData = CustomerDao.getCustomer(customerId);
+		customerData = CustomerDao.getCustomerById(customerId);
 
 		// get addressData
 		Address addressData = AddressDao.getAddress(customerData.getAddressId());

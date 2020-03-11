@@ -67,14 +67,26 @@
          <padding>
             <Insets left="10.0" />
          </padding></Label>
-      <Label text="Start Time" GridPane.rowIndex="9">
+      <Label text="Start Date" GridPane.columnSpan="2" GridPane.rowIndex="9">
          <padding>
             <Insets left="10.0" />
          </padding></Label>
-      <Label text="End Time" GridPane.rowIndex="10">
+      <DatePicker fx:id="startDatePicker" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+      <Label layoutX="162.0" layoutY="363.0" text="Start Time" GridPane.rowIndex="10">
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </Label>
+      <Label text="End Date" GridPane.columnSpan="2" GridPane.rowIndex="12">
          <padding>
             <Insets left="10.0" />
          </padding></Label>
+      <DatePicker fx:id="endDatePicker" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+      <Label layoutX="162.0" layoutY="363.0" text="End Time" GridPane.rowIndex="13">
+         <padding>
+            <Insets left="10.0" />
+         </padding>
+      </Label>
       <TextField fx:id="userIdTxt" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       <TextField fx:id="idTxt" text="auto" GridPane.columnIndex="2" />
       <TextField fx:id="customerTxt" text="get customer by name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -84,9 +96,9 @@
       <TextField fx:id="contactTxt" text="customer contact info" GridPane.columnIndex="2" GridPane.rowIndex="6" />
       <TextField fx:id="typeTxt" text="what type of appointment is this?" GridPane.columnIndex="2" GridPane.rowIndex="7" />
       <TextField fx:id="urlTxt" text="not needed" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-      <TextField fx:id="startDateTxt" text="get time from current cell selection, if edited update to correct cell" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-      <TextField fx:id="endDateTxt" text="When will the appointment end?" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-      <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="11">
+      <TextField fx:id="startTimeTxt" text="When will this appointment start?" GridPane.columnIndex="2" GridPane.rowIndex="10" />
+      <TextField fx:id="endTimeTxt" text="When will this appointment end?" GridPane.columnIndex="2" GridPane.rowIndex="13" />
+      <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="14">
         <buttons>
           <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onActionUpdate" text="Update" />
             <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onActionExit" text="Cancel" />

@@ -202,8 +202,9 @@ public class AppointmentDao {
         return monthAppointments;
     }
 
-    public static void updateAppointment(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
+    public static void updateAppointmentWithString(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
         try {
+            // TODO format date strings to Calendar
             // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
             // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
             sqlStatement = "UPDATE appointment SET " + updateCol + " = '" + setColValue + "' WHERE appointmentId = " + rowId;
@@ -213,6 +214,22 @@ public class AppointmentDao {
         } catch (ClassNotFoundException e) {
             System.out.println("ApptDao UPDATE CLASS NOT FOUND");
             e.getException();
+        }
+    }
+
+    public static void updateAppointmentWithDate(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
+        try {
+            // TODO format date strings to Calendar
+            Calendar colValue = DateTimeUtils.stringToCalendar(setColValue);
+            // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
+            // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
+            sqlStatement = "UPDATE appointment SET " + updateCol + " = '" + colValue + "' WHERE appointmentId = " + rowId;
+            DBUtils.startConnection();
+            QueryUtils.createQuery(sqlStatement);
+            ResultSet result = QueryUtils.getResult();
+        } catch (ClassNotFoundException | ParseException e) {
+            System.out.println("ApptDao UPDATE CLASS NOT FOUND");
+            e.getCause();
         }
     }
 

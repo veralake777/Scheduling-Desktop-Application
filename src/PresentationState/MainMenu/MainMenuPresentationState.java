@@ -36,7 +36,7 @@ public class MainMenuPresentationState {
 		// get customer data
 		Customer customerData = null;
 		try {
-			customerData = CustomerDao.getCustomer(appointmentData.getCustomerId());
+			customerData = CustomerDao.getCustomerById(appointmentData.getCustomerId());
 		} catch (ClassNotFoundException | SQLException | ParseException e) {
 			e.printStackTrace();
 		}

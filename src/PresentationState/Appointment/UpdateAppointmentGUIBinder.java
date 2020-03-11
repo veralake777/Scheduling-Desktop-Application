@@ -35,12 +35,14 @@ public class UpdateAppointmentGUIBinder {
 		JavaFxWidgetBindings.bindTextField(controller.contactTxt, presentationState.customerContact);
 		JavaFxWidgetBindings.bindTextField(controller.typeTxt, presentationState.type);
 		JavaFxWidgetBindings.bindTextField(controller.urlTxt, presentationState.url);
-		JavaFxWidgetBindings.bindTextField(controller.startDateTxt, presentationState.startTime);
-		JavaFxWidgetBindings.bindTextField(controller.endDateTxt, presentationState.endTime);
+		JavaFxWidgetBindings.bindDatePicker(controller.startDatePicker, presentationState.startDate);
+		JavaFxWidgetBindings.bindTextField(controller.startTimeTxt, presentationState.startTime);
+		JavaFxWidgetBindings.bindDatePicker(controller.endDatePicker, presentationState.endDate);
+		JavaFxWidgetBindings.bindTextField(controller.endTimeTxt, presentationState.endTime);
 //		JavaFxWidgetBindings.bindLabel(controller.greetingLabel, presentationState.greeting);
 	}
 
-	private void initActionHandlers() {
+	private void initActionHandlers() throws SQLException, ParseException {
 		JavaFxWidgetBindings.bindButton(controller.updateButton, UpdateAppointmentActionHandlers.updateButtonHandler(presentationState));
 	}
 }

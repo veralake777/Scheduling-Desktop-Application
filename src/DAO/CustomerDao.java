@@ -36,7 +36,37 @@ public class CustomerDao {
     }
 
     // get, update, delete, add
-    public static Customer getCustomer(int customerId) throws ClassNotFoundException, SQLException, ParseException {
+    public static Customer getCustomerByName(String name) throws SQLException, ParseException {
+        sqlStatement = "SELECT * FROM customer WHERE customerName = '" + name + "'";
+        Customer customerResult;
+        ResultSet result = null;
+        try {
+            result = DAO.getResultSet(sqlStatement);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        assert result != null;
+        while (result.next()) {
+            int customerIdG = result.getInt("customerId");
+            String customerName = result.getString("customerName");
+            int addressId = result.getInt("addressId");
+            int active = result.getInt("active");
+            if (active == 1) {
+                activeBool = true;
+            }
+            String createDate = result.getString("createDate");
+            String createdBy = result.getString("createdBy");
+            String lastUpdate = result.getString("lastUpdate");
+            String lastUpdateby = result.getString("lastUpdateBy");
+            Calendar createDateCalendar = DateTimeUtils.stringToCalendar(createDate);
+            Calendar lastUpdateCalendar = DateTimeUtils.stringToCalendar(lastUpdate);
+            customerResult = new Customer(customerIdG, customerName, addressId, activeBool, createDateCalendar, createdBy, lastUpdateCalendar, lastUpdateby);
+            return customerResult;
+        }
+        DBUtils.closeConnection();
+        return null;
+    }
+    public static Customer getCustomerById(int customerId) throws ClassNotFoundException, SQLException, ParseException {
         sqlStatement = "SELECT * FROM customer WHERE customerId = " + customerId;
         Customer customerResult;
         ResultSet result = null;
@@ -69,15 +99,15 @@ public class CustomerDao {
 
     public static ObservableList<Customer> getAllCustomers() throws ClassNotFoundException, SQLException, ParseException {
         ObservableList<Customer> allCustomers = FXCollections.observableArrayList();
-        sqlStatement = "select cust.customerId, cust.customerName, cust.active, a.address, a.address2, c.city, count.country " +
-                "from customer cust " +
-                "inner join address a " +
-                "on cust.addressId = a.addressId " +
-                "inner join city c " +
-                "on a.cityId = c.cityId " +
-                "inner join country count " +
-                "on c.countryId = count.countryId";
-
+//        sqlStatement = "select cust.customerId, cust.customerName, cust.active, a.address, a.address2, c.city, count.country " +
+//                "from customer cust " +
+//                "inner join address a " +
+//                "on cust.addressId = a.addressId " +
+//                "inner join city c " +
+//                "on a.cityId = c.cityId " +
+//                "inner join country count " +
+//                "on c.countryId = count.countryId";
+        sqlStatement = "SELECT * FROM customer";
         ResultSet result = null;
         try {
             result = DAO.getResultSet(sqlStatement);

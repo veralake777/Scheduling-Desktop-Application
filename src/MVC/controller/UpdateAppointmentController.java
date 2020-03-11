@@ -82,7 +82,6 @@ public class UpdateAppointmentController implements Initializable {
 //    }
 //
     public Appointment getAppointment() {
-        System.out.println(this.idTxt.getCharacters());
         return appointment;
     }
 

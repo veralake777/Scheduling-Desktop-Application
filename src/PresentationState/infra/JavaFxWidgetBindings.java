@@ -3,6 +3,7 @@ package PresentationState.infra;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -18,6 +19,9 @@ public class JavaFxWidgetBindings {
 	}
 	public static void bindButton(Button button, InvalidationListener invalidationListener) {
 		button.setOnAction(event -> triggerAction(invalidationListener));
+	}
+	public static void bindDatePicker(DatePicker datePicker, StringProperty stringProperty) {
+		datePicker.promptTextProperty().bind(stringProperty);
 	}
 
 	public static void triggerAction(InvalidationListener invalidationListener) {

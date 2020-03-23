@@ -3,10 +3,15 @@ package PresentationState.Appointment;
 import DAO.AppointmentDao;
 import DAO.CustomerDao;
 import javafx.beans.InvalidationListener;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 public class UpdateAppointmentActionHandlers {
 	public static InvalidationListener updateButtonHandler(UpdateAppointmentPresentationState ps) {
@@ -16,9 +21,6 @@ public class UpdateAppointmentActionHandlers {
 		{
 			int id = ps.appointment.getAppointmentId();
 			try {
-				// customer - catch (ParseException e) {
-				//				e.printStackTrace();
-				//			} catch (SQLException e) {
 				int customerId = Objects.requireNonNull(CustomerDao.getCustomerByName(ps.customer.getValue())).getId();
 				AppointmentDao.updateAppointmentWithString("customerId", String.valueOf(customerId), id);
 
@@ -43,31 +45,55 @@ public class UpdateAppointmentActionHandlers {
 				// url
 				AppointmentDao.updateAppointmentWithString("url", ps.url.getValue(), id);
 
+				// TIME STUFF
+
 				// start
-				// TODO fix me
-//				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//				LocalDate date = ps.startDate.getValue();
-//				String dateStr = format.format(ps.startDate.getValue());
-//				AppointmentDao.updateAppointmentWithDate("start", dateStr  + " " + ps.startTime.getValue(), id);
-//				AppointmentDao.updateAppointment("start", String.valueOf(ps.startDate.getValue()), id);
-
-
-				// end
-
-				// createDate = NOW()
-
-				// createdBy = currentUser
-
-				// lastUpdate = prevValue
-
-				// lastUpdateBy = prevUser
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
+				String startDate = ps.startDate.getValue() + " " + ps.startTime.getValue() + ":00";
+				// validate that startDate < endDate
+				Date startToDate = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss").parse(startDate);
+				String endDate = ps.endDate.getValue() + " " + ps.endTime.getValue() + ":00";
+				Date endToDate = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss").parse(endDate);
+				boolean datesPass = startToDate.before(endToDate);
+				boolean timesPass= startToDate.getTime() < endToDate.getTime();
+				AppointmentDao.updateAppointmentDate("start", String.valueOf(startToDate), id);
+				AppointmentDao.updateAppointmentDate("end", String.valueOf(endToDate), id);
+//				if(!datesPass || !timesPass) {
+//					Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
+//					alert.setTitle("Date Selection Error");
+//					alert.setContentText("Start date and time must be before end date and time.");
+//					alert.setResizable(false);
+//
+//					alert.showAndWait();
+//				} else {
+//
+//				}
+			} catch (ClassNotFoundException | ParseException | SQLException e) {
 				e.printStackTrace();
 			}
+//			//ALERT ask if they want to commit changes to the database. On ok, QueryUtils.commitQuery;
+			Alert alert = new Alert(Alert.AlertType.valueOf("CONFIRMATION"));
+			alert.setTitle("SQL Prompt");
+			alert.setContentText("Would you like to save your changes to the database?");
+			alert.setResizable(false);
+
+			Optional<ButtonType> result = alert.showAndWait();
+			ButtonType button = result.orElse(ButtonType.CANCEL);
+
+			if (button == ButtonType.OK) {
+				System.out.println("Ok pressed");
+				try {
+					ps.initData(id);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("canceled");
+			}
+			alert.showAndWait();
 		};
 	}
 }

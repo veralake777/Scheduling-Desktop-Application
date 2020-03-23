@@ -108,9 +108,9 @@ public class CityDao {
             // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
             sqlStatement = "UPDATE city SET " + updateCol + " = '" + setColValue + "' WHERE cityId = " + rowId;
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             System.out.println("CITYDao UPDATE CLASS NOT FOUND");
-            e.getException();
+            e.printStackTrace();
         }
         DBUtils.closeConnection();
     }
@@ -121,7 +121,7 @@ public class CityDao {
         sqlStatement = "DELETE FROM city WHERE cityId = " + rowId;
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         DBUtils.closeConnection();
@@ -134,7 +134,7 @@ public class CityDao {
         QueryUtils.createQuery(sqlStatement);
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         DBUtils.closeConnection();

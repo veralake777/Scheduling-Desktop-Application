@@ -5,13 +5,14 @@ import MVC.model.CalendarMonthModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import utils.Database.DBUtils;
-import utils.DateTime.DateTimeUtils;
 import utils.Database.QueryUtils;
+import utils.DateTime.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class AppointmentDao {
     // TODO: TEST APPOINTMENT CLASS
@@ -217,19 +218,26 @@ public class AppointmentDao {
         }
     }
 
-    public static void updateAppointmentWithDate(String updateCol, String setColValue, int rowId) throws ClassNotFoundException {
+    public static void updateAppointmentDate(String updateCol, String setColValue, int rowId) throws SQLException {
         try {
             // TODO format date strings to Calendar
-            Calendar colValue = DateTimeUtils.stringToCalendar(setColValue);
+
+//            Calendar colValue = DateTimeUtils.stringToCalendar(setColValue);
             // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
             // TODO: check colVal type....if int without single quotes, else with single quotes (like below)
-            sqlStatement = "UPDATE appointment SET " + updateCol + " = '" + colValue + "' WHERE appointmentId = " + rowId;
+            sqlStatement = "UPDATE appointment SET " + updateCol + " = '" + setColValue + "' WHERE appointmentId = " + rowId;
             DBUtils.startConnection();
+            //execute query
             QueryUtils.createQuery(sqlStatement);
-            ResultSet result = QueryUtils.getResult();
-        } catch (ClassNotFoundException | ParseException e) {
+            // test print results
+            System.out.println(Objects.requireNonNull(getAppointment(rowId)).getStart().getTime());
+        } catch (ClassNotFoundException e) {
             System.out.println("ApptDao UPDATE CLASS NOT FOUND");
-            e.getCause();
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -239,7 +247,7 @@ public class AppointmentDao {
         sqlStatement = "DELETE FROM appointment WHERE appointmentId = " + rowId;
     }
 
-    public static void addAppointment(int appointmentId, int customerId, int userId, String title, String description, String location, String contact, String type, String url, String startDate, String endDate,  String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException {
+    public static void addAppointment(int appointmentId, int customerId, int userId, String title, String description, String location, String contact, String type, String url, String startDate, String endDate,  String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException, SQLException {
         // INSERT INTO `table_name`(column_1,column_2,...) VALUES (value_1,value_2,...);
         sqlStatement = "INSERT INTO appointment(appointmentId, customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdatedBy) " +
                 "VALUES (" + appointmentId + ", " + customerId + ", " +  userId + ", '" + title + "' , '" + description + "' , '" + location + "' , '" + contact + "' , '" + type + "' , '" + url + "' , " + startDate + ", " + endDate + ", '" + createdBy + "' , " + lastUpdate + ", '" + lastUpdateBy + "')";

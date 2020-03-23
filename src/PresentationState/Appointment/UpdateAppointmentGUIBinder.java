@@ -18,7 +18,7 @@ public class UpdateAppointmentGUIBinder {
 		this.presentationState = presentationState;
 	}
 
-	void bindAndInitialize() throws ParseException, SQLException, ClassNotFoundException {
+	public void bindAndInitialize() throws ParseException, SQLException, ClassNotFoundException {
 		presentationState.initBinding();
 		initWidgetBinding();
 		initActionHandlers();

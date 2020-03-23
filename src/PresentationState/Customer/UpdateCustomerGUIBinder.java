@@ -22,7 +22,7 @@ public class UpdateCustomerGUIBinder {
 		presentationState.initBinding();
 		initWidgetBinding();
 		initActionHandlers();
-		presentationState.initData(1);
+		presentationState.initData(3);
 	}
 
 	private void initWidgetBinding() {
@@ -39,5 +39,6 @@ public class UpdateCustomerGUIBinder {
 
 	private void initActionHandlers() {
 		JavaFxWidgetBindings.bindButton(controller.updateButton, UpdateCustomerActionHandlers.updateCustomerHandler(presentationState));
+		JavaFxWidgetBindings.bindButton(controller.newCustomer, UpdateCustomerActionHandlers.onActionNewCustomer(presentationState));
 	}
 }

@@ -92,7 +92,7 @@ public class CountryDao {
         sqlStatement = "UPDATE country SET " + updateCol + " = '" + setColValue + "' WHERE countryId = " + rowId;
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -103,7 +103,7 @@ public class CountryDao {
         sqlStatement = "DELETE FROM country WHERE countryId = " + rowId;
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -114,7 +114,7 @@ public class CountryDao {
                 "VALUES (" + countryId + " , '" + countryName + "' , " + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }

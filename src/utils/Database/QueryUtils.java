@@ -24,7 +24,14 @@ public class QueryUtils {
             if(q.toLowerCase().startsWith("select"))
                 result=statement.executeQuery(q);
             if(q.toLowerCase().startsWith("delete")|| q.toLowerCase().startsWith("insert")|| q.toLowerCase().startsWith("update"))
-                statement.executeUpdate(q);
+
+                try {
+                    statement.executeUpdate(q);
+                    System.out.println(statement.getResultSet().getInt("addressId"));
+                } catch (SQLException e) {
+                    System.out.println("ERROR in UPDATE");
+                    e.printStackTrace();
+                }
         }
         catch(Exception ex){
             System.out.println("Error: "+ex.getMessage());
@@ -35,4 +42,18 @@ public class QueryUtils {
         return result;
     }
 
+//    public static void commitQuery() throws SQLException {
+////        try {
+////           statement.getConnection().commit();
+////        } catch (SQLException e) {
+//////            if(Locale.getDefault().getLanguage().equals("fr")) {
+//////                ResourceBundle fr = JavaFxApplications.resources("resources/bundles/app_fr");
+//////                String message = fr.getString(alertTitle);
+//////            }
+////            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
+////            alert.setTitle("SQL Error");
+////            alert.setContentText("Statement failed to commit to the database. Error code: " + e.getErrorCode());
+////            alert.showAndWait();
+////        }
+//    }
 }

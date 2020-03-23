@@ -66,6 +66,28 @@ public class AddressDao {
         return null;
     }
 
+    public static int getAddressId(String address) throws SQLException, ClassNotFoundException, ParseException {
+        String sqlStatement = "select addressId FROM address WHERE address = '" + address + "'";
+        int addressId;
+        ResultSet result = DAO.getResultSet(sqlStatement);
+        if(result.next()){
+            addressId = result.getInt("addressId");
+            return addressId;
+        } else {
+            // add new address to database
+            sqlStatement = "select max(addressId) FROM address";
+            ResultSet resultSet = DAO.getResultSet(sqlStatement);
+                resultSet.next();
+                addressId = resultSet.getInt(1) +1;
+                addAddress(addressId, "address", "", 2, "11111",
+                        "999-9999", "2020-03-23 12:00:00", "test", "2020-03-23 12:00:00", "test");
+                System.out.println("Address does not exist. Add to db.");
+        }
+
+        return -1;
+        // if the address does not exist, add to db
+    }
+
     public static ObservableList<Address> getAllAddresses() throws ClassNotFoundException, SQLException, ParseException {
         ObservableList<Address> allAddresses = FXCollections.observableArrayList();
         DBUtils.startConnection();
@@ -117,7 +139,7 @@ public class AddressDao {
     public static void addAddress(int addressId, String address1, String address2, int cityId, String postalCode, String phone, String createDate, String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException {
         // INSERT INTO `table_name`(column_1,column_2,...) VALUES (value_1,value_2,...);
         sqlStatement = "INSERT INTO address(addressId, address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdateBy) " +
-                "VALUES (" + addressId + " , '" + address1 + "' , '" + address2 + "' , " + cityId + " , '" + address2 + "' , " + postalCode + "' , '" + phone + "' , " + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
+                "VALUES (" + addressId + " , '" + address1 + "' , '" + address2 + "' , " + cityId + " , '" + postalCode + "' , '" + phone + "' , '" + createDate + "', '" + createdBy + "' , '" +lastUpdate + "', '" + lastUpdateBy + "')";
         DBUtils.startConnection();
         QueryUtils.createQuery(sqlStatement);
         ResultSet result = QueryUtils.getResult();

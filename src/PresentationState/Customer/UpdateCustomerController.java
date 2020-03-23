@@ -33,6 +33,8 @@ public class UpdateCustomerController {
 	public Label header;
 	@FXML
 	public TextField countryTxt;
+	@FXML
+	public Button newCustomer;
 
 	public void onActionUpdate(ActionEvent actionEvent) {
 		// See UpdateCustomerActionHandlers
@@ -41,5 +43,8 @@ public class UpdateCustomerController {
 	public void onActionExit(ActionEvent actionEvent) {
 		Stage stage = (Stage) cancelButton.getScene().getWindow();
 		stage.close();
+	}
+
+	public void onActionNewCustomer(ActionEvent actionEvent) {
 	}
 }

@@ -18,7 +18,7 @@ public abstract class DAO {
     ObservableList<String> columnNames;
     ObservableList<String> columnValues;
 
-    static ResultSet getResultSet(String query) throws ClassNotFoundException {
+    static ResultSet getResultSet(String query) throws ClassNotFoundException, SQLException {
         sqlStatement = query;
         DBUtils.startConnection();
         //  String sqlStatement="select FROM address";

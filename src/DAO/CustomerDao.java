@@ -1,9 +1,10 @@
 package DAO;
 
+import DAO.POJO.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import DAO.POJO.Customer;
 import utils.Database.DBUtils;
+import utils.Database.QueryUtils;
 import utils.DateTime.DateTimeUtils;
 
 import java.sql.ResultSet;
@@ -135,6 +136,23 @@ public class CustomerDao {
         DBUtils.closeConnection();
         return allCustomers;
     };
+
+    public static void updateCustomer(int id, String name, int addressId, boolean active) {
+        System.out.println("Customer id" + id);
+        System.out.println("Customer addressId" + addressId);
+        System.out.println("Customer active" + active);
+        sqlStatement = "UPDATE customer \n" +
+                "set customerId = " + id + ", customerName = '" +name+"', addressId = " + addressId + ", active = true\n" +
+                "where customerId = " + id;
+//        sqlStatement = "UPDATE customer " +
+//                            "SET customerId = " + id +
+//                            ", customerName = '" + name +
+//                            "', addressId = " + addressId +
+//                            ", active = " + active +
+//                        "WHERE customerId = " + id;
+        QueryUtils.createQuery(sqlStatement);
+        System.out.println("Customer Update Successful.");
+    }
     public static void updateCustomer(String updateCol, String setColValue, int rowId) throws ClassNotFoundException, SQLException, ParseException {
         try {
             // UPDATE `table_name` SET `column_name` = `new_value' [WHERE condition];
@@ -151,7 +169,7 @@ public class CustomerDao {
         sqlStatement = "DELETE FROM customer WHERE customerId = " + rowId;
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         DBUtils.closeConnection();
@@ -162,7 +180,7 @@ public class CustomerDao {
                 "VALUES (" + customerId + " , '" + customerName + "' , '" + addressId + "' , " + active + "," + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }

@@ -59,6 +59,15 @@ public class UpdateAppointmentPresentationState {
 //				e.printStackTrace();
 			}
 		});
+
+		startDate.addListener((observable, oldValue, newValue) -> {
+//			startDate.getValue();
+//			datePicker.getEditor().getText();
+			System.out.println(oldValue);
+			System.out.println(newValue);
+		});
+
+
 	}
 
 	/**
@@ -89,8 +98,6 @@ public class UpdateAppointmentPresentationState {
 
 		// DateTime elements
 		// format YYYY/MM/DD
-
-		//TODO fix me
 
 		Calendar startCal = appointment.getStart();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

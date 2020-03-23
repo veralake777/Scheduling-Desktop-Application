@@ -49,6 +49,8 @@ public class UpdateCustomerPresentationState {
 		address2.setValue(addressData.getAddress2());
 		phone.setValue(addressData.getPhone());
 		city.setValue(cityData.getCity());
-		phone.setValue(countryData.getCountry());
+		country.setValue(countryData.getCountry());
+		phone.setValue(addressData.getPhone());
 	}
+
 }

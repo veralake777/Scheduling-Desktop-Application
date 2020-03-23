@@ -74,8 +74,9 @@
       <TextField fx:id="urlTxt1" layoutX="327.0" layoutY="214.0" text="yes/no" GridPane.columnIndex="2" GridPane.rowIndex="9" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
         <buttons>
+           <Button fx:id="newCustomer" mnemonicParsing="false" onAction="#onActionNewCustomer" text="Add"/>
           <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onActionUpdate" text="Update" />
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onActionExit" text="Cancel" />
+           <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onActionExit" text="Cancel" />
         </buttons>
       </ButtonBar>
 

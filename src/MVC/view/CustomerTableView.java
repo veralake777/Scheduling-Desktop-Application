@@ -65,7 +65,7 @@ public class CustomerTableView {
         return customerTableView;
     }
 
-    private static ResultSet getResultSet(String query) throws ClassNotFoundException {
+    private static ResultSet getResultSet(String query) throws ClassNotFoundException, SQLException {
         DBUtils.startConnection();
         QueryUtils.createQuery(query);
         return QueryUtils.getResult();

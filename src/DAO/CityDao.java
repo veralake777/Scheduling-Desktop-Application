@@ -1,14 +1,15 @@
 package DAO;
 
+import DAO.POJO.City;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import DAO.POJO.City;
 import utils.Database.DBUtils;
-import utils.DateTime.DateTimeUtils;
 import utils.Database.QueryUtils;
+import utils.DateTime.DateTimeUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.Calendar;
 
@@ -74,15 +75,18 @@ public class CityDao {
         ObservableList<City> allCities = FXCollections.observableArrayList();
         String sqlStatement = "select * from city";
 
-        getCityColumns(sqlStatement);
-        getCityColumnValues(sqlStatement);
+//        getCityColumns(sqlStatement);
+//        getCityColumnValues(sqlStatement);
 
-        ResultSet result = null;
-        try {
-            result = DAO.getResultSet(sqlStatement);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        ResultSet result = null;
+//        QueryUtils.createQuery(sqlStatement);
+//        result = QueryUtils.getResult();
+//            result = DAO.getResultSet(sqlStatement);
+        DBUtils.startConnection();
+        Statement statement = DBUtils.getConn().createStatement();
+        statement.executeQuery(sqlStatement);
+        ResultSet result = statement.getResultSet();
+
         assert result != null;
         while (result.next()) {
             int cityIdG = result.getInt("cityId");

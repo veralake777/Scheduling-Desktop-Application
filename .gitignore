@@ -3,6 +3,8 @@
 /DAODemo2
 /C195DB2TableViewExample
 /CodeExamples
+/C195ComboBoxExample
+/C195ComboBoxObjectExample
 
 #db connection info
 /src/utils/Database/db.properties

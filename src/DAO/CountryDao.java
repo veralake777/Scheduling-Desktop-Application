@@ -9,6 +9,7 @@ import utils.Database.QueryUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.Calendar;
 
@@ -65,10 +66,14 @@ public class CountryDao {
         ObservableList<Country> allCountries = FXCollections.observableArrayList();
         String sqlStatement = "select * from country";
 
-        getCountryColumns(sqlStatement);
-        getCountryColumnValues(sqlStatement);
+//        getCountryColumns(sqlStatement);
+//        getCountryColumnValues(sqlStatement);
 
-        ResultSet result = DAO.getResultSet(sqlStatement);
+        DBUtils.startConnection();
+        Statement statement = DBUtils.getConn().createStatement();
+        statement.executeQuery(sqlStatement);
+        ResultSet result = statement.getResultSet();
+
         while (result.next()) {
             int countryIdG = result.getInt("countryId");
             String countryNameG = result.getString("country");

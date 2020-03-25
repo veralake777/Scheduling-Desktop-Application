@@ -174,10 +174,10 @@ public class CustomerDao {
         }
         DBUtils.closeConnection();
     };
-    public static void addCustomer(int customerId, String customerName, int addressId, int active, String createDate, String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException {
+    public static void addCustomer(String customerName, int addressId, int active, String createDate, String createdBy,String lastUpdate, String lastUpdateBy) throws ClassNotFoundException {
         // INSERT INTO `table_name`(column_1,column_2,...) VALUES (value_1,value_2,...);
         sqlStatement = "INSERT INTO customer(customerId, customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) " +
-                "VALUES (" + customerId + " , '" + customerName + "' , '" + addressId + "' , " + active + "," + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
+                "VALUES (, '" + customerName + "' , '" + addressId + "' , " + active + "," + createDate + ", '" + createdBy + "' , " +lastUpdate + ", '" + lastUpdateBy + "')";
         try {
             ResultSet result = DAO.getResultSet(sqlStatement);
         } catch (ClassNotFoundException | SQLException e) {

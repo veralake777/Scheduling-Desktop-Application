@@ -28,7 +28,7 @@ From these requirements, a system analyst at your company created solution state
 
 ## Provide the ability to add, update, and delete appointments, capturing the type of appointment and a link to the specific customer record in the database.
 
-## Provide the ability to MVC.view the calendar by month and by week.
+## Provide the ability to view the calendar by month and by week.
 
 ## Provide the ability to automatically adjust appointment times based on user time zones and daylight saving time.
 

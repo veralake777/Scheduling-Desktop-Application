@@ -8,21 +8,20 @@ package utils.Logger;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
  *
  * @author amy.antonucci
  */
-public class LoggerInfo {
+public class Logger {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
 
-        Logger log = Logger.getLogger("log.txt");
+        java.util.logging.Logger log = java.util.logging.Logger.getLogger("log.txt");
 
         try {
             //The following four lines write the log text to a file. Otherwise it will print only to the console.
@@ -43,9 +42,9 @@ public class LoggerInfo {
 //      Great for debugging! You could set it to FINEST, and then when you put the code into production, set it to INFO or WARNING, for instance, so that you
 //      don't get the debugging log info in your text file
         } catch (IOException ex) {
-            Logger.getLogger(LoggerInfo.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SecurityException ex) {
-            Logger.getLogger(LoggerInfo.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Logger.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         log.setLevel(Level.CONFIG); //change this line to see how the output changes!

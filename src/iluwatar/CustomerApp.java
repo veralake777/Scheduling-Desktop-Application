@@ -4,6 +4,17 @@ import iluwatar.DbDao.DbCustomerDao;
 import iluwatar.InMemory.InMemoryCustomerDao;
 import iluwatar.Interface.CustomerDao;
 import iluwatar.POJO.Customer;
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
@@ -11,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 
 /**
@@ -26,11 +38,70 @@ import java.util.Optional;
  * operations: select, add, update, and delete.
  */
 
-public class CustomerApp {
-    private static final String DB_URL = "";
-    // TODO fix logger
-//    private static Logger log = LoggerFactory.getLogger(App.class);
-    private static final String ALL_CUSTOMERS = "customerDao.getAllCustomers(): ";
+public class CustomerApp extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // db stuff
+        final var dataSource = createDataSource();
+        final var dbDao = new DbCustomerDao(dataSource);
+
+        // stage stuff
+        primaryStage.setTitle("Customers");
+
+        Label lblAdd = new Label("Add");
+        TextField textFieldAdd = new TextField();
+
+        GridPane gridPane = new GridPane();
+
+        // buttons
+        Button editButton = new Button("Add");
+        editButton.setOnAction(actionEvent -> primaryStage.close());
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(actionEvent -> primaryStage.close());
+
+        // fetch customers
+        Stream<Customer> all = dbDao.getAll();
+
+        // build view
+        for(int i = 1; i<=dbDao.getAll().count();i++){
+            Optional<Customer> customer = dbDao.getById(i);
+            if(customer.isPresent()){
+//                // customer list with buttons
+                HBox hbox = new HBox();
+//
+//                // customer
+                Label label = new Label(customer.get().getId() +
+                        "     " +
+                        customer.get().getCustomerName());
+                label.setOnMouseClicked(mouseEvent -> primaryStage.close());
+                label.setStyle("-fx-font-family: 'Roboto Light'; -fx-font-size: 18;");
+
+                hbox.setSpacing(20);
+                hbox.getChildren().addAll(label, editButton, deleteButton);
+                gridPane.add(hbox, 1, i, 1,1);
+
+
+            };
+
+        }
+
+        // header
+        Label header = new Label("Customers");
+        header.setPrefWidth(250);
+        header.setAlignment(Pos.CENTER);
+        header.setTextAlignment(TextAlignment.CENTER);
+        gridPane.add(header, 1, 0, gridPane.getColumnCount(), 1);
+        gridPane.add(new MainMenu().vBox, 0, 0, 1, gridPane.getRowCount());
+
+
+        // set scene
+        Scene scene = new Scene(gridPane,
+                Screen.getPrimary().getVisualBounds().getWidth(),
+                Screen.getPrimary().getVisualBounds().getHeight()-30);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
 
     /**
      * Program entry point
@@ -40,6 +111,7 @@ public class CustomerApp {
      */
 
     public static void main(final String[] args) throws Exception {
+        Application.launch(args);
         final var inMemoryDao = new InMemoryCustomerDao();
         performOperationsUsing(inMemoryDao);
 

@@ -4,6 +4,17 @@ import iluwatar.DbDao.DbAddressDao;
 import iluwatar.InMemory.InMemoryAddressDao;
 import iluwatar.Interface.AddressDao;
 import iluwatar.POJO.Address;
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import utils.Database.DBUtils;
 
 import javax.sql.DataSource;
@@ -11,6 +22,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 
 /**
@@ -26,7 +38,65 @@ import java.util.Optional;
  * operations: select, add, update, and delete.
  */
 
-public class AddressApp {
+public class AddressApp extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // db stuff
+        final var dataSource = createDataSource();
+        final var dbDao = new DbAddressDao(dataSource);
+
+        // stage stuff
+        primaryStage.setTitle("Address");
+
+        Label addAddressLbl = new Label("Add");
+        TextField addAddressTxt = new TextField();
+
+        GridPane gridPane = new GridPane();
+
+        // buttons
+        Button editButton = new Button("Add");
+        editButton.setOnAction(actionEvent -> primaryStage.close());
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(actionEvent -> primaryStage.close());
+
+        // fetch addresses
+        Stream<Address> all = dbDao.getAll();
+
+        // build view
+        for(int i = 1; i<=dbDao.getAll().count();i++){
+            Optional<Address> address = dbDao.getById(i);
+            if(address.isPresent()){
+                // address list with buttons
+                HBox hbox = new HBox();
+
+                // address
+                Label label = new Label(address.get().getAddress() +
+                        "     " +
+                        address.get().getPhone());
+                label.setOnMouseClicked(mouseEvent -> primaryStage.close());
+                label.setStyle("-fx-font-family: 'Roboto Light'; -fx-font-size: 18;");
+
+                hbox.setSpacing(20);
+                hbox.getChildren().addAll(label, editButton, deleteButton);
+                gridPane.add(hbox, 0, i, 1,1);
+            };
+        }
+
+        // header
+        Label header = new Label("Addresses");
+        header.setPrefWidth(250);
+        header.setAlignment(Pos.CENTER);
+        header.setTextAlignment(TextAlignment.CENTER);
+        gridPane.add(header, 0, 0, gridPane.getColumnCount(), 1);
+
+        // set scene
+        Scene scene = new Scene(gridPane,
+                Screen.getPrimary().getVisualBounds().getWidth(),
+                Screen.getPrimary().getVisualBounds().getHeight()-30);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
     private static final String DB_URL = "";
     // TODO fix logger
 //    private static Logger log = LoggerFactory.getLogger(App.class);
@@ -38,15 +108,16 @@ public class AddressApp {
      * @param args command line args
      * @throws Exception if any error occurs
      */
-
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
+        Application.launch(args);
         final var inMemoryDao = new InMemoryAddressDao();
-        performOperationsUsing(inMemoryDao);
+//        performOperationsUsing(inMemoryDao);
 
         final var dataSource = createDataSource();
 //        createSchema(dataSource);
         final var dbDao = new DbAddressDao(dataSource);
-        performOperationsUsing(dbDao);
+//        dbDao.getAll();
+//        performOperationsUsing(dbDao);
         printTest();
 //        deleteSchema(dataSource);
 
@@ -90,11 +161,11 @@ public class AddressApp {
         return DBUtils.getMySQLDataSource();
     }
 
-        private static void performOperationsUsing ( final AddressDao addressDao) throws Exception {
-            addAddress(addressDao);
+//        private static void performOperationsUsing ( final AddressDao addressDao) throws Exception {
+//            addAddress(addressDao);
 //            log.info(ALL_APPOINTMENTS);
-//            try (var customerStream = appointmentDao.getAll()) {
-//                customerStream.forEach((customer) -> log.info(customer.toString()));
+//            try (var addressStream = addressDao.getAll()) {
+//                addressStream.forEach((address) -> System.out.println(address.toString()));
 //            }
 //            log.info("appointmentDao.getByAppointmentId(2): " + appointmentDao.getById(2));
 //            final var appointment = new Appointment(4, "Dan", "Danson");
@@ -108,7 +179,7 @@ public class AddressApp {
 //            }
 //            appointmentDao.delete(appointment);
 //            log.info(ALL_APPOINTMENTS + appointmentDao.getAll());
-        }
+//        }
 
         private static void addAddress (AddressDao addressDao) throws Exception {
             for (var address : generateSampleAddresses()) {

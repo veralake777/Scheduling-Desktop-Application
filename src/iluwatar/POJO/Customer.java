@@ -3,8 +3,8 @@ package iluwatar.POJO;
 public class Customer {
     private int id; // PK
     private String customerName;
-    private int addressId; // FK --> customer --customer_ibfk_1 -- on update & delete restrict
-    private boolean active; // 1 = active, 0 = inactive
+    private int addressId;
+    private boolean active;
     private String createDate;
     private String createdBy; // userName
     private String lastUpdate;

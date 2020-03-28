@@ -1,0 +1,21 @@
+.days {
+    -fx-font-family: "Roboto Light";
+    -fx-font-size: 20;
+    -fx-padding: 10 10;
+}
+
+.times {
+    -fx-font-family: "Roboto Light";
+    -fx-font-size: 16;
+    -fx-padding: 10 5;
+    -fx-min-width: 30;
+}
+
+.time-slot {
+    -fx-background-color: GREY, WHITE ;
+    -fx-background-insets: 0, 1 1 0 0 ;
+}
+
+.time-slot:selected {
+    -fx-background-color:  rgba(235, 170, 93, .5) ;
+}

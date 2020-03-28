@@ -16,19 +16,19 @@ public class MainMenu {
 
 
     // calendar section
-    private VBox vBoxCalendar = new VBox(10);
+    private VBox vBoxCalendar = new VBox(0);
     private Label lblCalendar = new Label("CALENDAR           v");
     private Label lblMonth = new Label("My Month");
     private Label lblWeek = new Label("My Week");
 
     // appointment section
-    private VBox vBoxAppointments = new VBox(10);
+    private VBox vBoxAppointments = new VBox(0);
     private Label lblAppointments = new Label("APPOINTMENTS  v");
     private Label lblManageAppointments = new Label("Manage Appointments");
     private Label lblAddNewAppointment = new Label("New Appointment");
 
     // customers section
-    private VBox vBoxCustomers = new VBox(10);
+    private VBox vBoxCustomers = new VBox(0);
     private Label lblCustomers = new Label("CUSTOMERS        v");
     private Label lblManageCustomers = new Label("Manage Customers");
     private Label lblAddNewCustomer = new Label("New Customer");
@@ -49,12 +49,17 @@ public class MainMenu {
     };
 
     private String subLblListStyle(){
-        return "-fx-font-family: 'Roboto Light'; " +
+        return "-fx-background-color: rgba(235, 170, 93, .25);" +
+                "-fx-font-family: 'Roboto Light'; " +
                 "-fx-font-size: 16; " +
-                "-fx-padding: 10 10";
+                "-fx-padding: 10 10;" +
+                "-fx-pref-width: 210;" +
+                "-fx-padding: 25 20;";
     };
 
     private void buildMainMenu() {
+//        vBox.setStyle("-fx-background-color: #ebaa5d;" +
+//                "-fx-opacity: .5;");
         vBoxCalendar.getChildren().add(lblCalendar);
         vBoxAppointments.getChildren().add(lblAppointments);
         vBoxCustomers.getChildren().add(lblCustomers);
@@ -85,8 +90,17 @@ public class MainMenu {
 
         // set styling
         lblCalendar.setStyle(mainLblsStyle());
+        lblMonth.setStyle(subLblListStyle());
+        lblWeek.setStyle(subLblListStyle());
+
         lblAppointments.setStyle(mainLblsStyle());
+        lblManageAppointments.setStyle(subLblListStyle());
+        lblAddNewAppointment.setStyle(subLblListStyle());
+
         lblCustomers.setStyle(mainLblsStyle());
+        lblManageCustomers.setStyle(subLblListStyle());
+        lblAddNewCustomer.setStyle(subLblListStyle());
+
         lblReports.setStyle(mainLblsStyle());
 
         vBox.getChildren().addAll(

@@ -1,5 +1,6 @@
 package iluwatar;
 
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -91,15 +92,21 @@ public class MainMenu {
         // set styling
         lblCalendar.setStyle(mainLblsStyle());
         lblMonth.setStyle(subLblListStyle());
+        lblMonth.onMouseClickedProperty().set(event -> onClickLoadView(new Text("MONTH VIEW")));
         lblWeek.setStyle(subLblListStyle());
+        lblWeek.onMouseClickedProperty().set(event -> onClickLoadView(new WeekView().getWeekView()));
 
         lblAppointments.setStyle(mainLblsStyle());
         lblManageAppointments.setStyle(subLblListStyle());
+        lblManageAppointments.onMouseClickedProperty().set(event -> onClickLoadView(new Text("MANAGE APPTS VIEW")));
         lblAddNewAppointment.setStyle(subLblListStyle());
+        lblAddNewAppointment.onMouseClickedProperty().set(event -> onClickLoadView(new Text("ADD APPTS VIEW")));
 
         lblCustomers.setStyle(mainLblsStyle());
         lblManageCustomers.setStyle(subLblListStyle());
+        lblManageCustomers.onMouseClickedProperty().set(event -> onClickLoadView(new Text("MANAGE CUSTOMERS VIEW")));
         lblAddNewCustomer.setStyle(subLblListStyle());
+        lblAddNewCustomer.onMouseClickedProperty().set(event -> onClickLoadView(new Text("ADD CUSTOMERS VIEW")));
 
         lblReports.setStyle(mainLblsStyle());
 
@@ -120,6 +127,46 @@ public class MainMenu {
     private void onClickHideList(VBox vBox, Label[] lblList) {
         vBox.getChildren().removeAll(lblList);
         vBox.onMouseClickedProperty().set(event -> onClickDropDown(vBox, lblList));
+    }
+
+    private void onClickLoadView(Node view) {
+        Main.loadView(view);
+//        EventTarget target = event.getTarget();
+//        if (!(target instanceof Node)) return;
+//
+//        final Node node = (Node) target;
+//
+//        if (!(node instanceof Text)) {
+//            return;
+//        }
+//
+//        final Parent label = node.getParent();
+//
+//        if (!(label instanceof Label)) {
+//            return;
+//        }
+//
+//        final Parent mainMenuVBox = label.getParent();
+//
+//        if (!(mainMenuVBox instanceof VBox)) {
+//            return;
+//        }
+//
+//        final Parent next = mainMenuVBox.getParent();
+//
+//        final Parent next2 = next.getParent();
+//
+////        if (!gridPane.getStyleClass().contains("tab-container")) {
+////            return;
+////        }
+////
+////        if (isChangingTab()) {
+////            setChangingTab(false);
+////            return;
+////        }
+////
+////        processExpandOrCollapse();
+//        System.out.println(next2.getParent().getChildrenUnmodifiable().set(1, new Text("text")));
     }
     // Calendar - onClick dropDown
         //month - onClick loadMonthView

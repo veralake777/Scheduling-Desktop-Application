@@ -14,6 +14,10 @@ public class CalendarPane {
         this.nameOfDays = nameOfDays;
     }
 
+    public CalendarPane() {
+
+    }
+
     public String getMonth() {
         return month;
     }

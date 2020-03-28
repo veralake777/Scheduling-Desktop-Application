@@ -1,6 +1,7 @@
 package iluwatar;
 
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
@@ -8,12 +9,14 @@ import javafx.stage.Stage;
 import utils.Database.DBUtils;
 
 public class Main extends Application {
+    private static GridPane gridPane;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
 //        Font.loadFont(getClass().getResourceAsStream("../CSS/Fonts/LeagueSpartan-Bold.otf"), 35);
 //        Parent root = FXMLLoader.load(getClass().getResource(""));
 //        root.getStylesheets().addAll("/CSS/calendarPane.css", "/CSS/loginStyle.css", "/resources/app.css");
-        GridPane gridPane = new GridPane();
+        gridPane = new GridPane();
         MainMenu mainMenu = new MainMenu();
         WeekView weekView = new WeekView();
 
@@ -28,6 +31,12 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    public static void loadView(Node view) {
+        gridPane.getChildren().remove(1);
+        gridPane.add(view, 1, 0);
+    }
+
 
 
     public static void main(String[] args) throws ClassNotFoundException {

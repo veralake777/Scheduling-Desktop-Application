@@ -26,7 +26,7 @@ public class MainScreenController {
     private void setTabs() throws ParseException, SQLException, ClassNotFoundException, IOException {
         //overview view
         Tab overview = new Tab("Overview");
-        overview.setContent(FXMLLoader.load(this.getClass().getResource("/MVC/view/overview.fxml")));
+        overview.setContent(FXMLLoader.load(this.getClass().getResource("/MVC/view/weekView.fxml")));
 
         //calendar view
         Tab calendar = new Tab("Calendar");

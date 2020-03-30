@@ -11,9 +11,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,41 +30,9 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 
-public class OverviewController {
-    // top level container
+public class WeekViewController {
     @FXML
-    public GridPane overview;
-
-    // calendar view on the
-    @FXML
-    public BorderPane calendarPane;
-    @FXML
-    public Label monthAndYearLbl;
-    @FXML
-    public Button prevBtn;
-    @FXML
-    public Button nextBtn;
-
-    @FXML
-    public GridPane weeklyView;
-    @FXML
-    public TableColumn weekDayCol1;
-    @FXML
-    public TableColumn weekDayCol2;
-    @FXML
-    public TableColumn weekDayCol3;
-    @FXML
-    public TableColumn weekDayCol4;
-    @FXML
-    public TableColumn weekDayCol5;
-    @FXML
-    public TableColumn weekDayCol6;
-    @FXML
-    public TableColumn weekDayCol7;
-    @FXML
-    public BorderPane calendarMonthView;
-    public ButtonBar prevNextBtnBar;
-
+    public GridPane gridPaneWeekView;
     @FXML
     public ColumnConstraints hours;
     @FXML
@@ -82,59 +49,52 @@ public class OverviewController {
     public ColumnConstraints day6;
     @FXML
     public ColumnConstraints day7;
+    public ScrollPane scrollPaneWeekView;
 
 
-
-    public OverviewController() throws IOException {
+    public WeekViewController() throws IOException {
     }
 
     @FXML
     public void initialize() throws Exception {
-        setOverview();
+        buildWeekView();
     }
 
     CalendarMonthController calendarController = new CalendarMonthController();
 
-
-    public GridPane getOverview() {
-        return overview;
-    }
-
-    public void setOverview() throws IOException, ParseException, SQLException, ClassNotFoundException {
-        overview.getChildren().get(0).maxWidth(100);
-        overview.getChildren().get(1).translateXProperty().setValue(-75);
-        calendarMonthView.setMaxWidth(200);
-        calendarMonthView.prefHeightProperty().bind(calendarPane.heightProperty());
-        calendarMonthView.prefWidthProperty().bind(calendarPane.widthProperty());
-
+    public void buildWeekView() throws IOException, ParseException, SQLException, ClassNotFoundException {
         /**
-         * Week View
+         * ScrollPane
          */
-
-        hours.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.09));
-        day1.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
-        day2.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
-        day3.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
-        day4.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
-        day5.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
-        day6.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
-        day7.prefWidthProperty().bind(weeklyView.widthProperty().multiply(.135));
+        scrollPaneWeekView.setFitToWidth(true);
+        scrollPaneWeekView.setFitToHeight(true);
+        /**
+         * Grid Pane
+         */
+        hours.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.09));
+        day1.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
+        day2.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
+        day3.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
+        day4.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
+        day5.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
+        day6.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
+        day7.prefWidthProperty().bind(gridPaneWeekView.widthProperty().multiply(.135));
         addCurrentHours();
 
 
-        int numCols = weeklyView.getColumnCount(); //offset hours col
-        int numRows = weeklyView.getRowCount();
+        int numCols = gridPaneWeekView.getColumnCount(); //offset hours col
+        int numRows = gridPaneWeekView.getRowCount();
 
         for (int i = 1 ; i < numCols ; i++) {
             ColumnConstraints colConstraints = new ColumnConstraints();
             colConstraints.setHgrow(Priority.SOMETIMES);
-            weeklyView.getColumnConstraints().add(colConstraints);
+            gridPaneWeekView.getColumnConstraints().add(colConstraints);
         }
 
         for (int i = 2 ; i < numRows ; i++) {
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setVgrow(Priority.SOMETIMES);
-            weeklyView.getRowConstraints().add(rowConstraints);
+            gridPaneWeekView.getRowConstraints().add(rowConstraints);
         }
 
         for (int i = 1 ; i < numCols ; i++) {
@@ -156,7 +116,7 @@ public class OverviewController {
                 }
 
 //                addBox.setOnMouseClicked(mouseEvent -> onMouseClickedEmptyAppointmentPopup(mouseEvent, addBox));
-                weeklyView.add(addBox, i, j);
+                gridPaneWeekView.add(addBox, i, j);
             }
 
             /**
@@ -179,11 +139,11 @@ public class OverviewController {
                 }
             });
 
-            weeklyView.add(apptBox, 3, 5 );
+            gridPaneWeekView.add(apptBox, 3, 5 );
         }
 
         // create day labels
-        CalendarMonthController calendarController = new CalendarMonthController();
+//        CalendarMonthController calendarController = new CalendarMonthController();
         int today = calendarController.c.getToday();
         String currentName;
 //        DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
@@ -215,25 +175,11 @@ public class OverviewController {
             nameLbl.paddingProperty().setValue(new Insets(0, 0, 10, 0));
 
             // add both
-            weeklyView.add(dateStack, i, 0);
-            weeklyView.add(nameLbl, i, 1);
+            gridPaneWeekView.add(dateStack, i, 0);
+            gridPaneWeekView.add(nameLbl, i, 1);
 
 //            weeklyView.add(addAppointment(), 5, 3);
         }
-
-        // create separator
-//        Separator horSep = new Separator();
-//        horSep.setMaxWidth(day1.getPrefWidth() + 100);
-//        horSep.setHalignment(HPos.CENTER);
-//        horSep.setPadding(new Insets(10, 10, 10, 10));
-//        weeklyView.add(horSep, 0, 2);
-//
-//        // Next Appointment
-//        VBox apptBox2 = new VBox(5);
-//        Label custTest = new Label(CustomerDao.getAllCustomers().get(1).getAddress());
-//        weeklyView.add(custTest, 0, 2);
-//        weeklyView.add(new AppointmentVBox().getAppointmentBox(), 1, 2);
-
     }
 
     private void addCurrentHours() throws ParseException, SQLException, ClassNotFoundException, IOException {
@@ -270,7 +216,7 @@ public class OverviewController {
             Label currentHourLbl = new Label(i + AM_PM);
             currentHourLbl.setStyle("-font-color: GREY");
             currentHourLbl.setPadding(new Insets(50, 10, 0, 50));
-            weeklyView.add(currentHourLbl, 0, rowIndex);
+            gridPaneWeekView.add(currentHourLbl, 0, rowIndex);
             rowIndex++;
             i++;
         }
@@ -317,7 +263,7 @@ public class OverviewController {
         stage = (Stage)((VBox)event.getSource()).getScene().getWindow();
 
         // load add part view
-        FXMLLoader loader = FXMLLoader.load(OverviewController.class.getResource("../view/updateAppointment.fxml"));
+        FXMLLoader loader = FXMLLoader.load(WeekViewController.class.getResource("../view/updateAppointment.fxml"));
 //        UpdateAppointmentController controller = loader.getController();
 //        controller.receiveAppointment(appointment);
         loader.getController();
@@ -371,6 +317,7 @@ public class OverviewController {
         stage.showAndWait();
 
     }
+
     public void onMouseClickedAppointmentPopup(Appointment a) throws IOException, ParseException, SQLException, ClassNotFoundException {
         // Load in the .fxml file:
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/updateAppointment.fxml"));

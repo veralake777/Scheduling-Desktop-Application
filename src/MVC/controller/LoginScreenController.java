@@ -39,7 +39,7 @@ public class LoginScreenController {
         stage = (Stage) ((Button) actionEvent.getSource()).getScene().getWindow();
 
         // load add part MVC.view
-        scene = FXMLLoader.load(getClass().getResource("/MVC/view/overview.fxml"));
+        scene = FXMLLoader.load(getClass().getResource("/MVC/view/weekView.fxml"));
 
         // add scene to stage
         stage.setScene(new Scene(scene));

@@ -1,5 +1,6 @@
 package iluwatar;
 
+import iluwatar.POJO.Appointment;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -8,6 +9,7 @@ import javafx.css.PseudoClass;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -30,12 +32,14 @@ public class WeekView {
         private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
 
         private final List<TimeSlot> timeSlots = new ArrayList<>();
+        private TimeSlot currentSlot;
+        private static List<Appointment> appointments = new ArrayList<>();
 
         public WeekView() {
-
         }
         public GridPane getWeekView(){
             GridPane weekView = new GridPane();
+            weekView.getStyleClass().add("grid-pane");
 
             ObjectProperty<TimeSlot> mouseAnchor = new SimpleObjectProperty<>();
 
@@ -86,19 +90,9 @@ public class WeekView {
                 weekView.add(label, 0, slotIndex);
                 slotIndex++ ;
             }
-
-//            ScrollPane scroller = new ScrollPane(calendarView);
-//            scroller.setMaxHeight(500);
-//            scroller.setFitToWidth(true);
-//            calendarView.add(scroller, 0, 1);
-//            GridPane.setHgrow(scroller, Priority.ALWAYS);
-
-
-//            Scene scene = new Scene(scroller);
-//            scene.getStylesheets().add(getClass().getResource("calendar-view.css").toExternalForm());
-//            primaryStage.setScene(scene);
-//            primaryStage.show();
+            showResult();
             weekView.getStylesheets().add("iluwatar/calendar-view.css");
+
         return weekView;
         }
 
@@ -114,13 +108,13 @@ public class WeekView {
 
             timeSlot.getView().setOnMouseDragEntered(event -> {
                 TimeSlot startSlot = mouseAnchor.get();
-                timeSlots.forEach(slot ->
-                        slot.setSelected(isBetween(slot, startSlot, timeSlot)));
+                timeSlots.forEach(slot ->{
+                        slot.setSelected(isBetween(slot, startSlot, timeSlot));
+                });
             });
-
             timeSlot.getView().setOnMouseReleased(event -> mouseAnchor.set(null));
 
-            // TODO add appoinment functionality
+//            System.out.println(timeSlots.subList(timeSlot.isSelected()  return 1, !timeSlot.isSelected()));
         }
 
         // Utility method that checks if testSlot is "between" startSlot and endSlot
@@ -179,9 +173,10 @@ public class WeekView {
                 view.setMinSize(80, 20);
                 view.getStyleClass().add("time-slot");
 
-                selectedProperty().addListener((obs, wasSelected, isSelected) ->
-                        view.pseudoClassStateChanged(SELECTED_PSEUDO_CLASS, isSelected));
-
+                selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+                            view.pseudoClassStateChanged(SELECTED_PSEUDO_CLASS, isSelected);
+//                            appointments.add(new Appointment(10, 1, 1, "TITLE", "DESCRIP", "loc", "8888888", "type", "url", ""));
+            });
             }
 
             public LocalDateTime getStart() {
@@ -204,7 +199,20 @@ public class WeekView {
                 return view;
             }
 
+            public void showAlert() {
+                // TODO getDayOfWeek() start and end getTime() -> POPUP Appointment add new
+                //  alert is fucked up. won't close and keeps getting new days and times
+
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setContentText(getTime().toString());
+                a.showAndWait();
+            }
         }
+
+        public void showResult(){
+            System.out.println(timeSlots.get(1).view);
+        }
+
 
 //
 //        public static void main(String[] args) {

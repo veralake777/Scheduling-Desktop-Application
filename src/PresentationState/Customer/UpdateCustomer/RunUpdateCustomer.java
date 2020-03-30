@@ -1,5 +1,6 @@
-package PresentationState.Customer;
+package PresentationState.Customer.UpdateCustomer;
 
+import PresentationState.Customer.JavaFxApplications;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //import static org.svenehrke.javafxdemos.greetfxml.ApplicationConfig.*;
-import static PresentationState.Customer.UpdateCustomerApplicationConfig.*;
+import static PresentationState.Customer.UpdateCustomer.UpdateCustomerApplicationConfig.*;
 public class RunUpdateCustomer extends Application {
 
 	private final Logger logger = Logger.getLogger(RunUpdateCustomer.class.getName());

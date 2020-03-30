@@ -2,6 +2,7 @@
     -fx-font-family: "Roboto Light";
     -fx-font-size: 20;
     -fx-padding: 10 10;
+    -fx-pref-width: 175;
 }
 
 .times {
@@ -17,5 +18,5 @@
 }
 
 .time-slot:selected {
-    -fx-background-color:  rgba(235, 170, 93, .5) ;
+    -fx-background-color:  rgba(235, 170, 93, .1) ;
 }

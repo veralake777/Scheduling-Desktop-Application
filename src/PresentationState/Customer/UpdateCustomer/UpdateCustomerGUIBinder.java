@@ -1,4 +1,4 @@
-package PresentationState.Customer;
+package PresentationState.Customer.UpdateCustomer;
 
 
 //import org.svenehrke.javafxdemos.PresentationState.infra.JavaFxWidgetBindings;

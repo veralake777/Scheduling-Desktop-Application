@@ -1,9 +1,11 @@
 package iluwatar;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import utils.Database.DBUtils;
@@ -13,21 +15,33 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-//        Font.loadFont(getClass().getResourceAsStream("../CSS/Fonts/LeagueSpartan-Bold.otf"), 35);
-//        Parent root = FXMLLoader.load(getClass().getResource(""));
-//        root.getStylesheets().addAll("/CSS/calendarPane.css", "/CSS/loginStyle.css", "/resources/app.css");
-        gridPane = new GridPane();
-        MainMenu mainMenu = new MainMenu();
-        WeekView weekView = new WeekView();
 
+        gridPane = new GridPane();
+        gridPane.addColumn(0);
+        gridPane.addColumn(1);
+
+        ColumnConstraints columnConstraintsCalendar = new ColumnConstraints();
+        columnConstraintsCalendar.setPercentWidth(15);
+
+        ColumnConstraints columnConstraintsWeek = new ColumnConstraints();
+        columnConstraintsWeek.setPercentWidth(85);
+
+        gridPane.getColumnConstraints().addAll(columnConstraintsCalendar, columnConstraintsWeek);
+        MainMenu mainMenu = new MainMenu();
+//        WeekView weekView = new WeekView();
+
+        // main menu
         gridPane.add(mainMenu.vBox, 0, 0);
-        gridPane.add(weekView.getWeekView(), 1, 0);
+
+        // dynamic view
+        ScrollPane week = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
+        gridPane.add(week, 1, 0);
 
         ScrollPane scroller = new ScrollPane(gridPane);
-        scroller.setMaxHeight(500);
         scroller.setFitToWidth(true);
         Scene scene = new Scene(scroller);
 //        scene.getStylesheets().add(getClass().getResource("calendar-view.css").toExternalForm());
+        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -36,8 +50,6 @@ public class Main extends Application {
         gridPane.getChildren().remove(1);
         gridPane.add(view, 1, 0);
     }
-
-
 
     public static void main(String[] args) throws ClassNotFoundException {
         // connect to Database

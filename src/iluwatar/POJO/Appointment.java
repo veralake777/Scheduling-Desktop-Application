@@ -164,23 +164,26 @@ public class Appointment {
 
     @Override
     public String toString() {
-        return   "Appointment{" +
-                "appointmentId=" + getId() +
-                ", customerId='" + getCustomerId() + '\'' +
-                ", userId=" + getUserId() + '\'' +
-                ", title=" + getTitle() + '\'' +
-                ", description=" + getDescription() +'\'' +
-                ", location=" + getLocation()  +'\'' +
-                ", contact=" + getContact()  +'\'' +
-                ", type=" + getType()  +'\'' +
-                ", url=" + getUrl()  +'\'' +
-                ", start=" + getStart()  +'\'' +
-                ", end=" + getEnd()  +'\'' +
-                ", createDate=" + getCreateDate()  +'\'' +
-                ", createdBy=" + getCreatedBy()  +'\'' +
-                ", lastUpdate=" + getLastUpdate()  +'\'' +
-                ", lastUpdateBy=" + getLastUpdateBy()  +'\'' +
-                '}';
+        return
+//                "Appointment{" +
+//                "appointmentId=" + getId() +
+//                ", customerId='" + getCustomerId() + '\n' +
+//                ", userId=" + getUserId() + '\'' +
+                "Title: " + getTitle() + System.getProperty("line.separator") +
+                "Description: " + getDescription() + System.getProperty("line.separator") +
+                "Customer: " + getCustomerId() + System.getProperty("line.separator") +
+                "Location: " + getLocation()  + System.getProperty("line.separator")+
+                "Contact: " + getContact()  + System.getProperty("line.separator")+
+                "Type: " + getType()  + System.getProperty("line.separator")+
+                "Url: " + getUrl()  + System.getProperty("line.separator") +
+                "Start: " + getStart()  + System.getProperty("line.separator") +
+                "End: " + getEnd()  + System.getProperty("line.separator")
+//                ", createDate=" + getCreateDate()  +'\'' +
+//                ", createdBy=" + getCreatedBy()  +'\'' +
+//                ", lastUpdate=" + getLastUpdate()  +'\'' +
+//                ", lastUpdateBy=" + getLastUpdateBy()  +'\'' +
+//                '}'
+                ;
     }
 
     @Override

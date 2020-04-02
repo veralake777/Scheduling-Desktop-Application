@@ -84,10 +84,10 @@ public class CalendarMonthController {
         // bottom prev next btnBar
 //        calendarMonthView.setBottom(getPrevNextBtnBar());
 //        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.BASELINE_RIGHT);
-        calendarMonthView.setMaxHeight(200);
-        calendarMonthView.setMaxHeight(200);
-        calendarMonthView.paddingProperty().setValue(new Insets(100, 0, 20, 50));
-
+        calendarMonthView.setMaxHeight(1000);
+        calendarMonthView.setMaxWidth(1000);
+        calendarMonthView.paddingProperty().setValue(new Insets(0, 5, 0, 25));
+        calendarMonthView.setStyle("-fx-border-color: GREY; -fx-border-width: 2; -fx-border-radius: 5;");
     }
 
     private HBox createAndConfigureHeader() {
@@ -129,6 +129,7 @@ public class CalendarMonthController {
         Button prevMonthBtn = new Button(btnTxt.getText());
         prevMonthBtn.setPadding(btnPadding);
         prevMonthBtn.setFont(btnFont);
+        // padding to move buttons right
         prevMonthBtn.setStyle("-fx-background-color: rgba(0, 0, 0, 0);");
 
         prevMonthBtn.setAlignment(Pos.CENTER);

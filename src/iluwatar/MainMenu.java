@@ -69,33 +69,33 @@ public class MainMenu {
 //        vBox.setStyle("-fx-background-color: #ebaa5d;" +
 //                "-fx-opacity: .5;");
         vBox.setFillWidth(true);
-        vBoxCalendar.getChildren().add(lblCalendar);
-        vBoxAppointments.getChildren().add(lblAppointments);
-        vBoxCustomers.getChildren().add(lblCustomers);
+//        vBoxCalendar.getChildren().add(lblCalendar);
+//        vBoxAppointments.getChildren().add(lblAppointments);
+//        vBoxCustomers.getChildren().add(lblCustomers);
 
-        vBoxCalendar.onMouseClickedProperty().set(event -> {
-            Label[] lblList = new Label[]{
-                    lblMonth,
-                    lblWeek
-            };
-            onClickDropDown(vBoxCalendar, lblList);
-        });
-
-        vBoxAppointments.onMouseClickedProperty().set(event -> {
-            Label[] lblList = new Label[]{
-                    lblManageAppointments,
-                    lblAddNewAppointment
-            };
-            onClickDropDown(vBoxAppointments, lblList);
-        });
-
-        vBoxCustomers.onMouseClickedProperty().set(event -> {
-            Label[] lblList = new Label[]{
-                    lblManageCustomers,
-                    lblAddNewCustomer
-            };
-            onClickDropDown(vBoxCustomers, lblList);
-        });
+//        vBoxCalendar.onMouseClickedProperty().set(event -> {
+//            Label[] lblList = new Label[]{
+//                    lblMonth,
+//                    lblWeek
+//            };
+//            onClickDropDown(vBoxCalendar, lblList);
+//        });
+//
+//        vBoxAppointments.onMouseClickedProperty().set(event -> {
+//            Label[] lblList = new Label[]{
+//                    lblManageAppointments,
+//                    lblAddNewAppointment
+//            };
+//            onClickDropDown(vBoxAppointments, lblList);
+//        });
+//
+//        vBoxCustomers.onMouseClickedProperty().set(event -> {
+//            Label[] lblList = new Label[]{
+//                    lblManageCustomers,
+//                    lblAddNewCustomer
+//            };
+//            onClickDropDown(vBoxCustomers, lblList);
+//        });
 
         // set styling
 //        Parent root = FXMLLoader.load(getClass().getResource("../view/loginScreenView.fxml"));
@@ -136,6 +136,10 @@ public class MainMenu {
         lblAddNewCustomer.setStyle(subLblListStyle());
         lblAddNewCustomer.onMouseClickedProperty().set(event -> onClickLoadView(new Text("ADD CUSTOMERS VIEW")));
 
+        vBoxCalendar.getChildren().addAll(lblCalendar, lblMonth, lblWeek);
+        vBoxAppointments.getChildren().addAll(lblAppointments, lblManageAppointments, lblAddNewAppointment);
+        vBoxCustomers.getChildren().addAll(lblCustomers, lblManageCustomers, lblAddNewCustomer);
+
         lblReports.setStyle(mainLblsStyle());
         Label lblTitle = new Label("MAIN MENU");
         lblTitle.setStyle(mainLblsStyle());
@@ -149,15 +153,15 @@ public class MainMenu {
 
     };
 
-    private void onClickDropDown(VBox vBox, Label[] lblList) {
-        vBox.onMouseClickedProperty().set(event -> onClickHideList(vBox, lblList));
-        vBox.getChildren().addAll(lblList);
-    }
-
-    private void onClickHideList(VBox vBox, Label[] lblList) {
-        vBox.getChildren().removeAll(lblList);
-        vBox.onMouseClickedProperty().set(event -> onClickDropDown(vBox, lblList));
-    }
+//    private void onClickDropDown(VBox vBox, Label[] lblList) {
+//        vBox.onMouseClickedProperty().set(event -> onClickHideList(vBox, lblList));
+//        vBox.getChildren().addAll(lblList);
+//    }
+//
+//    private void onClickHideList(VBox vBox, Label[] lblList) {
+//        vBox.getChildren().removeAll(lblList);
+//        vBox.onMouseClickedProperty().set(event -> onClickDropDown(vBox, lblList));
+//    }
 
     private void onClickLoadView(Node view) {
         Main.loadView(view);

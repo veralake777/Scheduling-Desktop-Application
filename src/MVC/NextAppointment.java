@@ -28,7 +28,7 @@ public class NextAppointment {
     private void buildAppointment() throws Exception {
         vBox = new VBox(10);
         vBox.setAlignment(Pos.CENTER);
-        vBox.setStyle("-fx-background-color: GREY");
+        vBox.setStyle("-fx-background-color: GREY;");
         // db stuff
         try {
             final var dataSource = DBUtils.getMySQLDataSource();
@@ -43,11 +43,12 @@ public class NextAppointment {
 
             // header
             Text header = new Text("NEXT APPOINTMENT");
-            header.setFont(Font.font("Roboto", FontWeight.NORMAL, 32));
+            header.setFont(Font.font("Roboto", FontWeight.NORMAL, 20));
+            header.setWrappingWidth(250);
             if(nextAppointment != null) {
                 // appointment data
                 Text nextAppointmentString = new Text(nextAppointment.toString());
-                nextAppointmentString.setFont(Font.font("Roboto", FontWeight.NORMAL, 25));
+                nextAppointmentString.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));
                 vBox.getChildren().addAll(
                         header,
                         nextAppointmentString

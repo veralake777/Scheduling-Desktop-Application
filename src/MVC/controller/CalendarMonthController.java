@@ -47,7 +47,7 @@ public class CalendarMonthController {
 
     @FXML
     public void initialize() throws Exception {
-        createAndConfigureCalendar();
+        createAndConfigureSmallCalendar();
     }
 
 
@@ -75,20 +75,20 @@ public class CalendarMonthController {
             false, null);
 
 
-    public void createAndConfigureCalendar() throws ParseException, SQLException, ClassNotFoundException {
+    public void createAndConfigureSmallCalendar() throws ParseException, SQLException, ClassNotFoundException {
         calendarMonthView.setTop(createAndConfigureHeader());
-
         // center - calendar MVC.view
         calendarMonthView.setCenter(createAndConfigureDayPanes());
 
         // bottom prev next btnBar
 //        calendarMonthView.setBottom(getPrevNextBtnBar());
 //        BorderPane.setAlignment(getPrevNextBtnBar(), Pos.BASELINE_RIGHT);
-        calendarMonthView.setMaxHeight(1000);
-        calendarMonthView.setMaxWidth(1000);
+        calendarMonthView.setMaxHeight(100);
+        calendarMonthView.setMaxWidth(100);
         calendarMonthView.paddingProperty().setValue(new Insets(0, 5, 0, 25));
-        calendarMonthView.setStyle("-fx-border-color: GREY; -fx-border-width: 2; -fx-border-radius: 5;");
+        calendarMonthView.setStyle("-fx-border-color: GREY; -fx-border-width: 5; -fx-border-radius: 5;");
     }
+
 
     private HBox createAndConfigureHeader() {
         // header
@@ -260,6 +260,6 @@ public class CalendarMonthController {
         createAndConfigureDayPanes();
 
         // update calendar
-        createAndConfigureCalendar();
+        createAndConfigureSmallCalendar();
     }
 }

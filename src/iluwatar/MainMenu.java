@@ -1,10 +1,13 @@
 package iluwatar;
 
+import MVC.NextAppointment;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -101,26 +104,56 @@ public class MainMenu {
 //        Parent root = FXMLLoader.load(getClass().getResource("../view/loginScreenView.fxml"));
 //        root.getStylesheets().addAll("/CSS/calendarPane.css", "/CSS/loginStyle.css", "/resources/app.css");
         lblCalendar.setStyle(mainLblsStyle());
-        lblMonth.setStyle(subLblListStyle());
-        lblMonth.onMouseClickedProperty().set(event -> {
+        lblCalendar.onMouseClickedProperty().set(mouseEvent -> {
+            GridPane onLoad = new GridPane();
+            ColumnConstraints columnConstraintsCalendar = new ColumnConstraints();
+            columnConstraintsCalendar.setPercentWidth(20);
+            ColumnConstraints columnConstraintsWeek = new ColumnConstraints();
+            columnConstraintsWeek.setPercentWidth(80);
+//        RowConstraints rowConstraints = new RowConstraints(gridPane.getHeight());
+
+            BorderPane calendar = null;
+            VBox firstColumn = new VBox(10);
+            ScrollPane week = null;
+            firstColumn.setFillWidth(true);
             try {
-                BorderPane calendarMonth = FXMLLoader.load(getClass().getResource("../MVC/view/calendarMonthView.fxml"));
-                onClickLoadView(calendarMonth);
-            } catch (IOException e) {
-                System.out.println("CLASS CALENDAR VIEW IOEXCEPTION");
+                calendar = FXMLLoader.load(getClass().getResource("../MVC/view/calendarMonthView.fxml"));
+                week = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
+                firstColumn.getChildren().addAll(calendar, new NextAppointment().getNextAppointmentVBox());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            onLoad.getColumnConstraints().addAll(columnConstraintsCalendar, columnConstraintsWeek);
+            onLoad.addColumn(0, firstColumn);
+            onLoad.addColumn(1, week);
+
+            Main.loadView(onLoad);
         });
-        lblWeek.setStyle(subLblListStyle());
-        lblWeek.onMouseClickedProperty().set(event -> {
-            try {
-                ScrollPane week = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
-                onClickLoadView(week);
-            } catch (IOException e) {
-                System.out.println("CLASS WEEK VIEW IOEXCEPTION");
-                e.printStackTrace();
-            }
-        });
+//        lblMonth.setStyle(subLblListStyle());
+//        lblMonth.onMouseClickedProperty().set(event -> {
+//            try {
+//                BorderPane calendarMonth = FXMLLoader.load(getClass().getResource("../MVC/view/calendarMonthView.fxml"));
+//                calendarMonth.getTop().setStyle("-fx-font-size: 50;");
+//                calendarMonth.getCenter().setStyle("-fx-font-size: 30;");
+//                calendarMonth.setStyle("-fx-pref-width: 1000;" +
+//                        "-fx-pref-height: 750;");
+//                onClickLoadView(calendarMonth);
+//            } catch (IOException e) {
+//                System.out.println("CLASS CALENDAR VIEW IOEXCEPTION");
+//                e.printStackTrace();
+//            }
+//        });
+//        lblWeek.setStyle(subLblListStyle());
+//        lblWeek.onMouseClickedProperty().set(event -> {
+//            try {
+//                ScrollPane week = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
+//                onClickLoadView(week);
+//            } catch (IOException e) {
+//                System.out.println("CLASS WEEK VIEW IOEXCEPTION");
+//                e.printStackTrace();
+//            }
+//        });
 
 //        lblWeek.onMouseClickedProperty().set(event -> onClickLoadView(new WeekView().getWeekView()));
 
@@ -136,7 +169,7 @@ public class MainMenu {
         lblAddNewCustomer.setStyle(subLblListStyle());
         lblAddNewCustomer.onMouseClickedProperty().set(event -> onClickLoadView(new Text("ADD CUSTOMERS VIEW")));
 
-        vBoxCalendar.getChildren().addAll(lblCalendar, lblMonth, lblWeek);
+        vBoxCalendar.getChildren().addAll(lblCalendar);
         vBoxAppointments.getChildren().addAll(lblAppointments, lblManageAppointments, lblAddNewAppointment);
         vBoxCustomers.getChildren().addAll(lblCustomers, lblManageCustomers, lblAddNewCustomer);
 

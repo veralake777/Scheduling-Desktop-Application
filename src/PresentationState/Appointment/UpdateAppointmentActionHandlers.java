@@ -17,7 +17,6 @@ public class UpdateAppointmentActionHandlers {
 	public static InvalidationListener updateButtonHandler(UpdateAppointmentPresentationState ps) {
 		// update view and save to database
 		return observable ->
-
 		{
 			int id = ps.appointment.getAppointmentId();
 			try {
@@ -89,11 +88,23 @@ public class UpdateAppointmentActionHandlers {
 					e.printStackTrace();
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			} else {
 				System.out.println("canceled");
 			}
 			alert.showAndWait();
+		};
+	}
+
+	public static InvalidationListener onIdChange(UpdateAppointmentPresentationState ps, UpdateAppointmentController controller) {
+		return observable -> {
+			try {
+				ps.initData(controller.idComboBox.getValue());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		};
 	}
 }

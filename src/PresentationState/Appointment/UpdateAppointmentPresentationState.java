@@ -4,14 +4,21 @@ import DAO.AppointmentDao;
 import DAO.CustomerDao;
 import DAO.POJO.Appointment;
 import DAO.POJO.Customer;
+import iluwatar.DbDao.DbAppointmentDao;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import utils.Database.DBUtils;
 import utils.DateTime.DateTimeUtils;
 
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.stream.Stream;
 
 /**
  * PresentationState cannot only hold real data but also meta data used for the presentation.
@@ -38,28 +45,13 @@ public class UpdateAppointmentPresentationState {
 	public final StringProperty endDate = new SimpleStringProperty();
 	public final StringProperty endTime = new SimpleStringProperty();
 
+	public ObservableList<Integer> ids = FXCollections.observableArrayList();
+
 	public void initBinding() {
 		/**
 		 * The purpose of initBinding() is to bind internal fields of PresentationState to each other
 		 * (e.g. customerName automatically changes when appointmentId changes).
 		 */
-
-		id.addListener((observable, oldValue, newValue) -> {
-			try {
-				if(!id.getValue().equals("")){
-					// TODO check of appt id exists
-					try {
-						initData(Integer.parseInt(id.getValue()));
-					} catch (ParseException | SQLException | ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-			} catch (NumberFormatException | NullPointerException e) {
-				System.out.println("NUMBER IS WRONG OR NULL VALUE");
-//				e.printStackTrace();
-			}
-		});
-
 		startDate.addListener((observable, oldValue, newValue) -> {
 //			startDate.getValue();
 //			datePicker.getEditor().getText();
@@ -79,7 +71,10 @@ public class UpdateAppointmentPresentationState {
 	 * @throws ClassNotFoundException
 	 *
 	 */
-	public void initData(int appointmentId) throws ParseException, SQLException, ClassNotFoundException {
+	public void initData(int appointmentId) throws Exception {
+		if(ids.isEmpty()) {
+			setIds();
+		}
 		appointment = AppointmentDao.getAppointment(appointmentId);
 		// get customerName
 		assert appointment != null;
@@ -111,5 +106,35 @@ public class UpdateAppointmentPresentationState {
 		startTime.setValue(DateTimeUtils.getHoursAndMinutes(appointment.getStart()));
 		endTime.setValue(DateTimeUtils.getHoursAndMinutes(appointment.getEnd()));
 
+	}
+
+
+	private void newAppointment() {
+		customer.setValue("");
+		customerContact.setValue("");
+		userId.setValue("1");
+		title.setValue("");
+		description.setValue("");
+		location.setValue("");
+		type.setValue("");
+		url.setValue("");
+
+
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+		startTime.setValue(dtf.format(now));
+		endTime.setValue(dtf.format(now.plusHours(1)));
+
+		dtf = DateTimeFormatter.ofPattern("YYYY-mm-dd");
+
+		startDate.setValue(dtf.format(now));
+		endDate.setValue(dtf.format(now));
+	}
+
+	private void setIds() throws Exception {
+		Stream<iluwatar.POJO.Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+		appointmentStream.forEach(a->{
+			ids.add(a.getId());
+		});
 	}
 }

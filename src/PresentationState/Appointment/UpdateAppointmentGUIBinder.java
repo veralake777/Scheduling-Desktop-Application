@@ -18,15 +18,15 @@ public class UpdateAppointmentGUIBinder {
 		this.presentationState = presentationState;
 	}
 
-	public void bindAndInitialize() throws ParseException, SQLException, ClassNotFoundException {
+	public void bindAndInitialize() throws Exception {
 		presentationState.initBinding();
 		initWidgetBinding();
 		initActionHandlers();
 		presentationState.initData(1);
 	}
 
-	private void initWidgetBinding() {
-		JavaFxWidgetBindings.bindTextField(controller.idTxt, presentationState.id);
+	private void initWidgetBinding() throws ParseException, SQLException, ClassNotFoundException {
+//		JavaFxWidgetBindings.bindTextField(controller.idTxt, presentationState.id);
 		JavaFxWidgetBindings.bindTextField(controller.customerTxt, presentationState.customer);
 		JavaFxWidgetBindings.bindTextField(controller.userIdTxt, presentationState.userId);
 		JavaFxWidgetBindings.bindTextField(controller.titleTxt, presentationState.title);
@@ -39,10 +39,13 @@ public class UpdateAppointmentGUIBinder {
 		JavaFxWidgetBindings.bindTextField(controller.startTimeTxt, presentationState.startTime);
 		JavaFxWidgetBindings.bindDatePicker(controller.endDatePicker, presentationState.endDate);
 		JavaFxWidgetBindings.bindTextField(controller.endTimeTxt, presentationState.endTime);
+		JavaFxWidgetBindings.bindListToComboBox(controller.idComboBox, presentationState.ids);
+
 //		JavaFxWidgetBindings.bindLabel(controller.greetingLabel, presentationState.greeting);
 	}
 
-	private void initActionHandlers() throws SQLException, ParseException {
+	private void initActionHandlers() throws SQLException, ParseException, ClassNotFoundException {
 		JavaFxWidgetBindings.bindButton(controller.updateButton, UpdateAppointmentActionHandlers.updateButtonHandler(presentationState));
+		JavaFxWidgetBindings.bindComboBox(controller.idComboBox, UpdateAppointmentActionHandlers.onIdChange(presentationState, controller));
 	}
 }

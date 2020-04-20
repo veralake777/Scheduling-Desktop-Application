@@ -3,6 +3,9 @@ package MVC.controller;
 import DAO.AppointmentDao;
 import DAO.POJO.Appointment;
 import MVC.view.AppointmentVBox;
+import PresentationState.Appointment.JavaFxApplications;
+import PresentationState.Appointment.UpdateAppointmentGUIBinder;
+import PresentationState.Appointment.UpdateAppointmentPresentationState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +32,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
+
+import static PresentationState.Appointment.UpdateAppointmentConfig.*;
 
 public class WeekViewController {
     @FXML
@@ -100,7 +105,9 @@ public class WeekViewController {
         for (int i = 1 ; i < numCols ; i++) {
             for (int j = 2; j < numRows; j++) {
                 VBox addBox = new VBox();
-                addBox.getChildren().addAll(new Label("test"));
+                Label label = new Label("Add");
+
+                addBox.getChildren().addAll(label);
                 addBox.setMinSize(150, 85);
                 addBox.setAlignment(Pos.CENTER);
                 BorderStroke leftBorder = new BorderStroke(Color.WHITE, Color.LIGHTGRAY, Color.LIGHTGRAY, Color.WHITE,
@@ -116,6 +123,48 @@ public class WeekViewController {
                 }
 
 //                addBox.setOnMouseClicked(mouseEvent -> onMouseClickedEmptyAppointmentPopup(mouseEvent, addBox));
+                addBox.onMouseClickedProperty().set(mouseEvent -> {
+                    addBox.getChildren().clear();
+                    Stage popup=new Stage();
+
+                    popup.initModality(Modality.APPLICATION_MODAL);
+                    popup.setTitle("Add Appointment");
+
+
+                    Label label1= new Label("Add new appointment.");
+                    Button closeBtn= new Button("Close this pop up window");
+                    Button addBtn = new Button("Add");
+                    closeBtn.setOnAction(e -> popup.close());
+
+
+                    VBox layout= new VBox(10);
+                    layout.getChildren().addAll(label1, closeBtn, addBtn);
+                    layout.setAlignment(Pos.CENTER);
+
+                    FXMLLoader loader = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
+                    try {
+                        loader.load();
+                        new UpdateAppointmentGUIBinder(loader.getController(), new UpdateAppointmentPresentationState()).bindAndInitialize();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    Scene scene = new Scene(loader.getRoot());
+                    scene.getStylesheets().add(getClass().getResource(CSS_URL).toExternalForm());
+
+//                    Scene scene1= new Scene(PresentationState.Appointment., 300, 250);
+                    popup.setScene(scene);
+                    popup.setTitle(loader.getResources().getString("appointmentTitle"));
+                    popup.showAndWait();
+                });
                 gridPaneWeekView.add(addBox, i, j);
             }
 

@@ -88,7 +88,8 @@
          </padding>
       </Label>
       <TextField fx:id="userIdTxt" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <TextField fx:id="idTxt" text="auto" GridPane.columnIndex="2" />
+      <ComboBox fx:id="idComboBox" GridPane.columnIndex="2"/>
+<!--      <TextField fx:id="idTxt" text="auto" GridPane.columnIndex="2" />-->
       <TextField fx:id="customerTxt" text="get customer by name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <TextField fx:id="titleTxt" text="title" GridPane.columnIndex="2" GridPane.rowIndex="3" />
       <TextField fx:id="descriptionTxt" text="description" GridPane.columnIndex="2" GridPane.rowIndex="4" />

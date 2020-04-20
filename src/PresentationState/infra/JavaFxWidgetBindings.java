@@ -16,7 +16,6 @@ public class JavaFxWidgetBindings {
 
 	public static void bindTextField(TextField textField, StringProperty stringProperty) {
 		textField.textProperty().bindBidirectional(stringProperty);
-
 	}
 	public static void bindLabel(Label label, StringProperty stringProperty) {
 		label.textProperty().bind(stringProperty);
@@ -29,7 +28,7 @@ public class JavaFxWidgetBindings {
 		datePicker.promptTextProperty().bind(stringProperty);
 	}
 
-	// binding is included in combobox so populating instead for City and Country
+
 	public static void populateCityComboBox(ComboBox<City> cityComboBox, ObservableList<City> observableList) throws ParseException, SQLException, ClassNotFoundException {
 		observableList.sort(Comparator.comparing(City::getCity));
 		cityComboBox.setItems(observableList);
@@ -92,6 +91,14 @@ public class JavaFxWidgetBindings {
 				return null; // No conversion fromString needed.
 			}
 		});
+	}
+
+	public static void bindComboBox(ComboBox comboBox, InvalidationListener invalidationListener) {
+		comboBox.setOnAction(event -> triggerAction(invalidationListener));
+	}
+
+	public static void bindListToComboBox(ComboBox<Integer> idComboBox, ObservableList<Integer> ids) {
+		idComboBox.setItems(ids);
 	}
 
 	public static void triggerAction(InvalidationListener invalidationListener) {

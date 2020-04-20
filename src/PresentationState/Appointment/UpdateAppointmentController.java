@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -47,6 +48,7 @@ public class UpdateAppointmentController implements Initializable {
     public DatePicker endDatePicker;
     @FXML
     public TextField endTimeTxt;
+    public ComboBox<Integer> idComboBox;
 
 
     public void onActionUpdate(ActionEvent actionEvent) {
@@ -60,6 +62,8 @@ public class UpdateAppointmentController implements Initializable {
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

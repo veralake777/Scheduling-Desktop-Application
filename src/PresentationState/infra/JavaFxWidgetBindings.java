@@ -97,8 +97,8 @@ public class JavaFxWidgetBindings {
 		comboBox.setOnAction(event -> triggerAction(invalidationListener));
 	}
 
-	public static void bindListToComboBox(ComboBox<Integer> idComboBox, ObservableList<Integer> ids) {
-		idComboBox.setItems(ids);
+	public static void bindListToComboBox(ComboBox comboBox, ObservableList list) {
+		comboBox.setItems(list);
 	}
 
 	public static void triggerAction(InvalidationListener invalidationListener) {

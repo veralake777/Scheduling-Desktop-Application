@@ -1,23 +1,21 @@
 package PresentationState.Appointment;
 
-import DAO.AppointmentDao;
 import DAO.CustomerDao;
-import DAO.POJO.Appointment;
 import DAO.POJO.Customer;
 import iluwatar.DbDao.DbAppointmentDao;
+import iluwatar.DbDao.DbCustomerDao;
+import iluwatar.POJO.Appointment;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import utils.Database.DBUtils;
-import utils.DateTime.DateTimeUtils;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -28,10 +26,11 @@ import java.util.stream.Stream;
 
 public class UpdateAppointmentPresentationState {
 	//get appointment information
-	Appointment appointment;
+	Optional<Appointment> appointment;
+	Customer customer;
 
 	public final StringProperty id = new SimpleStringProperty();
-	public final StringProperty customer = new SimpleStringProperty();
+	public final StringProperty customerName = new SimpleStringProperty();
 	public final StringProperty customerContact = new SimpleStringProperty();
 
 	public final StringProperty userId = new SimpleStringProperty();
@@ -46,6 +45,7 @@ public class UpdateAppointmentPresentationState {
 	public final StringProperty endTime = new SimpleStringProperty();
 
 	public ObservableList<Integer> ids = FXCollections.observableArrayList();
+	public ObservableList<String> customerNames = FXCollections.observableArrayList();
 
 	public void initBinding() {
 		/**
@@ -75,42 +75,47 @@ public class UpdateAppointmentPresentationState {
 		if(ids.isEmpty()) {
 			setIds();
 		}
-		appointment = AppointmentDao.getAppointment(appointmentId);
+
+		if(customerNames.isEmpty()) {
+			setCustomerNames();
+		}
+		appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
 		// get customerName
 		assert appointment != null;
-		Customer cust = CustomerDao.getCustomerById(appointment.getCustomerId());
+		customer = CustomerDao.getCustomerById(appointment.get().getCustomerId());
 
-		id.setValue(String.valueOf(appointment.getAppointmentId()));
+		id.setValue(String.valueOf(appointment.get().getCustomerId()));
 
-		assert cust != null;
-		customer.setValue(String.valueOf(cust.getName()));
-		userId.setValue(String.valueOf(appointment.getUserId()));
-		customerContact.setValue(String.valueOf(appointment.getContact()));
-		title.setValue(String.valueOf(appointment.getTitle()));
-		description.setValue(String.valueOf(appointment.getDescription()));
-		location.setValue(String.valueOf(appointment.getLocation()));
-		url.setValue(String.valueOf(appointment.getUrl()));
+		assert customer != null;
+		this.customerName.setValue(String.valueOf(customer.getName()));
+		userId.setValue(String.valueOf(appointment.get().getUserId()));
+		customerContact.setValue(String.valueOf(appointment.get().getContact()));
+		title.setValue(String.valueOf(appointment.get().getTitle()));
+		description.setValue(String.valueOf(appointment.get().getDescription()));
+		location.setValue(String.valueOf(appointment.get().getLocation()));
+		url.setValue(String.valueOf(appointment.get().getUrl()));
 
 		// DateTime elements
 		// format YYYY/MM/DD
 
-		Calendar startCal = appointment.getStart();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String dateStr = format.format(startCal.getTime());
-		startDate.setValue(dateStr);
+//		Calendar startCal = DateTimeUtils.stringToCalendar(appointment.get().getStart());
+//		Calendar startCal = appointment.get().getStart();
+//		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//		String dateStr = format.format(startCal.getTime());
+		startDate.setValue( appointment.get().getStart());
 
-		Calendar endCal = appointment.getEnd();
-		dateStr = format.format(endCal.getTime());
-		endDate.setValue(dateStr);
+//		Calendar endCal =  DateTimeUtils.stringToCalendar(appointment.get().getEnd());
+//		dateStr = format.format(endCal.getTime());
+		endDate.setValue(appointment.get().getEnd());
 		// format HH:mm
-		startTime.setValue(DateTimeUtils.getHoursAndMinutes(appointment.getStart()));
-		endTime.setValue(DateTimeUtils.getHoursAndMinutes(appointment.getEnd()));
+//		startTime.setValue(String.valueOf(startCal.getTime()));
+//		endTime.setValue(String.valueOf(endCal.getTime()));
 
 	}
 
 
 	private void newAppointment() {
-		customer.setValue("");
+		customerName.setValue("");
 		customerContact.setValue("");
 		userId.setValue("1");
 		title.setValue("");
@@ -135,6 +140,13 @@ public class UpdateAppointmentPresentationState {
 		Stream<iluwatar.POJO.Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
 		appointmentStream.forEach(a->{
 			ids.add(a.getId());
+		});
+	}
+
+	private void setCustomerNames() throws Exception {
+		Stream<iluwatar.POJO.Customer> customerStream = new DbCustomerDao((DBUtils.getMySQLDataSource())).getAll();
+		customerStream.forEach(c->{
+			customerNames.add(c.getCustomerName());
 		});
 	}
 }

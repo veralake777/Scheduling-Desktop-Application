@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -97,8 +98,10 @@ public class DbAppointmentDao implements AppointmentDao {
                 resultSet.getString("contact"),
                 resultSet.getString("type"),
                 resultSet.getString("url"),
-                String.valueOf(resultSet.getDate("start")),
-                String.valueOf(resultSet.getDate("end")),
+                String.valueOf(resultSet.getDate("start", Calendar.getInstance())),
+                // getDate(String columnLabel, Calendar cal)
+                //Retrieves the value of the designated column in the current row of this ResultSet object as a java.sql.Date object in the Java programming language.
+                String.valueOf(resultSet.getDate("end", Calendar.getInstance())),
                 String.valueOf(resultSet.getDate("createDate")),
                 resultSet.getString("createdBy"),
                 String.valueOf(resultSet.getDate("lastUpdate")),

@@ -89,8 +89,7 @@
       </Label>
       <TextField fx:id="userIdTxt" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
       <ComboBox fx:id="idComboBox" GridPane.columnIndex="2"/>
-<!--      <TextField fx:id="idTxt" text="auto" GridPane.columnIndex="2" />-->
-      <TextField fx:id="customerTxt" text="get customer by name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+      <ComboBox fx:id="customerComboBox" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <TextField fx:id="titleTxt" text="title" GridPane.columnIndex="2" GridPane.rowIndex="3" />
       <TextField fx:id="descriptionTxt" text="description" GridPane.columnIndex="2" GridPane.rowIndex="4" />
       <TextField fx:id="locationTxt" text="where will you have this meeting?" GridPane.columnIndex="2" GridPane.rowIndex="5" />
@@ -101,8 +100,8 @@
       <TextField fx:id="endTimeTxt" text="When will this appointment end?" GridPane.columnIndex="2" GridPane.rowIndex="13" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="14">
         <buttons>
-          <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onActionUpdate" text="Update" />
-            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onActionExit" text="Cancel" />
+          <Button fx:id="updateButton" mnemonicParsing="false" text="Update" />
+           <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
         </buttons>
       </ButtonBar>
    </children>

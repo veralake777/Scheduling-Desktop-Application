@@ -27,7 +27,7 @@ public class UpdateAppointmentGUIBinder {
 
 	private void initWidgetBinding() throws ParseException, SQLException, ClassNotFoundException {
 //		JavaFxWidgetBindings.bindTextField(controller.idTxt, presentationState.id);
-		JavaFxWidgetBindings.bindTextField(controller.customerTxt, presentationState.customer);
+//		JavaFxWidgetBindings.bindTextField(controller.customerTxt, presentationState.customer);
 		JavaFxWidgetBindings.bindTextField(controller.userIdTxt, presentationState.userId);
 		JavaFxWidgetBindings.bindTextField(controller.titleTxt, presentationState.title);
 		JavaFxWidgetBindings.bindTextField(controller.descriptionTxt, presentationState.description);
@@ -40,12 +40,19 @@ public class UpdateAppointmentGUIBinder {
 		JavaFxWidgetBindings.bindDatePicker(controller.endDatePicker, presentationState.endDate);
 		JavaFxWidgetBindings.bindTextField(controller.endTimeTxt, presentationState.endTime);
 		JavaFxWidgetBindings.bindListToComboBox(controller.idComboBox, presentationState.ids);
+		JavaFxWidgetBindings.bindListToComboBox(controller.customerComboBox, presentationState.customerNames);
 
 //		JavaFxWidgetBindings.bindLabel(controller.greetingLabel, presentationState.greeting);
 	}
 
-	private void initActionHandlers() throws SQLException, ParseException, ClassNotFoundException {
+	private void initActionHandlers() {
+		// BUTTONS
 		JavaFxWidgetBindings.bindButton(controller.updateButton, UpdateAppointmentActionHandlers.updateButtonHandler(presentationState));
-		JavaFxWidgetBindings.bindComboBox(controller.idComboBox, UpdateAppointmentActionHandlers.onIdChange(presentationState, controller));
+		JavaFxWidgetBindings.bindButton(controller.cancelButton, UpdateAppointmentActionHandlers.exitProgram(controller));
+
+		// COMBO BOXES
+		JavaFxWidgetBindings.bindComboBox(controller.idComboBox, UpdateAppointmentActionHandlers.onIdComboBoxChange(presentationState, controller));
+		JavaFxWidgetBindings.bindComboBox(controller.customerComboBox, UpdateAppointmentActionHandlers.onCustomerComboBoxChange(presentationState, controller));
+
 	}
 }

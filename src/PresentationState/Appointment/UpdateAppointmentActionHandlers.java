@@ -1,16 +1,18 @@
 package PresentationState.Appointment;
 
 import DAO.AppointmentDao;
-import DAO.CustomerDao;
+import iluwatar.DbDao.DbCustomerDao;
 import javafx.beans.InvalidationListener;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
+import utils.Database.DBUtils;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 public class UpdateAppointmentActionHandlers {
@@ -18,9 +20,9 @@ public class UpdateAppointmentActionHandlers {
 		// update view and save to database
 		return observable ->
 		{
-			int id = ps.appointment.getAppointmentId();
+			int id = ps.appointment.get().getId();
 			try {
-				int customerId = Objects.requireNonNull(CustomerDao.getCustomerByName(ps.customer.getValue())).getId();
+				int customerId = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(ps.appointment.get().getCustomerId()).get().getId();
 				AppointmentDao.updateAppointmentWithString("customerId", String.valueOf(customerId), id);
 
 				// user
@@ -66,7 +68,9 @@ public class UpdateAppointmentActionHandlers {
 //				} else {
 //
 //				}
-			} catch (ClassNotFoundException | ParseException | SQLException e) {
+			} catch (ClassNotFoundException | ParseException | SQLException | IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 //			//ALERT ask if they want to commit changes to the database. On ok, QueryUtils.commitQuery;
@@ -98,13 +102,26 @@ public class UpdateAppointmentActionHandlers {
 		};
 	}
 
-	public static InvalidationListener onIdChange(UpdateAppointmentPresentationState ps, UpdateAppointmentController controller) {
+	public static InvalidationListener onIdComboBoxChange(UpdateAppointmentPresentationState ps, UpdateAppointmentController controller) {
 		return observable -> {
 			try {
 				ps.initData(controller.idComboBox.getValue());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		};
+	}
+
+	public static InvalidationListener onCustomerComboBoxChange(UpdateAppointmentPresentationState ps, UpdateAppointmentController controller) {
+		return observable -> {
+			System.out.println("CUSTOMER CHANGED");
+		};
+	}
+
+	public static InvalidationListener exitProgram(UpdateAppointmentController controller) {
+		return observable -> {
+			Stage stage = (Stage) controller.cancelButton.getScene().getWindow();
+			stage.close();
 		};
 	}
 }

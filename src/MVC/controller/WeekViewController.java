@@ -1,11 +1,12 @@
 package MVC.controller;
 
-import DAO.AppointmentDao;
 import DAO.POJO.Appointment;
 import MVC.view.AppointmentVBox;
+import PresentationState.Appointment.AddAppointment.AddAppointmentController;
+import PresentationState.Appointment.AddAppointment.AddAppointmentGUIBinder;
+import PresentationState.Appointment.AddAppointment.AddAppointmentPresentationState;
 import PresentationState.Appointment.JavaFxApplications;
-import PresentationState.Appointment.UpdateAppointmentGUIBinder;
-import PresentationState.Appointment.UpdateAppointmentPresentationState;
+import iluwatar.DbDao.DbAppointmentDao;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +26,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import utils.Database.DBUtils;
 import utils.DateTime.DateTimeUtils;
 
 import java.awt.event.MouseEvent;
@@ -32,8 +34,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Optional;
 
-import static PresentationState.Appointment.UpdateAppointmentConfig.*;
+import static PresentationState.Appointment.AddAppointment.AddAppointmentConfig.*;
 
 public class WeekViewController {
     @FXML
@@ -67,7 +70,7 @@ public class WeekViewController {
 
     CalendarMonthController calendarController = new CalendarMonthController();
 
-    public void buildWeekView() throws IOException, ParseException, SQLException, ClassNotFoundException {
+    public void buildWeekView() throws Exception {
         /**
          * ScrollPane
          */
@@ -141,10 +144,12 @@ public class WeekViewController {
                     layout.getChildren().addAll(label1, closeBtn, addBtn);
                     layout.setAlignment(Pos.CENTER);
 
+
                     FXMLLoader loader = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
+                    FXMLLoader loader1 = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
                     try {
                         loader.load();
-                        new UpdateAppointmentGUIBinder(loader.getController(), new UpdateAppointmentPresentationState()).bindAndInitialize();
+                        new AddAppointmentGUIBinder(loader.getController(), new AddAppointmentPresentationState()).bindAndInitialize();
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ParseException e) {
@@ -171,21 +176,20 @@ public class WeekViewController {
             /**
              * Appointment View
              */
-            Appointment appointment = AppointmentDao.getAppointment(1);
+            Optional<iluwatar.POJO.Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(1);
 
             VBox apptBox = new VBox();
-            apptBox.getChildren().addAll(new Label(appointment.getType()));
-            apptBox.setId(String.valueOf(appointment.getAppointmentId()));
+            apptBox.getChildren().addAll(new Label(appointment.get().getType()));
+            apptBox.setId(String.valueOf(appointment.get().getId()));
             apptBox.setOnMouseClicked(mouseEvent -> {
-                try {
-                    UpdateAppointmentController updateAppointmentController = new UpdateAppointmentController();
-                    updateAppointmentController.setAppointment(appointment);
-                    updateAppointmentController.openUpdateAppointment(mouseEvent, appointment);
+//                try {
+//                    UpdateAppointmentController updateAppointmentController = new UpdateAppointmentController();
+//                    updateAppointmentController.setAppointment(appointment.get());
+//                    updateAppointmentController.openUpdateAppointment(mouseEvent, appointment);
 
-
-                } catch (IOException | ClassNotFoundException | SQLException | ParseException e) {
-                    e.printStackTrace();
-                }
+//                } catch (IOException | ClassNotFoundException | SQLException | ParseException e) {
+//                    e.printStackTrace();
+//                }
             });
 
             gridPaneWeekView.add(apptBox, 3, 5 );
@@ -312,7 +316,7 @@ public class WeekViewController {
         stage = (Stage)((VBox)event.getSource()).getScene().getWindow();
 
         // load add part view
-        FXMLLoader loader = FXMLLoader.load(WeekViewController.class.getResource("../view/updateAppointment.fxml"));
+        FXMLLoader loader = FXMLLoader.load(WeekViewController.class.getResource("../view/addAppointment.fxml"));
 //        UpdateAppointmentController controller = loader.getController();
 //        controller.receiveAppointment(appointment);
         loader.getController();
@@ -371,7 +375,7 @@ public class WeekViewController {
         // Load in the .fxml file:
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/updateAppointment.fxml"));
         // get controller
-        UpdateAppointmentController controller = new UpdateAppointmentController();
+        AddAppointmentController controller = new AddAppointmentController();
         // set appointment details
 
 
@@ -381,7 +385,7 @@ public class WeekViewController {
         // Set the scene:
         Stage stage = new Stage();
         stage.setScene(new Scene(root, 550, 232));
-        stage.setTitle("Update Appointment");
+        stage.setTitle("Add Appointment");
         stage.resizableProperty().setValue(false);
 //        stage.getIcons().add(new Image("file:icon.png"));
         stage.showAndWait();

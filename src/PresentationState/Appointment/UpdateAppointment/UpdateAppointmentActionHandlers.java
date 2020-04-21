@@ -1,4 +1,4 @@
-package PresentationState.Appointment;
+package PresentationState.Appointment.UpdateAppointment;
 
 import DAO.AppointmentDao;
 import iluwatar.DbDao.DbCustomerDao;

@@ -1,5 +1,6 @@
-package PresentationState.Appointment;
+package PresentationState.Appointment.UpdateAppointment;
 
+import PresentationState.Appointment.JavaFxApplications;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 //import static org.svenehrke.javafxdemos.greetfxml.ApplicationConfig.*;
-import static PresentationState.Appointment.UpdateAppointmentConfig.*;
+import static PresentationState.Appointment.UpdateAppointment.UpdateAppointmentConfig.*;
 
 public class RunUpdateAppointment extends Application {
 

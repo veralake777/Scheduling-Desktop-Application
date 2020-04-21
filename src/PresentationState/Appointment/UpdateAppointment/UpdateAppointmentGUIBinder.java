@@ -1,4 +1,4 @@
-package PresentationState.Appointment;
+package PresentationState.Appointment.UpdateAppointment;
 
 
 //import org.svenehrke.javafxdemos.PresentationState.infra.JavaFxWidgetBindings;

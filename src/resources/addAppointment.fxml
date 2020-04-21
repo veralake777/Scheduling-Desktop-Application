@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="CENTER" hgap="10.0" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PresentationState.Appointment.UpdateAppointment.UpdateAppointmentController">
+<GridPane alignment="CENTER" hgap="10.0" prefHeight="400.0" prefWidth="600.0" vgap="10.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="PresentationState.Appointment.AddAppointment.AddAppointmentController">
    <columnConstraints>
       <ColumnConstraints prefWidth="75.0" />
       <ColumnConstraints />
@@ -88,7 +88,6 @@
          </padding>
       </Label>
       <TextField fx:id="userIdTxt" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <ComboBox fx:id="idComboBox" GridPane.columnIndex="2"/>
       <ComboBox fx:id="customerComboBox" GridPane.columnIndex="2" GridPane.rowIndex="1" />
       <TextField fx:id="titleTxt" text="title" GridPane.columnIndex="2" GridPane.rowIndex="3" />
       <TextField fx:id="descriptionTxt" text="description" GridPane.columnIndex="2" GridPane.rowIndex="4" />
@@ -100,7 +99,7 @@
       <TextField fx:id="endTimeTxt" text="When will this appointment end?" GridPane.columnIndex="2" GridPane.rowIndex="13" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="14">
         <buttons>
-          <Button fx:id="updateButton" mnemonicParsing="false" text="Update" />
+          <Button fx:id="addButton" mnemonicParsing="false" text="Add" />
            <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
         </buttons>
       </ButtonBar>

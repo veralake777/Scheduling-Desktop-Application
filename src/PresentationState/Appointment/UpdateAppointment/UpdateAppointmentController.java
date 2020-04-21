@@ -1,4 +1,4 @@
-package PresentationState.Appointment;
+package PresentationState.Appointment.UpdateAppointment;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

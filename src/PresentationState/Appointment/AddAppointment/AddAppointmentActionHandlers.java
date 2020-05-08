@@ -93,7 +93,7 @@ public class AddAppointmentActionHandlers {
 
 	public static InvalidationListener onCustomerComboBoxChange(AddAppointmentPresentationState ps, AddAppointmentController controller) {
 		return observable -> {
-			System.out.println("wtf");
+			ps.customerName.setValue(controller.customerComboBox.getSelectionModel().getSelectedItem());
 			ps.clear();
 		};
 	}

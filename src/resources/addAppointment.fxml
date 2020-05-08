@@ -94,7 +94,7 @@
       <TextField fx:id="locationTxt" text="where will you have this meeting?" GridPane.columnIndex="2" GridPane.rowIndex="5" />
       <TextField fx:id="contactTxt" text="customer contact info" GridPane.columnIndex="2" GridPane.rowIndex="6" />
       <TextField fx:id="typeTxt" text="what type of appointment is this?" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-      <TextField fx:id="urlTxt" text="not needed" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+      <TextField fx:id="urlTxt" text="not needed" GridPane.columnIndex="2" GridPane.rowIndex="8" />sel
       <TextField fx:id="startTimeTxt" text="When will this appointment start?" GridPane.columnIndex="2" GridPane.rowIndex="10" />
       <TextField fx:id="endTimeTxt" text="When will this appointment end?" GridPane.columnIndex="2" GridPane.rowIndex="13" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="14">

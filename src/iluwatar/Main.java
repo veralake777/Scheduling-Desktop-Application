@@ -49,15 +49,15 @@ public class Main extends Application {
 
         BorderPane calendar = FXMLLoader.load(getClass().getResource("../MVC/view/calendarMonthView.fxml"));
 
-        ScrollPane week = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
+        ScrollPane weekColumn = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
 
-        VBox firstColumn = new VBox(10);
-        firstColumn.setFillWidth(true);
-        firstColumn.getChildren().addAll(calendar, new NextAppointment().getNextAppointmentVBox());
+        VBox monthColumn = new VBox(10);
+        monthColumn.setFillWidth(true);
+        monthColumn.getChildren().addAll(calendar, new NextAppointment().getNextAppointmentVBox());
 
         onLoad.getColumnConstraints().addAll(columnConstraintsCalendar, columnConstraintsWeek);
-        onLoad.addColumn(0, firstColumn);
-        onLoad.addColumn(1, week);
+        onLoad.addColumn(0, monthColumn);
+        onLoad.addColumn(1, weekColumn);
 //        calendar.setTranslateY(-680);
 //        onLoad.getChildren().get(0).setStyle("-fx-alignment: CENTER_TOP;");
 
@@ -72,7 +72,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void loadView(Node view) {
+    public static void loadDynamicView(Node view) {
         gridPane.getChildren().remove(1);
         gridPane.add(view, 1, 0);
     }

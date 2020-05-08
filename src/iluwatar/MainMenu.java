@@ -128,7 +128,7 @@ public class MainMenu {
             onLoad.addColumn(0, firstColumn);
             onLoad.addColumn(1, week);
 
-            Main.loadView(onLoad);
+            Main.loadDynamicView(onLoad);
         });
 //        lblMonth.setStyle(subLblListStyle());
 //        lblMonth.onMouseClickedProperty().set(event -> {
@@ -165,9 +165,15 @@ public class MainMenu {
 
         lblCustomers.setStyle(mainLblsStyle());
         lblManageCustomers.setStyle(subLblListStyle());
-        lblManageCustomers.onMouseClickedProperty().set(event -> onClickLoadView(new Text("MANAGE CUSTOMERS VIEW")));
+        lblManageCustomers.onMouseClickedProperty().set(event -> {
+            try {
+                onClickLoadView(new MyCustomersView().getGridPane());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         lblAddNewCustomer.setStyle(subLblListStyle());
-        lblAddNewCustomer.onMouseClickedProperty().set(event -> onClickLoadView(new Text("ADD CUSTOMERS VIEW")));
+        lblAddNewCustomer.onMouseClickedProperty().set(event -> onClickLoadView(new AddCustomer().getAddCustomerGridPane()));
 
         vBoxCalendar.getChildren().addAll(lblCalendar);
         vBoxAppointments.getChildren().addAll(lblAppointments, lblManageAppointments, lblAddNewAppointment);
@@ -197,7 +203,7 @@ public class MainMenu {
 //    }
 
     private void onClickLoadView(Node view) {
-        Main.loadView(view);
+        Main.loadDynamicView(view);
     }
 
     // Calendar - onClick dropDown

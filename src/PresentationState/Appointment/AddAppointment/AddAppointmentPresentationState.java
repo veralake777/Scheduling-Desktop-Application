@@ -80,7 +80,7 @@ public class AddAppointmentPresentationState {
 		}
 		appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
 		// get customerName
-		assert appointment != null;
+		assert appointment.isPresent();
 		customer = CustomerDao.getCustomerById(appointment.get().getCustomerId());
 
 		id.setValue(String.valueOf(appointment.get().getCustomerId()));

@@ -115,20 +115,16 @@ public class Address {
         this.lastUpdateBy = lastUpdateBy;
     }
 
-    @Override
+       @Override
     public String toString() {
-       return   "Address{" +
+        return   "Address{" +
                 "addressId=" + getId() +
                 ", address='" + getAddress() + '\'' +
                 ", address2=" + getAddress2() + '\'' +
                 ", cityId=" + getCityId() + '\'' +
                 ", postalCode=" + getPostalCode() +'\'' +
                 ", phone=" + getPhone()  +'\'' +
-                ", createDate=" + getCreateDate()  +'\'' +
-                ", createdBy=" + getCreatedBy()  +'\'' +
-                ", lastUpdate=" + getLastUpdate()  +'\'' +
-                ", lastUpdateBy=" + getLastUpdateBy()  +'\'' +
-               '}';
+                '}';
     }
 
     @Override

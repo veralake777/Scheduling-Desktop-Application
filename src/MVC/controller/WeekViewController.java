@@ -108,9 +108,9 @@ public class WeekViewController {
         for (int i = 1 ; i < numCols ; i++) {
             for (int j = 2; j < numRows; j++) {
                 VBox addBox = new VBox();
-                Label label = new Label("Add");
+                Label addLabel = new Label("Add");
 
-                addBox.getChildren().addAll(label);
+                addBox.getChildren().addAll(addLabel);
                 addBox.setMinSize(150, 85);
                 addBox.setAlignment(Pos.CENTER);
                 BorderStroke leftBorder = new BorderStroke(Color.WHITE, Color.LIGHTGRAY, Color.LIGHTGRAY, Color.WHITE,
@@ -150,14 +150,6 @@ public class WeekViewController {
                     try {
                         loader.load();
                         new AddAppointmentGUIBinder(loader.getController(), new AddAppointmentPresentationState()).bindAndInitialize();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

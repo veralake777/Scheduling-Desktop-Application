@@ -1,7 +1,5 @@
 package iluwatar;
 
-import iluwatar.POJO.City;
-import iluwatar.POJO.Country;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -23,6 +21,7 @@ public class AddCustomer {
      *
      * Button: HBox(Save, Cancel)
      */
+    ComboBoxes cb = new ComboBoxes();
     private Label customerNameLbl = new Label("Customer Name");
     private TextField customerNameTxt = new TextField("customer name");
     private Label address1Lbl = new Label("Address Line 1");
@@ -30,11 +29,11 @@ public class AddCustomer {
     private Label address2Lbl = new Label("Address Line 2");
     private TextField address2Txt = new TextField("address line 2");
     private Label cityLbl = new Label("City");
-    private ComboBox<City> cityComboBox = new ComboBox<City>();
+    private ComboBox<String> cityComboBox = cb.getCities();
     private Label postalCodeLbl = new Label("Postal Code");
     private TextField postalCodeTxt = new TextField("postal code");
     private Label countryLbl = new Label("Country");
-    private ComboBox<Country> countryComboBox = new ComboBox<Country>();
+    private ComboBox<String> countryComboBox = cb.getCountries();
     private Label phoneNumberLbl = new Label("Phone Number");
     private TextField phoneNumberTxt = new TextField("phone number");
     private Label activeLbl = new Label("Active?");
@@ -42,6 +41,9 @@ public class AddCustomer {
     private RadioButton activeNoBtn = new RadioButton("No");
     private Button saveBtn = new Button("Save");
     private Button cancelBtn = new Button("Cancel");
+
+    public AddCustomer() throws Exception {
+    }
 
     // Set one constraint at a time
     private void buildGridPane() {

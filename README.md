@@ -56,3 +56,47 @@ From these requirements, a system analyst at your company created solution state
    •   one additional report of your choice
    
 ## Provide the ability to track user activity by recording timestamps for user log-ins in a .txt file. Each new record should be appended to the log file, if the file already exists.
+
+#DATABASE MODIFICATIONS
+## Modifications used for simplifying CRUD operations
+- auto_increment id columns for customer, address, user, appointment tables
+- add default value to createDate, createdBy, lastUpdate, lastUpdateBy for customer, address, user, appointment tables
+
+## Stored Procedures
+Stored procedures in this application are use to increase readability within the Java code portion of the project
+NEW CUSTOMER STORED PROCEDURE
+```aidl
+-- procedure to handle inserting a new customer
+    -- handles the address table update if the address does not already exist
+    -- city does not need an if/else because the user is selecting from a combo box. if new cities need to be added
+    -- in the future then the databse worldCity table must be updated or the city table must be updated/modified to 
+    -- allow users to insert new cities 
+CREATE PROCEDURE new_customer
+    (
+       IN c_name  varchar(45),
+       IN c_address_1 varchar(50),
+       IN c_address_2 varchar(50),
+       IN c_city varchar(50),
+       IN c_postal_code varchar(10),
+       IN c_phone varchar(20),
+       IN c_active tinyint(1)
+     )
+     BEGIN
+		 
+         -- address table
+		 INSERT INTO address(addressId, address, address2, cityId, postalCode, phone)
+         VALUES (null, c_address_1, c_address_2, 
+         (SELECT cityId from city where city = c_city), c_postal_code, c_phone);
+         
+         -- customer table
+         IF EXISTS (SELECT addressId from address where address = c_address_1) THEN
+			INSERT INTO customer(customerId, customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
+			VALUES (null, c_name, (SELECT addressId from address where address = c_address_1), c_active, default, default, default, default);
+		ELSE
+			INSERT INTO customer(customerId, customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
+			VALUES (null, c_name, (SELECT max(addressId)+1), c_active, default, default, default, default);
+		END IF;
+     END // 
+
+-- to use the procedure `CALL new_customer(...)`
+```

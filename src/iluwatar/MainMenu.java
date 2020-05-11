@@ -173,7 +173,13 @@ public class MainMenu {
             }
         });
         lblAddNewCustomer.setStyle(subLblListStyle());
-        lblAddNewCustomer.onMouseClickedProperty().set(event -> onClickLoadView(new AddCustomer().getAddCustomerGridPane()));
+        lblAddNewCustomer.onMouseClickedProperty().set(event -> {
+            try {
+                onClickLoadView(new AddCustomer().getAddCustomerGridPane());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
         vBoxCalendar.getChildren().addAll(lblCalendar);
         vBoxAppointments.getChildren().addAll(lblAppointments, lblManageAppointments, lblAddNewAppointment);

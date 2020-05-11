@@ -5,6 +5,7 @@ import iluwatar.DbDao.DbCustomerDetailsDao;
 import iluwatar.POJO.Customer;
 import iluwatar.POJO.CustomerDetails;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -21,6 +22,9 @@ public class MyCustomersView {
     }
 
     /**
+     * ## Provide the ability to add, update, and delete customer records in the database, including name, address, and
+     * phone number.
+     *
      * Title: All Customers
      * Search: Label("Search"), TextInput("By Name, Address, Phone)
      * Add New: Button("New Customer")
@@ -29,7 +33,7 @@ public class MyCustomersView {
      *      Customer Name, Edit Button
      *      Customer Address
      *      Customer Phone
-     * Buttons (on Right): Page Up, Page Down
+     *
      */
 
     private class CustomerCard {
@@ -114,12 +118,13 @@ public class MyCustomersView {
             }
 
 
-            gridPane.setStyle("" +
+            gridPane.setStyle(
                     "-fx-border-width: 3.5; " +
                     "-fx-border-radius: 10; " +
                     "-fx-border-color: GREY;" +
                     "-fx-padding: 25, 25, 25, 25;" +
-                    "-fx-label-padding: 5;");
+                    "-fx-label-padding: 5;"
+            );
         }
 
         protected GridPane getCustomerCard() {
@@ -206,5 +211,8 @@ public class MyCustomersView {
                 e.printStackTrace();
             }
         });
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(customerCardsGridPane);
     };
 }

@@ -1,21 +1,25 @@
 package iluwatar;
 
 import MVC.NextAppointment;
+import iluwatar.DbDao.DbCustomerDao;
+import iluwatar.POJO.Customer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import utils.Database.DBUtils;
 
-import java.io.IOException;
+import java.util.stream.Stream;
 
 public class MainMenu {
     // main menu
-    public MainMenu() throws IOException {
+    public MainMenu() throws Exception {
         buildMainMenu();
     }
 
@@ -68,7 +72,7 @@ public class MainMenu {
                 "-fx-padding: 25 0;";
     };
 
-    private void buildMainMenu() throws IOException {
+    private void buildMainMenu() throws Exception {
 //        vBox.setStyle("-fx-background-color: #ebaa5d;" +
 //                "-fx-opacity: .5;");
         vBox.setFillWidth(true);
@@ -163,6 +167,29 @@ public class MainMenu {
         lblAddNewAppointment.setStyle(subLblListStyle());
         lblAddNewAppointment.onMouseClickedProperty().set(event -> onClickLoadView(new Text("ADD APPTS VIEW")));
 
+        // slide out menu
+        ObservableList<Customer> customers = FXCollections.observableArrayList();
+        Stream<Customer> customerStream = new DbCustomerDao(DBUtils.getMySQLDataSource()).getAll();
+
+        // add all customers as objects to a list
+        customerStream.forEach(customers::add);
+
+        // vbox for slide out menu
+        VBox customerMenu = new VBox(5);
+        customerMenu.setId("Customers");
+        customerMenu.setPrefWidth(200);
+
+        HBox searchBar = new HBox(10);
+        searchBar.getChildren().addAll(new Label("Search"), new TextField("by name, phone, address"));
+
+        customerMenu.getChildren().add(searchBar);
+
+        // add customer names to
+        customers.forEach(customer -> {customerMenu.getChildren().add(new Label(customer.getCustomerName()));});
+
+        customerMenu.setLayoutX(lblCustomers.getLayoutX());
+        customerMenu.setLayoutY(lblCustomers.getLayoutY());
+
         lblCustomers.setStyle(mainLblsStyle());
         lblManageCustomers.setStyle(subLblListStyle());
         lblManageCustomers.onMouseClickedProperty().set(event -> {
@@ -181,9 +208,20 @@ public class MainMenu {
             }
         });
 
+        //Adding event Filter
+        lblCustomers.addEventFilter(MouseEvent.MOUSE_ENTERED, mouseEvent -> vBoxCustomers.getChildren().add(customerMenu));
+        lblCustomers.addEventFilter(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
+            if(vBoxCustomers.getChildren().isEmpty()){
+                vBoxCustomers.getChildren().add(customerMenu);
+            } else {
+                vBoxCustomers.getChildren().remove(customerMenu);
+            }
+        });
+
         vBoxCalendar.getChildren().addAll(lblCalendar);
-        vBoxAppointments.getChildren().addAll(lblAppointments, lblManageAppointments, lblAddNewAppointment);
-        vBoxCustomers.getChildren().addAll(lblCustomers, lblManageCustomers, lblAddNewCustomer);
+        vBoxAppointments.getChildren().addAll(lblAppointments);
+        vBoxCustomers.getChildren().addAll(lblCustomers);
+
 
         lblReports.setStyle(mainLblsStyle());
         Label lblTitle = new Label("MAIN MENU");
@@ -228,5 +266,6 @@ public class MainMenu {
         // number of appointment types by month
         // the schedule for each consultant
         // one additional report of your choice
+
 
 }

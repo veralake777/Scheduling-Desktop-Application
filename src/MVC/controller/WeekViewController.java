@@ -74,7 +74,7 @@ public class WeekViewController {
         /**
          * ScrollPane
          */
-        scrollPaneWeekView.setFitToWidth(true);
+//        scrollPaneWeekView.setPrefWidth(Toolkit.getDefaultToolkit().getScreenSize().getWidth()*85);
         scrollPaneWeekView.setFitToHeight(true);
         /**
          * Grid Pane
@@ -209,15 +209,15 @@ public class WeekViewController {
             StackPane dateStack = new StackPane();
             dateStack.getChildren().addAll(dateCircle, dateText);
             dateStack.alignmentProperty().setValue(Pos.CENTER);
-            dateStack.translateXProperty().setValue(-15);
-            dateStack.paddingProperty().setValue(new Insets(20, 10, 20, 10));
+//            dateStack.translateXProperty().setValue();
+            dateStack.paddingProperty().setValue(new Insets(20, 10, 20, 20));
 
             // weekday name label
             Label nameLbl = new Label(dayNames[i]);
             nameLbl.alignmentProperty().setValue(Pos.CENTER);
             nameLbl.translateXProperty().setValue(50);
             nameLbl.setFont(new Font(20));
-            nameLbl.paddingProperty().setValue(new Insets(0, 0, 10, 0));
+            nameLbl.paddingProperty().setValue(new Insets(10, 10, 10, 10));
 
             // add both
             gridPaneWeekView.add(dateStack, i, 0);
@@ -260,7 +260,7 @@ public class WeekViewController {
             // create Label
             Label currentHourLbl = new Label(i + AM_PM);
             currentHourLbl.setStyle("-font-color: GREY");
-            currentHourLbl.setPadding(new Insets(50, 10, 0, 50));
+            currentHourLbl.setPadding(new Insets(50, 10, 0, 25));
             gridPaneWeekView.add(currentHourLbl, 0, rowIndex);
             rowIndex++;
             i++;

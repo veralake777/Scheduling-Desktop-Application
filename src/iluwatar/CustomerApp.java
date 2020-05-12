@@ -91,7 +91,7 @@ public class CustomerApp extends Application {
         header.setAlignment(Pos.CENTER);
         header.setTextAlignment(TextAlignment.CENTER);
         gridPane.add(header, 1, 0, gridPane.getColumnCount(), 1);
-        gridPane.add(new MainMenu().vBox, 0, 0, 1, gridPane.getRowCount());
+        gridPane.add(new MainMenu().mainMenu, 0, 0, 1, gridPane.getRowCount());
 
 
         // set scene

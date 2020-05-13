@@ -21,6 +21,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        WeekView weekView = new WeekView();
 
         gridPane = new GridPane();
         gridPane.addColumn(0);
@@ -51,8 +52,7 @@ public class Main extends Application {
 //        RowConstraints rowConstraints = new RowConstraints(gridPane.getHeight());
 
         BorderPane calendar = FXMLLoader.load(getClass().getResource("../MVC/view/calendarMonthView.fxml"));
-
-        ScrollPane weekColumn = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
+        GridPane weekColumn = weekView.getWeekView();
 
         VBox monthColumn = new VBox(10);
         monthColumn.setFillWidth(true);
@@ -79,6 +79,8 @@ public class Main extends Application {
         gridPane.getChildren().remove(1);
         gridPane.add(view, 1, 1);
     }
+
+
 
     public static void main(String[] args) throws ClassNotFoundException {
         // connect to Database

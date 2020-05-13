@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -92,11 +91,11 @@ public class MainMenu {
             columnConstraintsWeek.setPercentWidth(80);
             BorderPane calendar = null;
             VBox firstColumn = new VBox(10);
-            ScrollPane week = null;
+            GridPane week = null;
             firstColumn.setFillWidth(true);
             try {
                 calendar = FXMLLoader.load(getClass().getResource("../MVC/view/calendarMonthView.fxml"));
-                week = FXMLLoader.load(getClass().getResource("../MVC/view/weekView.fxml"));
+                week = new WeekView().getWeekView();
                 firstColumn.getChildren().addAll(calendar, new NextAppointment().getNextAppointmentVBox());
             } catch (Exception e) {
                 e.printStackTrace();

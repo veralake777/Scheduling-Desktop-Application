@@ -164,9 +164,10 @@ public class DbCustomerDao implements CustomerDao {
         try (var connection = getConnection();
              var statement =
                      connection
-                             .prepareStatement("UPDATE customer SET title = ? WHERE ID = ?")) {
+                             .prepareStatement("UPDATE customer SET customerName = ? WHERE customerId = ?")) {
             //TODO add all updates you would like to make based on UI
             statement.setString(1, customer.getCustomerName());
+            statement.setInt(2, customer.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new CustomException(ex.getMessage(), ex);
@@ -179,7 +180,7 @@ public class DbCustomerDao implements CustomerDao {
     @Override
     public boolean delete(Customer customer) throws Exception {
         try (var connection = getConnection();
-             var statement = connection.prepareStatement("DELETE FROM customer WHERE ID = ?")) {
+             var statement = connection.prepareStatement("DELETE FROM customer WHERE customerId = ?")) {
             statement.setInt(1, customer.getId());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {

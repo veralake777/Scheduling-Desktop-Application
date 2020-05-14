@@ -224,6 +224,12 @@ public class WeekView {
             VBox appointmentVBox = new VBox();
             appointmentVBox.getStylesheets().add("./CSS/modifyWindows.css");
 
+            HBox contactHBox = new HBox(10);
+            Label contactLbl = new Label("Customer Name");
+            TextField contactTF = new TextField("enter the customer's name");
+            contactTF.onMouseClickedProperty().set(e->{contactTF.clear();});
+            contactHBox.getChildren().addAll(contactLbl, contactTF);
+
             HBox titleHBox = new HBox(10);
             Label titleLbl = new Label("Title");
             TextField titleTF = new TextField("enter the title");
@@ -241,12 +247,6 @@ public class WeekView {
             TextField locationTF = new TextField("enter the location");
             locationTF.onMouseClickedProperty().set(e->{locationTF.clear();});
             locationHBox.getChildren().addAll(locationLbl, locationTF);
-
-            HBox contactHBox = new HBox(10);
-            Label contactLbl = new Label("Customer Name");
-            TextField contactTF = new TextField("enter the customer's name");
-            contactTF.onMouseClickedProperty().set(e->{contactTF.clear();});
-            contactHBox.getChildren().addAll(contactLbl, contactTF);
 
             HBox typeHBox = new HBox(10);
             Label typeLbl = new Label("Type");
@@ -273,7 +273,7 @@ public class WeekView {
             hide.setOnAction(event -> popup.hide());
             buttons.getChildren().addAll(show, hide);
 
-            appointmentVBox.getChildren().addAll(titleHBox, descriptionHBox, locationHBox, contactHBox, typeHBox, startHBox, endHBox, buttons);
+            appointmentVBox.getChildren().addAll(contactHBox, titleHBox, descriptionHBox, locationHBox, typeHBox, startHBox, endHBox, buttons);
             popup.setTitle("Add Appointment");
             popup.setScene(new Scene(appointmentVBox));
             popup.showAndWait();

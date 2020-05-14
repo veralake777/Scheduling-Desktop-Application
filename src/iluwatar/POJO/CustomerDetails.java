@@ -10,7 +10,7 @@ public class CustomerDetails {
     String postalCode;
     String country;
 
-    public CustomerDetails(int id, String name, String phone, String address1, String address2, String city, String postalCode, String country) {
+    public CustomerDetails(Integer id, String name, String phone, String address1, String address2, String city, String postalCode, String country) {
         this.id = id;
         this.name = name;
         this.phone = phone;

@@ -6,14 +6,15 @@ import iluwatar.POJO.Customer;
 import iluwatar.POJO.CustomerDetails;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
 import utils.Database.DBUtils;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -54,7 +55,7 @@ public class MyCustomersView {
         return gridPane;
     }
     private void buildGridPane() throws Exception {
-        // style
+        // style components
         gridPane.setPadding(new Insets(5, 0, 0, 25));
 
         titleLbl.setPadding(new Insets(15, 10, 10, 15));
@@ -74,6 +75,7 @@ public class MyCustomersView {
         newCustomerBtn.setFont(Font.font("Roboto", FontWeight.MEDIUM, 20));
         newCustomerBtn.setStyle("-fx-border-radius: 5; -fx-border-width: 2.5; -fx-border-color: GREY; -fx-background-color: white;");
 
+        // build customer cards grid pane
         // title
         RowConstraints row1 = new RowConstraints();
         // search and add new
@@ -82,7 +84,6 @@ public class MyCustomersView {
         RowConstraints row3 = new RowConstraints();
         //row4
         RowConstraints row4 = new RowConstraints();
-
 
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setPercentWidth(85);
@@ -96,39 +97,38 @@ public class MyCustomersView {
         // build row2 hbox
         row2HBox.getChildren().addAll(searchLbl, searchTxt, newCustomerBtn);
 
-        // build customer cards grid pane
-        buildCustomerCardGridPane();
 
-        // button styling
-//        pageUp.setPrefSize(50, 50);
-//        pageDown.setPrefSize(50, 50);
-
+        buildCustomerCardScrollPane();
         gridPane.add(titleLbl, 0, 0);
         gridPane.add(row2HBox, 0, 1);
         gridPane.add(customerCardsGridPane, 0, 2);
-//        gridPane.add(pageUp, 1, 0);
-//        gridPane.add(pageDown, 1, 1);
-//        gridPane.getChildren().addAll(titleLbl, row2HBox, customerCardsGridPane, pageUp, pageDown);
     }
 
     // customerCards gridPane
     GridPane customerCardsGridPane = new GridPane();
-    private void buildCustomerCardGridPane() throws Exception {
-        // style
+    private void buildCustomerCardScrollPane() throws Exception {
+        // style customerCardGridPane - used in each card
         customerCardsGridPane.setHgap(15);
         customerCardsGridPane.setVgap(15);
         customerCardsGridPane.setPadding(new Insets(20, 0, 0, 10));
+
+        // Get Customers
         Stream<Customer> customerStream = new DbCustomerDao(DBUtils.getMySQLDataSource()).getAll();
+
+        // row & column counters
         AtomicInteger row = new AtomicInteger();
         AtomicInteger col = new AtomicInteger();
+
+        // for each customer build a new customer card based on customerDetails view from database
         customerStream.forEach(c -> {
             try {
+                // create new customer card
                 CustomerCard card = new CustomerCard(c.getId());
+                // build 2 x 2 grid of customer cards
                 if(col.get() == 0 || col.get() == 1) {
                     customerCardsGridPane.add(card.getCustomerCard(), col.get(), row.get());
-                    //set col to 1
+                    // set col to 1
                     col.getAndIncrement();
-                    System.out.println(col.get());
                 } else {
                     customerCardsGridPane.add(card.getCustomerCard(), col.get(), row.get());
                     // set row to next row
@@ -152,19 +152,26 @@ public class MyCustomersView {
         // Labels for card view; textFields for onActionEditButton
         Label customerNameLbl = new Label();
         TextField customerNameTxtFld = new TextField();
+
         Label phoneLbl = new Label();
         TextField phoneTxtFld = new TextField();
+
         Label addressLine1Lbl = new Label();
         TextField addressLine1TxtFld = new TextField();
+
         Label addressLine2Lbl = new Label();
         TextField addressLine2TxtFld = new TextField();
+
         Label postalCodeLbl = new Label();
         TextField postalCodeTxtFld = new TextField();
+
         Label cityLbl = new Label();
         TextField cityTxtFld = new TextField();
+
         Label countryLbl = new Label();
         TextField countryTxtLbl = new TextField();
 
+        // Dumb CustomerCard - used for new AddNewCustomer
         private CustomerCard() {
             Font labelFont = Font.font("Roboto", FontWeight.NORMAL, 14);
             customerNameLbl.setFont(labelFont);
@@ -195,6 +202,8 @@ public class MyCustomersView {
             countryLbl.setText("Country");
             countryTxtLbl.setText("enter customer country");
         }
+
+        // CustomerCard Constructor by customerId - used for editCustomer button
         private CustomerCard(int customerId) throws Exception {
             DbCustomerDetailsDao dbCustomerDetailsDao = new DbCustomerDetailsDao(DBUtils.getMySQLDataSource());
             Optional<CustomerDetails> customer = dbCustomerDetailsDao.getById(customerId);
@@ -230,50 +239,93 @@ public class MyCustomersView {
             });
         }
 
-        private void buildNewCustomerGridPane() {
-            ColumnConstraints columnConstraints = new ColumnConstraints(300);
-            ColumnConstraints columnConstraints1 = new ColumnConstraints(300);
+        private Stage buildNewCustomerStage() {
+            // INIT STAGE AND GRIDPANE
+            Stage stage = new Stage();
+            ColumnConstraints columnConstraints = new ColumnConstraints(150);
+            ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
             gridPane.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
 
-            final Region spacer = new Region();
+            int rowCount = 8;
+            for(int i = 0; i<rowCount; i++) {
+                RowConstraints rowConstraints = new RowConstraints(37);
+                gridPane.getRowConstraints().add(rowConstraints);
+            }
+
             double minWidth = 75;
 
-            //row 1: BOLD customerName
+            //START LABELS AND INPUTS
             HBox nameHBox = new HBox(50);
             customerNameLbl.setMinSize(minWidth, 25);
-            nameHBox.getChildren().addAll(customerNameLbl, spacer, customerNameTxtFld);
+            customerNameTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            nameHBox.getChildren().addAll(customerNameLbl, customerNameTxtFld);
             gridPane.add(nameHBox, 0, 0);
 
             HBox phoneHbox = new HBox(50);
             phoneLbl.setMinSize(minWidth, 25);
-            phoneHbox.getChildren().addAll(phoneLbl, spacer, phoneTxtFld);
+            phoneTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            phoneHbox.getChildren().addAll(phoneLbl,phoneTxtFld);
             gridPane.add(phoneHbox, 0, 1);
 
             HBox address1HBox = new HBox(50);
             addressLine1Lbl.setMinSize(minWidth, 25);
-            address1HBox.getChildren().addAll(addressLine1Lbl, spacer, addressLine1TxtFld);
+            addressLine1TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            address1HBox.getChildren().addAll(addressLine1Lbl, addressLine1TxtFld);
             gridPane.add(address1HBox, 0, 2);
 
             HBox address2 = new HBox(50);
             addressLine2Lbl.setMinSize(minWidth, 25);
-            address2.getChildren().addAll(addressLine2Lbl, spacer, addressLine2TxtFld);
+            addressLine2TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            address2.getChildren().addAll(addressLine2Lbl, addressLine2TxtFld);
             gridPane.add(address2, 0, 3);
 
             HBox cityHBox = new HBox(50);
             cityLbl.setMinSize(minWidth, 25);
-            cityHBox.getChildren().addAll(cityLbl, spacer, cityTxtFld);
+            cityTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            cityHBox.getChildren().addAll(cityLbl, cityTxtFld);
             gridPane.add(cityHBox, 0, 4);
 
             HBox postalCodeHBox = new HBox(50);
             postalCodeLbl.setMinSize(minWidth, 25);
-            postalCodeHBox.getChildren().addAll(postalCodeLbl, spacer, postalCodeTxtFld);
+            postalCodeTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            postalCodeHBox.getChildren().addAll(postalCodeLbl, postalCodeTxtFld);
             gridPane.add(postalCodeHBox, 0, 5);
 
             HBox countryHBox = new HBox(50);
             countryLbl.setMinSize(minWidth, 25);
-            countryHBox.getChildren().addAll(countryLbl, spacer, countryTxtLbl);
+            countryTxtLbl.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            countryHBox.getChildren().addAll(countryLbl, countryTxtLbl);
             gridPane.add(countryHBox, 0, 6);
+            //END LABELS AND INPUTS
 
+            // START BUTTONS
+            HBox buttonsHBox = new HBox(20);
+            Button addBtn = new Button("Add");
+            addBtn.onMouseClickedProperty().set(e-> {
+                try {
+                    DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                    if(customerDao.maxId() != -1) {
+                        customerDao.add(new CustomerDetails(customerDao.maxId()+1, customerNameTxtFld.getText(), phoneTxtFld.getText(), addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityTxtFld.getText(), postalCodeTxtFld.getText(), countryTxtLbl.getText()));
+                        stage.close();
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setContentText("Customer successfully added to the database.");
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("There was an error with the database.");
+                        alert.showAndWait();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+            Button cancelBtn = new Button("Cancel");
+            cancelBtn.onMouseClickedProperty().set(e->stage.close());
+            buttonsHBox.setAlignment(Pos.CENTER);
+            buttonsHBox.setPadding(new Insets(10));
+            buttonsHBox.getChildren().addAll(addBtn, cancelBtn);
+            // END BUTTONS
+
+            gridPane.add(buttonsHBox, 1, 7);
             gridPane.setStyle(
                     "-fx-border-width: 3.5; " +
                             "-fx-border-radius: 10; " +
@@ -281,6 +333,113 @@ public class MyCustomersView {
                             "-fx-padding: 25, 25, 25, 25;" +
                             "-fx-label-padding: 5;"
             );
+            stage.setScene(new Scene(gridPane));
+            return stage;
+        }
+
+        private Stage buildEditCustomerStage(CustomerDetails customer) throws IOException {
+            // INIT CUSTOMER, STAGE AND GRIDPANE
+            Stage stage = new Stage();
+            ColumnConstraints columnConstraints = new ColumnConstraints(150);
+            ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
+            gridPane.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
+
+            int rowCount = 8;
+            for(int i = 0; i<rowCount; i++) {
+                RowConstraints rowConstraints = new RowConstraints(37);
+                gridPane.getRowConstraints().add(rowConstraints);
+            }
+
+            double minWidth = 75;
+
+            //START LABELS AND INPUTS
+            HBox nameHBox = new HBox(50);
+            customerNameLbl.setMinSize(minWidth, 25);
+            customerNameTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            customerNameTxtFld.setText(customer.getName());
+            nameHBox.getChildren().addAll(customerNameLbl, customerNameTxtFld);
+            gridPane.add(nameHBox, 0, 0);
+
+            HBox phoneHbox = new HBox(50);
+            phoneLbl.setMinSize(minWidth, 25);
+            phoneTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            phoneTxtFld.setText(customer.getPhone());
+            phoneHbox.getChildren().addAll(phoneLbl,phoneTxtFld);
+            gridPane.add(phoneHbox, 0, 1);
+
+            HBox address1HBox = new HBox(50);
+            addressLine1Lbl.setMinSize(minWidth, 25);
+            addressLine1TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            addressLine1TxtFld.setText(customer.getAddress1());
+            address1HBox.getChildren().addAll(addressLine1Lbl, addressLine1TxtFld);
+            gridPane.add(address1HBox, 0, 2);
+
+            HBox address2 = new HBox(50);
+            addressLine2Lbl.setMinSize(minWidth, 25);
+            addressLine2TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            addressLine2TxtFld.setText(customer.getAddress2());
+            address2.getChildren().addAll(addressLine2Lbl, addressLine2TxtFld);
+            gridPane.add(address2, 0, 3);
+
+            HBox cityHBox = new HBox(50);
+            cityLbl.setMinSize(minWidth, 25);
+            cityTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            cityTxtFld.setText(customer.getCity());
+            cityHBox.getChildren().addAll(cityLbl, cityTxtFld);
+            gridPane.add(cityHBox, 0, 4);
+
+            HBox postalCodeHBox = new HBox(50);
+            postalCodeLbl.setMinSize(minWidth, 25);
+            postalCodeTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            postalCodeTxtFld.setText(customer.getPostalCode());
+            postalCodeHBox.getChildren().addAll(postalCodeLbl, postalCodeTxtFld);
+            gridPane.add(postalCodeHBox, 0, 5);
+
+            HBox countryHBox = new HBox(50);
+            countryLbl.setMinSize(minWidth, 25);
+            countryTxtLbl.setMinSize(columnConstraints1.getPrefWidth(), 25);
+            countryTxtLbl.setText(customer.getCountry());
+            countryHBox.getChildren().addAll(countryLbl, countryTxtLbl);
+            gridPane.add(countryHBox, 0, 6);
+            //END LABELS AND INPUTS
+
+            // START BUTTONS
+            HBox buttonsHBox = new HBox(20);
+            Button updateBtn = new Button("Update");
+            updateBtn.onMouseClickedProperty().set(e-> {
+                try {
+                    DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                    if(customerDao.maxId() != -1) {
+                        customerDao.update(new CustomerDetails(customerDao.maxId()+1, customerNameTxtFld.getText(), phoneTxtFld.getText(), addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityTxtFld.getText(), postalCodeTxtFld.getText(), countryTxtLbl.getText()));
+                        stage.close();
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setContentText("Customer successfully added to the database.");
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("There was an error with the database.");
+                        alert.showAndWait();
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+            Button cancelBtn = new Button("Cancel");
+            cancelBtn.onMouseClickedProperty().set(e->stage.close());
+            buttonsHBox.setAlignment(Pos.CENTER);
+            buttonsHBox.setPadding(new Insets(10));
+            buttonsHBox.getChildren().addAll(updateBtn, cancelBtn);
+            // END BUTTONS
+
+            gridPane.add(buttonsHBox, 1, 7);
+            gridPane.setStyle(
+                    "-fx-border-width: 3.5; " +
+                            "-fx-border-radius: 10; " +
+                            "-fx-border-color: GREY;" +
+                            "-fx-padding: 25, 25, 25, 25;" +
+                            "-fx-label-padding: 5;"
+            );
+            stage.setScene(new Scene(gridPane));
+            return stage;
         }
 
         private void buildGridPane() {
@@ -320,15 +479,19 @@ public class MyCustomersView {
             return gridPane;
         }
 
-        public GridPane addNewCustomerCard() throws Exception {
-            buildNewCustomerGridPane();
-            return gridPane;
+        private Stage getNewCustomerScene() throws Exception {
+            return buildNewCustomerStage();
         }
     }
 
-    public GridPane newCustomerCard() throws Exception {
+    public Stage getNewCustomerCardScene() throws Exception {
         CustomerCard customerCard = new CustomerCard();
-        return customerCard.addNewCustomerCard();
+        return customerCard.getNewCustomerScene();
+    }
+
+    public Stage getEditCustomerCardStage(CustomerDetails customer) throws IOException {
+        CustomerCard customerCard = new CustomerCard();
+        return customerCard.buildEditCustomerStage(customer);
     }
 
 }

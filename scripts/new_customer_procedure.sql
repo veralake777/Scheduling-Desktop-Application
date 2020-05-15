@@ -24,9 +24,8 @@
 --        IN c_phone varchar(20),
 --        IN c_active tinyint(1)
 --      )
---      BEGIN
--- 		 
---          -- address table
+-- BEGIN
+--          -- address, city table
 -- 		 INSERT INTO address(addressId, address, address2, cityId, postalCode, phone)
 --          VALUES (null, c_address_1, c_address_2, 
 --          (SELECT cityId from city where city = c_city), c_postal_code, c_phone);

@@ -1,14 +1,14 @@
 package iluwatar;
 
 import MVC.NextAppointment;
-import iluwatar.DbDao.*;
+import iluwatar.DbDao.DbCustomerDao;
+import iluwatar.DbDao.DbCustomerDetailsDao;
 import iluwatar.POJO.Customer;
 import iluwatar.POJO.CustomerDetails;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,7 +20,6 @@ import javafx.stage.Stage;
 import utils.Database.DBUtils;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
@@ -142,44 +141,15 @@ public class MainMenu {
         HBox searchBar = new HBox(5);
         javafx.scene.control.Button newCustomer = new Button("NEW");
         newCustomer.onMouseClickedProperty().set(e-> {
-            DbCustomerDao customerDao = null;
-            DbAddressDao addressDao = null;
-            DbCityDao cityDao = null;
-            DbCountryDao countryDao = null;
-            try {
-                customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
-                addressDao = new DbAddressDao(DBUtils.getMySQLDataSource());
-                cityDao = new DbCityDao(DBUtils.getMySQLDataSource());
-                countryDao = new DbCountryDao(DBUtils.getMySQLDataSource());
-            } catch (IOException ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Could not connect to database.");
-                alert.showAndWait();
-                ex.printStackTrace();
-            }
-
-            String name = "test";
-            String phone="555-5555";
-            String address1 = "123 test st.";
-            String address2 = null;
-            String city = "Quebec";
-            String postalCode = "00000";
-            String country = "Canada";
-            try {
-                if(customerDao.getAll().anyMatch(customer -> Boolean.parseBoolean(customer.getCustomerName()))){
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setContentText("Customer already exists.");
-                    alert.showAndWait();
-                } else {
-                    Stage newCustomerStage = new Stage();
-                    newCustomerStage.setScene(new Scene(new MyCustomersView().newCustomerCard()));
-                    newCustomerStage.showAndWait();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText("Could not connect to database.");
+        alert.showAndWait();
+        try {
+            Stage newCustomerStage = new MyCustomersView().getNewCustomerCardScene();
+            newCustomerStage.showAndWait();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         });
 //        newCustomer.addEventHandler(e->System.out.println("new customer"));
         searchBar.getChildren().addAll(new Label("Search"), new TextField("by name, phone, address"), newCustomer);
@@ -196,10 +166,8 @@ public class MainMenu {
                     Optional<Customer> customerToEdit = customerDao.getById(id);
                     if(customerToEdit.isPresent()) {
                         // Todo popup stage with edit customer info
-                        System.out.println(customerToEdit.get().getCustomerName());
-                        customerToEdit.get().setCustomerName("Updated");
-                        System.out.println(customerToEdit.get().getCustomerName());
-                        customerDao.update(customerToEdit.get());
+                        Stage stage = new MyCustomersView().getEditCustomerCardStage(customer);
+                        stage.showAndWait();
                     } else {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.showAndWait()
@@ -314,7 +282,7 @@ public class MainMenu {
                 vBoxCustomers,
                 vBoxReports
         );
-        };
+    };
 
     private void onClickLoadView(Node view) {
         Main.loadDynamicView(view);
@@ -322,21 +290,21 @@ public class MainMenu {
 
 
     // Calendar - onClick dropDown
-        //month - onClick loadMonthView
-        //week - onClick loadWeekView
+    //month - onClick loadMonthView
+    //week - onClick loadWeekView
 
     //Appointments - onClick dropDown
-        //manage - onClick loadModifyAppointment
-        //add new - onClick loadAddNewAppointment
+    //manage - onClick loadModifyAppointment
+    //add new - onClick loadAddNewAppointment
 
     //Customers
-        //modify - onClick loadModifyCustomers
-        //add new - onClick loadAddCustomer
+    //modify - onClick loadModifyCustomers
+    //add new - onClick loadAddCustomer
 
     //Reports - onClick loadReports
-        // number of appointment types by month
-        // the schedule for each consultant
-        // one additional report of your choice
+    // number of appointment types by month
+    // the schedule for each consultant
+    // one additional report of your choice
 
 
 }

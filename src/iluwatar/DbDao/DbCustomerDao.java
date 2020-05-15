@@ -5,11 +5,11 @@ import com.mysql.jdbc.PreparedStatement;
 import iluwatar.CustomException;
 import iluwatar.Interface.CustomerDao;
 import iluwatar.POJO.Customer;
+import iluwatar.POJO.CustomerDetails;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -96,6 +96,26 @@ public class DbCustomerDao implements CustomerDao {
                 resultSet.getString("lastUpdateBy"));
     }
 
+    public int maxId() throws CustomException, SQLException {
+        ResultSet resultSet = null;
+
+        try (var connection = getConnection();
+             var statement = connection.prepareStatement("SELECT max(customerId) FROM customer")) {
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            } else {
+                return -1;
+            }
+        } catch (SQLException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -131,24 +151,28 @@ public class DbCustomerDao implements CustomerDao {
         if (getById(customer.getId()).isPresent()) {
             return false;
         }
-
         try (var connection = getConnection();
+             // int id, String customerName, int addressId, boolean active, String createDate,
+             // String createdBy, String lastUpdate, String lastUpdateBy
+             //-- CALL new_customer('name', 'address1', 'address2', 'Quebec', '88888', '555-5555', 1);
              var statement = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?)")) {
             // dates to strings
             // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
+            // set customerId to null bc of auto_increment on table
             statement.setInt(1, customer.getId());
             statement.setString(2, customer.getCustomerName());
             statement.setInt(3, customer.getAddressId());
-            if(customer.isActive()){
+            if (customer.isActive()) {
                 statement.setInt(4, 1);
             } else {
                 statement.setInt(4, 0);
             }
-            statement.setTimestamp(5, Timestamp.valueOf(customer.getCreateDate()));
-            statement.setString(6, customer.getCreatedBy());
-            statement.setTimestamp(7, Timestamp.valueOf(customer.getLastUpdate()));
-            statement.setString(8, customer.getLastUpdateBy());
+            statement.setString(5, "NOW()");
+            statement.setString(6, "test");
+            statement.setString(7, "NOW()");
+            statement.setString(8, "test");
 
+            // customer isActive is always set to 1
             statement.execute();
             return true;
         } catch (SQLException ex) {
@@ -156,9 +180,55 @@ public class DbCustomerDao implements CustomerDao {
         }
     }
 
+    // new customer with customer details view
+        public boolean add(CustomerDetails customer) throws Exception {
+            if (getById(customer.getId()).isPresent()) {
+                return false;
+            }
+            try (var connection = getConnection();
+                 // var statement = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?)"))
+                 //-- CALL new_customer('name', 'address1', 'address2', 'Quebec', '88888', '555-5555', 1);
+                 var statement = connection.prepareStatement("CALL new_customer(?, ?, ?, ?, ?, ?, 1)")){
+                // dates to strings
+                // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
+                // set customerId to null bc of auto_increment on table
+                statement.setString(1, customer.getName());
+                statement.setString(2, customer.getAddress1());
+                statement.setString(3, customer.getAddress2());
+                statement.setString(4, customer.getCity());
+                statement.setString(5, customer.getPostalCode());
+                statement.setString(6, customer.getPhone());
+                // customer isActive is always set to 1
+                statement.execute();
+                return true;
+            } catch (SQLException ex) {
+                throw new CustomException(ex.getMessage(), ex);
+            }
+    }
+
     /**
      * {@inheritDoc}
      */
+    // overloaded function for customerDetails
+    public boolean update(CustomerDetails customer) throws CustomException {
+        // todo fix database update_customer procedure
+        try (var connection = getConnection();
+             var statement = connection.prepareStatement("CALL update_customer(?, ?, ?, ?, ?, ?, ?, 1)")){
+            // dates to strings
+            // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
+            // set customerId to null bc of auto_increment on table
+            statement.setInt(1, customer.getId());
+            statement.setString(2, customer.getName());
+            statement.setString(3, customer.getAddress1());
+            statement.setString(4, customer.getAddress2());
+            statement.setString(5, customer.getCity());
+            statement.setString(6, customer.getPostalCode());
+            statement.setString(7, customer.getPhone());
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        }
+    }
     @Override
     public boolean update(Customer customer) throws Exception {
         try (var connection = getConnection();

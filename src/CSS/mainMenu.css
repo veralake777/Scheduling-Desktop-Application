@@ -1,0 +1,17 @@
+.hbox {
+    -fx-background-color: #ebaa5d;
+    -fx-padding: 20 10;
+}
+
+.label {
+-fx-font-family: 'Roboto Bold';
+-fx-font-size: 18;
+-fx-alignment: center;
+-fx-font-weight: BOLD;
+-fx-padding: 25 20;
+-fx-background-color:#ebaa5d;
+-fx-border-radius: 50;
+-fx-border-style: none none solid none;
+-fx-border-width: 10;
+-fx-border-color: WHITE;
+}

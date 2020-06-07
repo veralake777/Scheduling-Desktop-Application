@@ -9,8 +9,8 @@ import POJO.Appointment;
 import POJO.Customer;
 import POJO.User;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import utils.DBUtils;
@@ -260,6 +260,7 @@ public class AppointmentCard {
         gridPane.add(urlLbl, 0, 6);
         gridPane.add(urlTxt, 1, 6);
         gridPane.add(datePickerLbl,0,7);
+        datePicker.setValue(start.toLocalDate());
         gridPane.add(datePicker, 1, 7);
         gridPane.add(startLbl, 0, 8);
         startTxt.getSelectionModel().select(LocalTime.from(start));

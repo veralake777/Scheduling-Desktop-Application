@@ -1,6 +1,5 @@
 package Components;
 
-import Components.Calendar.CalendarView;
 import DbDao.DbUserDao;
 import POJO.User;
 import javafx.event.ActionEvent;
@@ -11,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import utils.DBUtils;
@@ -106,9 +107,14 @@ public class LoginScreen {
         passwordFld.setText(rb.getString("enterYourPassword"));
         passwordFld.setId("passwordTxtFld");
 
+        if(KeyEvent.KEY_PRESSED.getName().equals("VK_ENTER")){
+            System.out.println("ENTER KEY PRESSED");
+        }
+
         HBox btnHBox = new HBox(25);
         Button loginBtn = new Button(rb.getString("login"));
         loginBtn.setOnAction(e-> {
+            System.out.println(e);
             try {
                 validateUser(e, userNameTxtFld.getText(), passwordFld.getText());
             } catch (IOException ex) {
@@ -122,6 +128,15 @@ public class LoginScreen {
 
         rightSide.getChildren().addAll(accountLoginLbl, userNameLbl, userNameTxtFld, passwordLbl, passwordFld, btnHBox, loginErrorLbl);
         mainGridPane.add(rightSide, 1, 0);
+
+        // if Enter key is pressed then fire the loginBtn action event
+        loginBtn.setDefaultButton(true);
+        mainGridPane.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+            if (ev.getCode() == KeyCode.ENTER) {
+                loginBtn.fire();
+                ev.consume();
+            }
+        });
     }
 
     public Scene getScene() {

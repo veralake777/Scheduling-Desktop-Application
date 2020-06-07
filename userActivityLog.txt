@@ -1867,3 +1867,64 @@ INFO: SUCCESSFUL LOGIN:
   UserName: test
   Password: test
   Timestamp: 2020-06-07T18:26:40.726881500
+Jun 07, 2020 6:30:51 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-07T18:30:51.268252900
+Jun 07, 2020 6:37:30 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-07T18:37:30.363086800
+Jun 07, 2020 6:39:18 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-07T18:39:18.819472900
+Jun 07, 2020 6:53:15 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-07T18:53:15.241599100
+Jun 07, 2020 6:54:18 PM Components.LoginScreen validateUser
+INFO: 
+----------------------------------------
+FAILED LOGIN:
+  UserName: Enter your username 
+  Password: Enter your password
+  Timestamp: 2020-06-07T18:54:18.363774100
+----------------------------------------
+
+Jun 07, 2020 6:58:21 PM Components.LoginScreen validateUser
+INFO: 
+----------------------------------------
+FAILED LOGIN:
+  UserName: Enter your username 
+  Password: Enter your password
+  Timestamp: 2020-06-07T18:58:21.719769400
+----------------------------------------
+
+Jun 07, 2020 6:59:22 PM Components.LoginScreen validateUser
+INFO: 
+----------------------------------------
+FAILED LOGIN:
+  UserName: Enter your username 
+  Password: Enter your password
+  Timestamp: 2020-06-07T18:59:22.128197100
+----------------------------------------
+
+Jun 07, 2020 6:59:42 PM Components.LoginScreen validateUser
+INFO: 
+----------------------------------------
+FAILED LOGIN:
+  UserName: Enter your username 
+  Password: Enter your password
+  Timestamp: 2020-06-07T18:59:42.470313400
+----------------------------------------
+
+Jun 07, 2020 6:59:46 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-07T18:59:46.969359600

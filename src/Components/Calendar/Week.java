@@ -198,11 +198,11 @@ public class Week {
     // Finally we note that x <= y <= z or z <= y <= x if and only if (y-x)*(z-y) >= 0.
 
     private boolean isBetween(TimeSlot testSlot, TimeSlot startSlot, TimeSlot endSlot) {
-        boolean daysBetween = testSlot.getDayOfWeek().compareTo(startSlot.getDayOfWeek())
-                * endSlot.getDayOfWeek().compareTo(testSlot.getDayOfWeek()) >= 0 ;
+        boolean daysBetween = testSlot.getDayOfWeek().compareTo(startSlot.getDayOfWeek()) * endSlot.getDayOfWeek().compareTo(testSlot.getDayOfWeek()) == 0 ;
 
         boolean timesBetween = testSlot.getTime().compareTo(startSlot.getTime())
-                * endSlot.getTime().compareTo(testSlot.getTime()) >= 0 ;
+                * endSlot.getTime().compareTo(testSlot.getTime()) >= 0 && testSlot.getTime().compareTo(startSlot.getTime())
+                * endSlot.getTime().compareTo(testSlot.getTime()) <= 60;
 
         return daysBetween && timesBetween;
     }

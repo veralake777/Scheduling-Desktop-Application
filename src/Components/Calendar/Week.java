@@ -11,12 +11,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import utils.DBUtils;
@@ -32,9 +33,9 @@ import java.util.stream.Stream;
  **/
 public class Week {
     private final Main main;
-    private final LocalTime firstSlotStart = LocalTime.of(8, 0);
+    private final LocalTime FIRST_SLOT_START = LocalTime.of(8, 0);
     private final Duration slotLength = Duration.ofMinutes(15);
-    private final LocalTime lastSlotStart = LocalTime.of(18, 59);
+    private final LocalTime LAST_SLOT_END = LocalTime.of(18, 59);
 
     private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
 
@@ -48,9 +49,6 @@ public class Week {
         GridPane weekView = new GridPane();
         weekView.getStyleClass().add("grid-pane");
 
-        Stream<Appointment> appointmentStream =  new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
-        ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
-        appointmentStream.forEach(appointmentObservableList::add);
         ObjectProperty<TimeSlot> mouseAnchor = new SimpleObjectProperty<>();
 
         // Start week on Monday + date
@@ -60,37 +58,24 @@ public class Week {
         int col = 1;
         for (LocalDate date = monday; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
             int slotIndex = 1;
-            for (LocalDateTime startTime = date.atTime(firstSlotStart);
-                 !startTime.isAfter(date.atTime(lastSlotStart));
+            for (LocalDateTime startTime = date.atTime(FIRST_SLOT_START);
+                 !startTime.isAfter(date.atTime(LAST_SLOT_END));
                  startTime = startTime.plus(slotLength)) {
 
-
+                // this is the time slot cell
                 TimeSlot timeSlot = new TimeSlot(startTime, slotLength);
                 timeSlots.add(timeSlot);
 
-                // set existing appointments
-                for (Appointment a : appointmentObservableList) {
-                    long minutes = a.getEnd().getMinutes() - a.getStart().getMinutes();
-                    Duration duration = Duration.ofMinutes(minutes);
-                    TimeSlot existingSlot = new TimeSlot(a.getStart().toLocalDateTime(), duration);
-                    if (timeSlot.getStart().equals(existingSlot.getStart())) {
-                        timeSlot.setSelected(true);
-                        // if selected then show AppointmentCard.getEditAppointmentStage()
-                        timeSlot.registerOnClick(main, a.getId());
-                        // drag handler
-                        registerDragHandlers(timeSlot, mouseAnchor);
-                        weekView.add(timeSlot.getView(), col, slotIndex);
-                        weekView.add( new Label(a.getType()), col, slotIndex);
-                    }
-                }
+                timeSlot.getView().setOnMouseClicked(mouseEvent-> {
+                    AppointmentCard appointmentCard = new AppointmentCard(main);
+                    Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
+                    popup.showAndWait();
+                });
 
-                // if not selected then show AppointmentCard.getNewAppointmentStage()
-                if(!timeSlot.isSelected()) {
-                    timeSlot.registerOnClick(main, -1);
-                    // drag handler
-                    registerDragHandlers(timeSlot, mouseAnchor);
-                    weekView.add(timeSlot.getView(), col, slotIndex);
-                }
+                // drag handler
+                registerDragHandlers(timeSlot, mouseAnchor);
+                weekView.add(timeSlot.getView(), col, slotIndex);
+
                 slotIndex++;
             }
             col++;
@@ -120,8 +105,8 @@ public class Week {
         // TIMES
         int slotIndex = 1 ;
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
-        for (LocalDateTime startTime = monday.atTime(firstSlotStart);
-             ! startTime.isAfter(monday.atTime(lastSlotStart));
+        for (LocalDateTime startTime = monday.atTime(FIRST_SLOT_START);
+             ! startTime.isAfter(monday.atTime(LAST_SLOT_END));
              startTime = startTime.plus(slotLength)) {
             Label label = new Label(startTime.format(timeFormatter));
             label.setPadding(new Insets(2));
@@ -131,7 +116,62 @@ public class Week {
             slotIndex++ ;
         }
         weekView.getStylesheets().add("CSS/calendarPane.css");
+        setAppointments();
         return weekView;
+    }
+
+    private void setAppointments() throws Exception {
+        Stream<Appointment> appointmentStream =  new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+        ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
+        appointmentStream.forEach(appointmentObservableList::add);
+        for (int i = 0; i<timeSlots.size(); i++) {
+            TimeSlot timeSlot = timeSlots.get(i);
+
+            // set existing appointments
+            for (Appointment a : appointmentObservableList) {
+                long minutes = a.getEnd().getMinutes() - a.getStart().getMinutes();
+                Duration duration = Duration.ofMinutes(minutes);
+                TimeSlot existingSlot = new TimeSlot(a.getStart().toLocalDateTime(), Duration.ofMinutes(30));
+                if (timeSlot.getStart().equals(existingSlot.getStart())) {
+                    timeSlot.duration = Duration.ofMinutes(duration.toMinutes());
+                    Duration tempD = Duration.ofMinutes(timeSlot.duration.toMinutes());
+                    int j = i;
+                    while(tempD.toMinutes() >= 15) {
+                        TimeSlot currentTimeSlot = timeSlots.get(j);
+                        tempD = tempD.minusMinutes(15);
+                        currentTimeSlot.setSelected(true);
+                        // clear current mouse event from current time slot from getView()
+                        registerOnMouseClicked(currentTimeSlot, a);
+                        j++;
+                    }
+                    timeSlots.get(i).setSelected(true);
+
+                    // add label for appointment to start time slot only
+                    timeSlot.addLabel(new Label(a.getType()));
+                    registerOnMouseClicked(timeSlot, a);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void registerOnMouseClicked(TimeSlot timeSlot, Appointment a) {
+        timeSlot.getView().removeEventHandler(EventType.ROOT, Event::consume);
+        timeSlot.getView().setOnMouseClicked(mouseEvent -> {
+            AppointmentCard appointmentCard = null;
+            try {
+                appointmentCard = new AppointmentCard(a.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                assert appointmentCard != null;
+                Stage popup = appointmentCard.getEditAppointmentStage();
+                popup.showAndWait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 
@@ -170,16 +210,16 @@ public class Week {
 
         timeSlot.getView().setOnMouseReleased(event -> {
             // New Appointment pop up with appointment date and time information auto filled
-            AppointmentCard appointmentCard = new AppointmentCard(main);
-            Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.start, Duration.ofMinutes(lastSlotStart.getMinute() - firstSlotStart.getMinute()));
-            popup.showAndWait();
-            if(!popup.isShowing()) {
-                try {
-                    this.getView();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+//            AppointmentCard appointmentCard = new AppointmentCard(main);
+//            Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.start, Duration.ofMinutes(LAST_SLOT_END.getMinute() - FIRST_SLOT_START.getMinute()));
+//            popup.showAndWait();
+//            if(!popup.isShowing()) {
+//                try {
+//                    this.getView();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
             // set mouse anchor to null
             mouseAnchor.set(null);
         });
@@ -215,8 +255,8 @@ public class Week {
     public static class TimeSlot {
 
         private final LocalDateTime start ;
-        private final Duration duration ;
-        private final Region view ;
+        private Duration duration ;
+        private final StackPane view ;
 
         private final BooleanProperty selected = new SimpleBooleanProperty();
 
@@ -232,49 +272,39 @@ public class Week {
             selectedProperty().set(selected);
         }
 
-        public void registerOnClick(Main main, int appointmentId) {
-            if(appointmentId == -1) {
-                this.view.setOnMouseClicked(mouseEvent -> {
-                    AppointmentCard appointmentCard = new AppointmentCard(main);
-                    Stage popup = appointmentCard.getNewAppointmentStage(this.start, this.duration);
-                    popup.showAndWait();
-                });
-            } else {
-                this.view.setOnMouseClicked(mouseEvent -> {
-                    AppointmentCard appointmentCard = null;
-                    try {
-                        appointmentCard = new AppointmentCard(appointmentId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        assert appointmentCard != null;
-                        Stage popup = appointmentCard.getEditAppointmentStage();
-                        popup.showAndWait();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            }
-
-        }
+//        public void registerOnClick(Main main, int appointmentId) {
+//            this.view.setOnMouseClicked(null);
+//            if(appointmentId == -1) {
+//                this.view.setOnMouseClicked(mouseEvent -> {
+//                    AppointmentCard appointmentCard = new AppointmentCard(main);
+//                    Stage popup = appointmentCard.getNewAppointmentStage(this.start, this.duration);
+//                    popup.showAndWait();
+//                });
+//            } else {
+//                this.view.setOnMouseClicked(mouseEvent -> {
+//                    AppointmentCard appointmentCard = null;
+//                    try {
+//                        appointmentCard = new AppointmentCard(appointmentId);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    try {
+//                        assert appointmentCard != null;
+//                        Stage popup = appointmentCard.getEditAppointmentStage();
+//                        popup.showAndWait();
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+//            }
+//
+//        }
 
         public TimeSlot(LocalDateTime start, Duration duration) {
-            Duration duration1 ;
             this.start = start ;
-            duration1 = duration ;
 
-            view = new Region() ;
-
-            int minHeight = 20 ;
-            while(duration1.toMinutes() >= 15) {
-                minHeight = minHeight + 20 ;
-                duration1 = duration1.minusMinutes(15) ;
-            }
-
-
-            this.duration = duration1;
-            view.setMinSize(80, minHeight);
+            view = new StackPane() ;
+            view.setMinSize(80, 20);
             view.getStyleClass().addAll("time-slot", "time-slot:selected");
 
             selectedProperty().addListener((obs, wasSelected, isSelected) -> view.pseudoClassStateChanged(SELECTED_PSEUDO_CLASS, isSelected));
@@ -296,8 +326,12 @@ public class Week {
             return duration;
         }
 
-        public Node getView() {
+        public StackPane getView() {
             return view;
+        }
+
+        public void addLabel(Label label) {
+            view.getChildren().add(label);
         }
     }
 }

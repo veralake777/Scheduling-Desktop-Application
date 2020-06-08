@@ -104,28 +104,32 @@ public class AppointmentCard {
         this.stage = new Stage();
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
         // special LocalAppointment class for building the table that includes customer names
-        Appointment appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId).get();
+        Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
         // set appointment
-        this.appointment = appointment;
+        if(appointment.isPresent()) {
+            this.appointment = appointment.get();
 
-        // get customer
-        Optional<Customer> customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointment.getCustomerId());
+            // get customer
+            Optional<Customer> customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getCustomerId());
 
-        assert customerNameTxt != null;
-        customerNameTxt.getSelectionModel().select(customer.get());
-        user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(appointment.getUserId()).get();
-        titleTxt.setText(appointment.getTitle());
-        descriptionTxt.setText(appointment.getDescription());
-        locationTxt.setText(appointment.getLocation());
-        contactTxt.setText(appointment.getContact());
-        typeTxt.setText(appointment.getType());
-        urlTxt.setText(appointment.getUrl());
+            assert customerNameTxt != null;
+            customerNameTxt.getSelectionModel().select(customer.get());
+            user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
+            titleTxt.setText(this.appointment.getTitle());
+            descriptionTxt.setText(this.appointment.getDescription());
+            locationTxt.setText(this.appointment.getLocation());
+            contactTxt.setText(this.appointment.getContact());
+            typeTxt.setText(this.appointment.getType());
+            urlTxt.setText(this.appointment.getUrl());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
-        assert startTxt != null;
-        startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(appointment.getStart().getTime())));
-        sdf = new SimpleDateFormat("mm");
-        endTxt.getSelectionModel().select(Integer.valueOf(sdf.format(appointment.getEnd().getTime())));
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+            assert startTxt != null;
+            startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
+            sdf = new SimpleDateFormat("mm");
+            endTxt.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+        } else {
+            System.out.println("Appointment not found.");
+        }
     }
 
     private void setAppointment(Appointment appointment) {

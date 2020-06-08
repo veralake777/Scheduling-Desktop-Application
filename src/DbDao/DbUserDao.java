@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+ *
  * An implementation of {@link UserDao} that persists users in RDBMS.
  */
 public class DbUserDao implements UserDao {

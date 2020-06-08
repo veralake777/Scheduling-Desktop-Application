@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 
 public interface CustomerDao {
     /**
+     * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+     *
      * In an application the Data Access Object (DAO) is a part of Data access layer. It is an object
      * that provides an interface to some type of persistence mechanism. By mapping application calls to
      * the persistence layer, DAO provides some specific data operations without exposing details of the

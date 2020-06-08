@@ -18,6 +18,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+ *
  * An implementation of {@link AppointmentDao} that persists appointmentes in RDBMS.
  */
 public class DbAppointmentDao implements AppointmentDao {

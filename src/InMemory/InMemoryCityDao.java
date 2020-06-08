@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
+ * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+ *
  * An in memory implementation of {@link CityDao}, which stores the cities in JVM memory and
  * data is lost when the application exits.
  *

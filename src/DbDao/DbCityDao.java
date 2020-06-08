@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+ *
  * An implementation of {@link CityDao} that persists cities in RDBMS.
  */
 public class DbCityDao implements CityDao {

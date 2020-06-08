@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
+ * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+ *
  * An in memory implementation of {@link UserDao}, which stores the users in JVM memory and
  * data is lost when the application exits.
  *

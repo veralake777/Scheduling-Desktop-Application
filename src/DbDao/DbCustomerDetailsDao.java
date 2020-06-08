@@ -20,6 +20,8 @@ public class DbCustomerDetailsDao implements CustomerDetailsDao {
     private final DataSource dataSource;
 
     /**
+     * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+     *
      * Creates an instance of {@link DbCustomerDetailsDao} which uses provided dataSource to
      * store and retrieve customer information.
      *

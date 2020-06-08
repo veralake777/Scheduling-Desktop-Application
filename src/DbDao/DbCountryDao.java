@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
+ *
  * An implementation of {@link CountryDao} that persists countries in RDBMS.
  */
 public class DbCountryDao implements CountryDao {

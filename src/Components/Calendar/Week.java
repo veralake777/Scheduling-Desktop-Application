@@ -67,7 +67,7 @@ public class Week {
                 timeSlots.add(timeSlot);
 
                 timeSlot.getView().setOnMouseClicked(mouseEvent-> {
-                    AppointmentCard appointmentCard = new AppointmentCard(main);
+                    AppointmentCard appointmentCard = new AppointmentCard(main, timeSlot.getStart().toLocalDate());
                     Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
                     popup.showAndWait();
                 });
@@ -160,7 +160,7 @@ public class Week {
         timeSlot.getView().setOnMouseClicked(mouseEvent -> {
             AppointmentCard appointmentCard = null;
             try {
-                appointmentCard = new AppointmentCard(a.getId());
+                appointmentCard = new AppointmentCard(a.getId(), timeSlot.getStart().toLocalDate());
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -2506,3 +2506,202 @@ INFO: SUCCESSFUL LOGIN:
   UserName: test 
   Password: test
   Timestamp: 2020-06-09T09:54:29.647148100
+Jun 09, 2020 10:00:04 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:00:04.747705
+Jun 09, 2020 10:04:33 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:04:33.942731300
+Jun 09, 2020 10:15:11 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:15:11.794595
+Jun 09, 2020 10:16:19 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:16:19.765827900
+Jun 09, 2020 10:16:51 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:16:51.436734300
+Jun 09, 2020 10:17:50 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:17:50.088219500
+Jun 09, 2020 10:23:43 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:23:43.711393800
+Jun 09, 2020 10:29:34 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:29:34.592169500
+Jun 09, 2020 10:37:26 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:37:26.436092200
+Jun 09, 2020 10:38:32 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:38:32.862136900
+Jun 09, 2020 10:40:32 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:40:32.158268600
+Jun 09, 2020 10:43:12 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:43:12.987901700
+Jun 09, 2020 10:44:16 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:44:16.459093700
+Jun 09, 2020 10:45:22 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:45:22.736618700
+Jun 09, 2020 10:50:35 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:50:35.216082
+Jun 09, 2020 10:54:09 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T10:54:09.753516700
+Jun 09, 2020 11:06:08 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:06:08.787452800
+Jun 09, 2020 11:07:50 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:07:50.928814100
+Jun 09, 2020 11:10:01 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:10:01.917672
+Jun 09, 2020 11:11:01 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:11:01.678338900
+Jun 09, 2020 11:11:43 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:11:43.794958100
+Jun 09, 2020 11:12:57 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:12:57.312837100
+Jun 09, 2020 11:13:22 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:13:22.896319300
+Jun 09, 2020 11:15:30 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:15:30.619790
+Jun 09, 2020 11:18:05 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:18:05.247571500
+Jun 09, 2020 11:20:25 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:20:25.489963600
+Jun 09, 2020 11:21:33 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:21:33.872785800
+Jun 09, 2020 11:24:16 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:24:16.907331300
+Jun 09, 2020 11:27:20 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:27:20.476707400
+Jun 09, 2020 11:28:14 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:28:14.278063
+Jun 09, 2020 11:33:18 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:33:18.112959100
+Jun 09, 2020 11:34:10 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:34:10.122042800
+Jun 09, 2020 11:38:41 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:38:41.912447800
+Jun 09, 2020 11:40:35 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:40:35.237048800
+Jun 09, 2020 11:42:58 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:42:58.481369
+Jun 09, 2020 11:43:20 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:43:20.417154900
+Jun 09, 2020 11:45:04 AM Components.LoginScreen validateUser
+INFO: 
+----------------------------------------
+FAILED LOGIN:
+  UserName: Enter your username 
+  Password: Enter your password
+  Timestamp: 2020-06-09T11:45:04.073896300
+----------------------------------------
+
+Jun 09, 2020 11:45:11 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:45:11.462433200
+Jun 09, 2020 11:45:46 AM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-09T11:45:46.731041300

@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -102,6 +103,13 @@ public class AppointmentCard {
         user = main.getUser();
     }
 
+    // for week view, new appointment
+    public AppointmentCard(Main main, LocalDate date) {
+        this.stage = new Stage();
+        user = main.getUser();
+        this.datePicker.setValue(date);
+    }
+
     /**
      * @param appointmentId passed in from Calendar.CalendarView, Calendar.Month, Calendar.Week
      * @throws Exception
@@ -181,6 +189,46 @@ public class AppointmentCard {
         }
     }
 
+    public AppointmentCard(int appointmentId, LocalDate date) throws Exception {
+        this.appointmentsTable = appointmentsTable;
+        this.stage = new Stage();
+
+        // access appointment in database - must use appointment id because the AppointmentsTable class uses a
+        // special LocalAppointment class for building the table that includes customer names
+        Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
+        // set appointment
+        if(appointment.isPresent()) {
+            this.appointment = appointment.get();
+
+            // get customer
+            Optional<Customer> customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getCustomerId());
+
+            assert customerNameTxt != null;
+            customerNameTxt.getSelectionModel().select(customer.get());
+            user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
+            titleTxt.setText(this.appointment.getTitle());
+            descriptionTxt.setText(this.appointment.getDescription());
+            locationTxt.setText(this.appointment.getLocation());
+            contactTxt.setText(this.appointment.getContact());
+            typeTxt.setText(this.appointment.getType());
+            urlTxt.setText(this.appointment.getUrl());
+            this.datePicker.setValue(date);
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+            assert startTxt != null;
+            startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
+            sdf = new SimpleDateFormat("mm");
+            endTxt.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+        } else {
+            System.out.println("Appointment not found.");
+        }
+    }
+
+
+    public AppointmentCard(LocalDate date) {
+        this.stage = new Stage();
+        this.datePicker.setValue(date);
+    }
+
     private void setAppointment(Appointment appointment) {
         // set all appointment values to input values
         appointment.setCustomerId(customerNameTxt.getSelectionModel().getSelectedItem().getId());
@@ -212,10 +260,12 @@ public class AppointmentCard {
     private ButtonBar newAppointmentButtonBar() {
         ButtonBar buttonBar = new ButtonBar();
         Button okBtn = new Button("OK");
+        Button cancelBtn = new Button("Cancel");
         // init button bar
         buttonBar.setButtonMinWidth(100);
         ButtonBar.setButtonData(okBtn, ButtonBar.ButtonData.OK_DONE);
-        buttonBar.getButtons().addAll(okBtn);
+        ButtonBar.setButtonData(cancelBtn, ButtonBar.ButtonData.CANCEL_CLOSE);
+        buttonBar.getButtons().addAll(okBtn, cancelBtn);
 
         okBtn.setOnAction(e->{
             // Date formatter for date picker and time combo boxes
@@ -232,7 +282,7 @@ public class AppointmentCard {
             }
             try {
                 assert dao != null;
-                dao .add(new Appointment(
+                dao.add(new Appointment(
                         dao.getMaxId() + 1,
                         customerNameTxt.getValue().getId(),
                         user.getId(),
@@ -257,6 +307,8 @@ public class AppointmentCard {
                 ex.printStackTrace();
             }
         });
+
+        cancelBtn.setOnAction(e-> stage.close());
 
         return buttonBar;
     }
@@ -336,10 +388,13 @@ public class AppointmentCard {
         ButtonBar buttonBar = new ButtonBar();
         Button okBtn = new Button("OK");
         Button deleteBtn = new Button("Delete");
+        Button cancelBtn = new Button("Cancel");
+
         // init button bar
         ButtonBar.setButtonData(okBtn, ButtonBar.ButtonData.OK_DONE);
-        ButtonBar.setButtonData(deleteBtn, ButtonBar.ButtonData.CANCEL_CLOSE);
-        buttonBar.getButtons().addAll(okBtn, deleteBtn);
+        ButtonBar.setButtonData(deleteBtn, ButtonBar.ButtonData.OTHER);
+        ButtonBar.setButtonData(cancelBtn, ButtonBar.ButtonData.CANCEL_CLOSE);
+        buttonBar.getButtons().addAll(okBtn, deleteBtn, cancelBtn);
 
         okBtn.setOnAction(e->{
             // DAO.add()
@@ -370,6 +425,8 @@ public class AppointmentCard {
                 ex.printStackTrace();
             }
         });
+
+        cancelBtn.setOnAction(e-> stage.close());
 
         return buttonBar;
     }

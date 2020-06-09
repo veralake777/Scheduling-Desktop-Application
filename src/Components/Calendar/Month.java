@@ -7,11 +7,13 @@ import DbDao.DbCustomerDao;
 import POJO.Appointment;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventType;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -37,7 +39,10 @@ public class Month {
     private Text calendarTitle;
     private YearMonth currentYearMonth;
     private ObservableList<Appointment> appointmentsThisMonth = FXCollections.observableArrayList();
-    Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+    private Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+
+    // new appointment button
+    Button newAppointmentBtn = new Button("New Appointment");
 
     public Month(Main main) throws Exception {
         Month.main = main;
@@ -156,21 +161,20 @@ public class Month {
             AnchorPane.setLeftAnchor(txt, 5.0);
             ap.getChildren().add(txt);
 
+            ap.removeEventHandler(EventType.ROOT, Event::consume);
+            LocalDate finalCalendarDate = calendarDate;
             ap.setOnMouseClicked(e-> {
-                // Appointment IDs associated with this pane
-                ObservableList<Appointment> appointments = FXCollections.observableArrayList();
-                            Stage appointmentStage;
-                            try {
-                                if(appointments.size() > 0 ) {
-                                    appointmentStage = ap.thisDaysAppointmentsStage(appointments);
-                                    appointmentStage.showAndWait();
-                                } else {
-                                    appointmentStage = new AppointmentCard(main).getNewAppointmentStage();
-                                    appointmentStage.showAndWait();
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
+                Stage appointmentStage;
+                try {
+                    if(ap.appointments.size() > 0 ) {
+                        appointmentStage = ap.thisDaysAppointmentsStage(ap.appointments);
+                    } else {
+                        appointmentStage = new AppointmentCard(finalCalendarDate).getNewAppointmentStage();
+                    }
+                    appointmentStage.showAndWait();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             });
 
             if(isAppointment(ap.getDate(), ap)) {
@@ -234,7 +238,7 @@ public class Month {
     /**
      * Create an anchor pane that can store additional data.
      */
-    private static class AnchorPaneNode extends AnchorPane {
+    private class AnchorPaneNode extends AnchorPane {
 
         // Date associated with this pane
         private LocalDate date;
@@ -247,17 +251,18 @@ public class Month {
          */
         public AnchorPaneNode(Node... children) {
             super(children);
+            this.removeEventHandler(EventType.ROOT, Event::consume);
             // Add action handler for mouse clicked
             this.setOnMouseClicked(e -> {
                 Stage appointmentStage;
+
                 try {
                     if(appointments.size() > 0 ) {
                         appointmentStage = thisDaysAppointmentsStage(appointments);
-                        appointmentStage.showAndWait();
                     } else {
                         appointmentStage = new AppointmentCard(main).getNewAppointmentStage();
-                        appointmentStage.showAndWait();
                     }
+                    appointmentStage.showAndWait();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -275,45 +280,67 @@ public class Month {
 
         private Stage thisDaysAppointmentsStage(ObservableList<Appointment> appointments) throws Exception {
             Stage stage = new Stage();
-            VBox appointmentVBox = new VBox();
-            for(int i = 0; i < appointments.size(); i++) {
-                String appointmentType = appointments.get(i).getType();
-                String customerName = String.valueOf(new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointments.get(i).getCustomerId()).get().getCustomerName());
-                Button editAppointmentBtn = new Button("Edit");
-                int finalI = i;
-                editAppointmentBtn.setOnAction(e-> {
+            VBox appointmentVBox = new VBox(15);
+            appointmentVBox.setPrefSize(400, 400);
+            appointmentVBox.setPadding(new Insets(25));
+            appointmentVBox.setStyle("-fx-font-family: 'Roboto Bold';" +
+                    "-fx-font-size: 12;" +
+                    "-fx-font-weight: BOLD;");
+            for (Appointment appointment : appointments) {
+                String appointmentType = appointment.getType();
+                String customerName = String.valueOf(new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointment.getCustomerId()).get().getCustomerName());
+                Optional<Appointment> appointmentToEdit = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointment.getId());
+                Button updateAppointmentBtn = new Button("Update");
+                updateAppointmentBtn.setOnAction(e -> {
                     try {
-                        Optional<Appointment> appointmentToEdit = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointments.get(finalI).getId());
-                        stage.setScene(new Scene(new Label(appointmentToEdit.get().getType())));
+                        stage.setMinWidth(500);
+                        stage.setScene(new Scene(new AppointmentCard(appointmentToEdit.get().getId()).getNewAppointmentGridPane()));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 });
-                Button updateAppointmentBtn = new Button("Update");
-                onDeleteAppointment(appointments, stage, finalI, updateAppointmentBtn);
                 Button deleteAppointmentBtn = new Button("Delete");
-                onDeleteAppointment(appointments, stage, finalI, deleteAppointmentBtn);
+                deleteAppointmentBtn.setOnAction(e -> {
+                    try {
+                        DbAppointmentDao dao = new DbAppointmentDao(DBUtils.getMySQLDataSource());
+                        Alert a = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this appointment?");
 
+                        a.showAndWait()
+                                .filter(response -> response == ButtonType.OK)
+                                .ifPresent(response -> {
+                                    try {
+                                        dao.delete(appointmentToEdit.get());
+                                        Alert a2 = new Alert(Alert.AlertType.INFORMATION, "Success!");
+                                        a2.showAndWait();
+                                    } catch (Exception ex) {
+                                        Alert a3 = new Alert(Alert.AlertType.INFORMATION, "Something went wrong.");
+                                        a3.showAndWait();
+                                        ex.printStackTrace();
+                                    }
+                                });
+                    } catch (Exception ex) {
+                        Alert a = new Alert(Alert.AlertType.INFORMATION, "Something went wrong.");
+                        a.showAndWait();
+                        ex.printStackTrace();
+                    }
+                });
 
-                HBox appt = new HBox(15);
-                appt.getChildren().addAll(new Label(appointmentType), new Label(customerName), editAppointmentBtn, updateAppointmentBtn, deleteAppointmentBtn);
-                appointmentVBox.getChildren().add(appt);
+                Separator separator = new Separator();
+                HBox appt = new HBox(20);
+                appt.getChildren().addAll(new Label(appointmentType), new Label(customerName), updateAppointmentBtn, deleteAppointmentBtn);
+                appointmentVBox.getChildren().addAll(appt, separator);
+                newAppointmentBtn.setOnAction(e-> {
+                    try {
+                        stage.setScene(new Scene(new AppointmentCard(date).getNewAppointmentGridPane()));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
             }
+
+            appointmentVBox.getChildren().add(newAppointmentBtn);
             stage.setScene(new Scene(appointmentVBox));
             return stage;
         }
-
-        private void onDeleteAppointment(ObservableList<Appointment> appointments, Stage stage, int finalI, Button deleteAppointmentBtn) {
-            deleteAppointmentBtn.setOnAction(e->{
-                Optional<Appointment> appointmentToDelete = null;
-                try {
-                    appointmentToDelete = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointments.get(finalI).getId());
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                stage.setScene(new Scene(new Label(appointmentToDelete.get().getType())));
-            });
-        }
-
     }
 }

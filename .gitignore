@@ -7,9 +7,9 @@
 /C195ComboBoxObjectExample
 
 #db connection info
-/src/utils/Database/db.properties
-/src/utils/Database/DBUtils.java
-/src/DAO/DaoTemplate.java
+/previous-versions/utils/Database/db.properties
+/previous-versions/utils/Database/DBUtils.java
+/previous-versions/DAO/DaoTemplate.java
 
 # ItelliJ Files
 /.idea

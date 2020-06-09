@@ -1,17 +1,38 @@
-.borderPane {
-    -fx-font-size: 25px;
-    -fx-padding: 50px;
-}
+.calendar {
+     -fx-padding: 10 10;
+    -fx-background-color: WHITE;
+ }
 
+.day-labels {
+    -fx-padding: 0 0 0 15;
+}
+.days-small {
+    -fx-font-family: "Roboto Bold" ;
+    -fx-font-size: 20 ;
+    -fx-padding: 10 10;
+    -fx-pref-width: 50 ;
+}
 .days {
-    -fx-font-size: 40px;
-    -fx-alignment: CENTER;
+    -fx-font-family: "Roboto Light" ;
+    -fx-font-size: 20 ;
+    -fx-padding: 10 10 ;
+    -fx-pref-width: 175 ;
 }
 
-.blue {
-    -fx-background-color: LIGHTBLUE;
+.times {
+    -fx-font-family: "Roboto Light" ;
+    -fx-font-size: 16 ;
+    -fx-padding: 10 5 ;
+    -fx-min-width: 30 ;
 }
 
-.red {
-    -fx-background-color: RED;
+.time-slot {
+    -fx-background-color: GREY, WHITE ;
+    -fx-background-insets: 0, 1 1 0 0 ;
+}
+
+.time-slot:selected {
+    -fx-background-color:  rgba(235, 170, 93, .5) ;
+    -fx-border-radius: .5;
+    -fx-padding: -5;
 }

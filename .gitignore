@@ -1,10 +1,20 @@
-# ItelliJ Files
+#dev folders
+/simple_javafx_fxml
 /DAODemo2
 /C195DB2TableViewExample
-/src/utils/Database/db.properties
+/CodeExamples
+/C195ComboBoxExample
+/C195ComboBoxObjectExample
+
+#db connection info
+/previous-versions/utils/Database/db.properties
+/previous-versions/utils/Database/DBUtils.java
+/previous-versions/DAO/DaoTemplate.java
+
+# ItelliJ Files
 /.idea
 *.iml
+
+#production
 /out
-/CodeExamples
-/src/utils/Database/DBUtils.java
-/src/DAO/DaoTemplate.java
+

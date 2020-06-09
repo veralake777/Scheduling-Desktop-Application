@@ -1,7 +1,6 @@
-.loginMainGridPane {
+#loginMainGridPane {
     -fx-background-color: radial-gradient(radius 75%, #ebaa5d, #38909b);
 }
-
 .small {
     -fx-font-size: 22;
     -fx-font-wight: 500;

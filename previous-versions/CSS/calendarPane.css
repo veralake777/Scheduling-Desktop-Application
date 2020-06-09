@@ -1,0 +1,17 @@
+.borderPane {
+    -fx-font-size: 25px;
+    -fx-padding: 50px;
+}
+
+.days {
+    -fx-font-size: 40px;
+    -fx-alignment: CENTER;
+}
+
+.blue {
+    -fx-background-color: LIGHTBLUE;
+}
+
+.red {
+    -fx-background-color: RED;
+}

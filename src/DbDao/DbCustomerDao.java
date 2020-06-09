@@ -211,13 +211,23 @@ public class DbCustomerDao implements CustomerDao {
      */
     @Override
     public boolean delete(Customer customer) throws Exception {
+        boolean statement1;
+        boolean statement2;
         try (var connection = getConnection();
-             var statement = connection.prepareStatement("DELETE FROM customer WHERE customerId = ?")) {
-            statement.setInt(1, customer.getId());
-            return statement.executeUpdate() > 0;
+             var s1 = connection.prepareStatement("DELETE FROM appointment WHERE customerId = ?")) {
+            s1.setInt(1, customer.getId());
+            statement1 =  s1.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new CustomException(ex.getMessage(), ex);
         }
+        try (var connection = getConnection();
+             var s2 = connection.prepareStatement("DELETE FROM customer WHERE customerId = ?")) {
+            s2.setInt(1, customer.getId());
+            statement2 = s2.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        }
+        return statement1 && statement2;
     }
 
     private Optional<Address> getAddress(int addressId) throws Exception {

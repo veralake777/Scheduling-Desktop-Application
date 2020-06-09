@@ -1,12 +1,18 @@
 package Components.Customer;
 
+import DbDao.DbCustomerDao;
 import DbDao.DbCustomerDetailsDao;
+import POJO.Customer;
 import POJO.CustomerDetails;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import javafx.util.Callback;
 import utils.DBUtils;
 
@@ -27,6 +33,14 @@ public class CustomersTable {
     private TableColumn<CustomerDetails, String> countryColumn = new TableColumn("Country");
     ObservableList<CustomerDetails> customers = FXCollections.observableArrayList();
 
+    // VBox to hold static left side view
+    private VBox leftSideView = new VBox(10);
+
+    // DYNAMIC right side view
+    private Node rightSideView;
+
+    // GridPane
+    GridPane gridPane = new GridPane();
 
     public void initialize() throws Exception {
         customerTableView.getStylesheets().add("CSS/tableView.css");
@@ -70,18 +84,9 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     editBtn.setOnAction(event -> {
-                                        CustomerDetails customer = getTableView().getItems().get(getIndex());
-                                        Stage stage;
+                                        CustomerDetails customer = getTableView().getItems().get(getIndex()-1);
                                         try {
-                                            stage = new CustomerCard().getEditCustomerCardStage(customer);
-                                            stage.showAndWait();
-                                            // update tableView with new customer stream
-                                            if(!stage.isShowing()) {
-                                                customers.clear();
-                                                Stream<CustomerDetails> stream2 = new DbCustomerDetailsDao(DBUtils.getMySQLDataSource()).getAll();
-                                                stream2.forEach(c->customers.add(c));
-                                                customerTableView.setItems(customers);
-                                            }
+                                            updateRightSideView(new CustomerCard(customer).getCustomerCard());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -117,18 +122,28 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     deleteBtn.setOnAction(event -> {
-                                        CustomerDetails customer = getTableView().getItems().get(getIndex());
+                                        CustomerDetails customerDetails = getTableView().getItems().get(getIndex());
+                                        // delete customer from database
+                                        try {
+                                            DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                                            Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
+                                            dao.delete(customer);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        // delete customer from table
+
                                         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
                                         a.setTitle("Delete Customer");
                                         a.setHeaderText("Are you sure you would like to permanently delete "
-                                                + customer.getCustomerName() + " from the database?");
+                                                + customerDetails.getCustomerName() + " from the database?");
                                         a.setContentText(
                                                 "This will also delete the associated address and appointments. \n" +
                                                         "Click OK if you are sure. Click Cancel to exit this window.");
                                         a.showAndWait().ifPresent((btnType) -> {
                                             if (btnType == ButtonType.OK) {
                                                 // remove customer from table
-                                                getTableView().getItems().remove(customer);
+                                                getTableView().getItems().remove(customerDetails);
                                                 // TODO remove from database
                                             } else if (btnType == ButtonType.CANCEL) {
                                                 a.close();
@@ -149,14 +164,51 @@ public class CustomersTable {
 
         deleteColumn.setCellFactory(deleteBtnCellFactory);
 
+        customerTableView.setPrefHeight(700);
         customerTableView.setEditable(true);
         customerTableView.getColumns().addAll(nameColumn, phoneColumn, addressColumn, address2Column, postalCodeColumn,
                 cityColumn, countryColumn, editColumn, deleteColumn);
         customerTableView.setItems(customers);
     }
 
-    public TableView<CustomerDetails> getView() throws Exception {
+    private VBox getLeftSideView() throws Exception {
         initialize();
-        return customerTableView;
+        Rectangle2D screenSize = Screen.getPrimary().getBounds();
+        Button newCustomerBtn = new Button("New Customer");
+        newCustomerBtn.setMaxWidth(screenSize.getWidth()/2);
+        newCustomerBtn.setMinHeight(screenSize.getHeight()*.1);
+        newCustomerBtn.setStyle("-fx-font-family: 'Roboto Bold';\n" +
+                "-fx-font-size: 25;\n" +
+                "-fx-alignment: center;\n" +
+                "-fx-font-weight: BOLD;\n" +
+                "-fx-padding: 25 20;\n" +
+                "-fx-background-color:#ebaa5d;\n");
+        newCustomerBtn.setOnAction(e-> {
+            try {
+                updateRightSideView(new CustomerCard().getNewCustomerCardGridPane());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        leftSideView.setMaxHeight(680);
+        leftSideView.getChildren().addAll(customerTableView, newCustomerBtn);
+        return leftSideView;
+    }
+
+    public GridPane getView() throws Exception {
+        gridPane.add(getLeftSideView(), 0, 0);
+        rightSideView = new Label("Click a button to load a view.");
+        rightSideView.setStyle("-fx-alignment: CENTER;" +
+                "-fx-padding: 0 0 0 450");
+        gridPane.add(rightSideView, 1, 0 );
+        return gridPane;
+    }
+
+    public void updateRightSideView(Node node) {
+        rightSideView = node;
+        rightSideView.setStyle("-fx-alignment: CENTER;" +
+                "-fx-padding: 0 0 0 300");
+        gridPane.getChildren().remove(1);
+        gridPane.add(rightSideView, 1, 0);
     }
 }

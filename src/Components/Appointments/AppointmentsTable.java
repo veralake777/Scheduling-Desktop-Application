@@ -10,14 +10,11 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import utils.DBUtils;
 
@@ -31,7 +28,7 @@ import java.util.stream.Stream;
 public class AppointmentsTable {
 
     public AppointmentsTable(Main main) throws Exception {
-        buildAnchorPane();
+        buildView();
         this.main = main;
     }
 
@@ -42,8 +39,8 @@ public class AppointmentsTable {
     // DYNAMIC right side view
     private Node rightSideView;
 
-    //TilePane
-    AnchorPane anchorPane;
+    // GridPane
+    GridPane gridPane;
 
     //table view
     private TableView appointmentTableView = new TableView<Appointment>();
@@ -96,7 +93,7 @@ public class AppointmentsTable {
 
         // customer name column
         customerName.setCellValueFactory(new PropertyValueFactory<>("customerName"));
-        customerName.setMinWidth(200);
+        customerName.setMinWidth(100);
 
         // set column data
         setAppointments();
@@ -132,7 +129,7 @@ public class AppointmentsTable {
                                     editBtn.setOnAction(event -> {
                                         LocalAppointment appointment = getTableView().getItems().get(getIndex());
                                         try {
-                                            updateRightSideView(new AppointmentCard(appointment.getAppointmentId()).getEditAppointmentGridPane());
+                                            updateRightSideView(new AppointmentCard(appointment.getAppointmentId(), AppointmentsTable.this).getEditAppointmentGridPane());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -142,6 +139,7 @@ public class AppointmentsTable {
                                 }
                             }
                         };
+                        cell.setMinWidth(100);
                         return cell;
                     }
                 };
@@ -178,21 +176,18 @@ public class AppointmentsTable {
                                                         "Click OK if you are sure. Click Cancel to exit this window.");
                                         a.showAndWait().ifPresent((btnType) -> {
                                             if (btnType == ButtonType.OK) {
-                                                // remove customer from table
+                                                // remove appointment from database
                                                 try {
                                                     DbAppointmentDao dao = new DbAppointmentDao(DBUtils.getMySQLDataSource());
                                                     dao.delete(dao.getById(appointment.getAppointmentId()).get());
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
+                                                // remove appointment from table
                                                 getTableView().getItems().remove(appointment);
-                                                // TODO remove from database
                                             } else if (btnType == ButtonType.CANCEL) {
                                                 a.close();
                                             }
-//                                            clearDialogOptionSelections();;
-//                                        System.out.println(customer.getCustomerName()
-//                                                + "   " + customer.getPhone());
                                         });
                                     });
                                     setGraphic(deleteBtn);
@@ -200,6 +195,7 @@ public class AppointmentsTable {
                                 }
                             }
                         };
+                        cell.setMinWidth(100);
                         return cell;
                     }
                 };
@@ -208,28 +204,12 @@ public class AppointmentsTable {
 
         // New Button below the table
         newAppointmentBtn.setOnAction(e-> {
-              updateRightSideView(new AppointmentCard(main).getNewAppointmentGridPane());
-//            Stage stage = null;
-//            try {
-//                stage = new AppointmentCard(main).getNewAppointmentStage();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//            try {
-//                stage.showAndWait();
-//                if(!stage.isShowing()) {
-//                    appointments.clear();
-//                    setAppointments();
-//                    appointmentTableView.setItems(appointments);
-//                }
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
+              updateRightSideView(new AppointmentCard(AppointmentsTable.this, main).getNewAppointmentGridPane());
         });
 
         // init table
         appointmentTableView.setEditable(true);
-        appointmentTableView.setPrefHeight(750);
+        appointmentTableView.setPrefHeight(800);
         appointmentTableView.getColumns().addAll(type, customerName, editColumn, deleteColumn);
         appointmentTableView.setItems(appointments);
     }
@@ -264,24 +244,26 @@ public class AppointmentsTable {
         return leftSideView;
     }
 
-    private void buildAnchorPane() throws Exception {
-        anchorPane = new AnchorPane();
+    private void buildView() throws Exception {
+        gridPane = new GridPane();
+        ColumnConstraints col1 = new ColumnConstraints(600);
+        gridPane.getColumnConstraints().add(col1);
         rightSideView = new Label("Click a button to load a view.");
-        anchorPane.getChildren().addAll(getLeftSideView(),rightSideView);   // Add grid from Example 1-5
-        AnchorPane.setLeftAnchor(leftSideView, 0.0);
-        AnchorPane.setTopAnchor(rightSideView, 400.0);
-        AnchorPane.setRightAnchor(rightSideView, 425.0);
+        rightSideView.setStyle("-fx-alignment: CENTER;" +
+                "-fx-padding: 0 0 0 500;");
+        gridPane.add(getLeftSideView(), 0, 0);
+        gridPane.add(rightSideView, 1, 0);
     }
 
-    public AnchorPane getAnchorPane() {
-        return anchorPane;
+    public GridPane getGridPane() {
+        return gridPane;
     }
 
     public void updateRightSideView(Node node) {
         rightSideView = node;
-        anchorPane.getChildren().remove(1);
-        anchorPane.getChildren().add(node);
-        AnchorPane.setRightAnchor(rightSideView, 20.00);
-        AnchorPane.setRightAnchor(rightSideView, 100.0);
+        rightSideView.setStyle("-fx-alignment: CENTER;" +
+                "-fx-padding: 0 0 0 350");
+        gridPane.getChildren().remove(1);
+        gridPane.add(rightSideView, 1, 0);
     }
 }

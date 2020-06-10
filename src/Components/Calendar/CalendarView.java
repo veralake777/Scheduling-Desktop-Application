@@ -1,7 +1,6 @@
 package Components.Calendar;
 
 import Components.Appointments.NextAppointment;
-import Components.Main;
 import POJO.User;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;

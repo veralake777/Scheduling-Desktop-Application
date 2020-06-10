@@ -1,8 +1,9 @@
 package Components.Appointments;
 
-import POJO.Appointment;
 import DbDao.DbAppointmentDao;
+import POJO.Appointment;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -27,8 +28,11 @@ public class NextAppointment {
 
     private void buildAppointment() {
         vBox = new VBox(10);
-        vBox.setAlignment(Pos.CENTER);
-        vBox.setStyle("-fx-background-color: GREY;");
+        vBox.setAlignment(Pos.CENTER_LEFT);
+        vBox.setStyle("-fx-background-color: WHITE;" +
+                "-fx-padding: 15;" +
+                "-fx-border-color: GREY;" +
+                "-fx-border-width: 2;");
         // db stuff
         try {
             final var dataSource = DBUtils.getMySQLDataSource();
@@ -44,15 +48,24 @@ public class NextAppointment {
 
             // header
             Text header = new Text("NEXT APPOINTMENT");
+            header.setStyle("-fx-underline: true;");
             header.setFont(Font.font("Roboto", FontWeight.NORMAL, 20));
             header.setWrappingWidth(250);
             if(nextAppointment != null) {
                 // appointment data
-                Text nextAppointmentString = new Text(nextAppointment.toString());
-                nextAppointmentString.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));
+                Label type = new Label("TYPE:    " + nextAppointment.getType());
+                Label startTime = new Label("TIME:    " +
+                        nextAppointment.getStart().toLocalDateTime().toLocalTime().getHour() + ":" +
+                        nextAppointment.getStart().toLocalDateTime().toLocalTime().getMinute());
+                Label date = new Label("DATE:    " + nextAppointment.getStart().toLocalDateTime().toLocalDate().toString());
+                type.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));
+                startTime.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));
+                date.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));
                 vBox.getChildren().addAll(
                         header,
-                        nextAppointmentString
+                        type,
+                        date,
+                        startTime
                 );
             } else {
                 header.setText("NO UPCOMING APPOINTMENTS");

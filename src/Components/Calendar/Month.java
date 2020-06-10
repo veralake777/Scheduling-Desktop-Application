@@ -132,6 +132,8 @@ public class Month {
         populateCalendar(yearMonth);
         // Create the calendar view
         view = new VBox(titleBar, dayLabels, calendar);
+        view.setStyle("-fx-border-color: GREY;" +
+                "-fx-border-width: 2;");
     }
 
     /**

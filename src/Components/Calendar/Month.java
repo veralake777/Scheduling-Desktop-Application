@@ -1,7 +1,6 @@
 package Components.Calendar;
 
 import Components.Appointments.AppointmentCard;
-import Components.Main;
 import DbDao.DbAppointmentDao;
 import DbDao.DbCustomerDao;
 import POJO.Appointment;
@@ -170,7 +169,7 @@ public class Month {
                     if(ap.appointments.size() > 0 ) {
                         appointmentStage = ap.thisDaysAppointmentsStage(ap.appointments);
                     } else {
-                        appointmentStage = new AppointmentCard(finalCalendarDate).getNewAppointmentStage();
+                        appointmentStage = new AppointmentCard(finalCalendarDate, user.getId()).getNewAppointmentStage();
                     }
                     appointmentStage.showAndWait();
                 } catch (Exception ex) {
@@ -332,7 +331,7 @@ public class Month {
                 appointmentVBox.getChildren().addAll(appt, separator);
                 newAppointmentBtn.setOnAction(e-> {
                     try {
-                        stage.setScene(new Scene(new AppointmentCard(date).getNewAppointmentGridPane()));
+                        stage.setScene(new Scene(new AppointmentCard(date, user.getId()).getNewAppointmentGridPane()));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

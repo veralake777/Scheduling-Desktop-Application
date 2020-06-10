@@ -118,6 +118,29 @@ public class DbCustomerDetailsDao implements CustomerDetailsDao {
         }
     }
 
+    public Optional<CustomerDetails> getByName(String name) throws Exception {
+
+        ResultSet resultSet = null;
+
+        try (var connection = getConnection();
+             var statement = connection.prepareStatement("SELECT * FROM customerDetails WHERE customerName = ?")) {
+
+            statement.setString(1, name);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(createCustomer(resultSet));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        }
+    }
+
     /**
      * {@inheritDoc}
      */

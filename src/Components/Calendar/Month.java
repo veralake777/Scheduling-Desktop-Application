@@ -5,6 +5,7 @@ import Components.Main;
 import DbDao.DbAppointmentDao;
 import DbDao.DbCustomerDao;
 import POJO.Appointment;
+import POJO.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -33,7 +34,7 @@ import java.util.stream.Stream;
  * CalendarMonthModel contains the CalendarMonth data.
  */
 public class Month {
-    private static Main main;
+    private User user;
     private ArrayList<AnchorPaneNode> allCalendarDays = new ArrayList<>(35);
     private VBox view;
     private Text calendarTitle;
@@ -44,8 +45,8 @@ public class Month {
     // new appointment button
     Button newAppointmentBtn = new Button("New Appointment");
 
-    public Month(Main main) throws Exception {
-        Month.main = main;
+    public Month(User user) throws Exception {
+        this.user = user;
         buildAppointmentsThisMonth();
     }
 
@@ -200,7 +201,7 @@ public class Month {
         boolean match = false;
         for (Appointment a : appointmentsThisMonth) {
             String startDate = new SimpleDateFormat("yyyy-MM-dd").format(a.getStart());
-            if (startDate.equals(String.valueOf(calendarDate))) {
+            if (startDate.equals(String.valueOf(calendarDate)) && a.getUserId() == user.getId()) {
                 ap.appointments.add(a);
                 match = true;
             }
@@ -260,7 +261,7 @@ public class Month {
                     if(appointments.size() > 0 ) {
                         appointmentStage = thisDaysAppointmentsStage(appointments);
                     } else {
-                        appointmentStage = new AppointmentCard(main).getNewAppointmentStage();
+                        appointmentStage = new AppointmentCard(user).getNewAppointmentStage();
                     }
                     appointmentStage.showAndWait();
                 } catch (Exception ex) {

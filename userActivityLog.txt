@@ -2905,3 +2905,33 @@ INFO: SUCCESSFUL LOGIN:
   UserName: test 
   Password: test
   Timestamp: 2020-06-10T14:41:54.141714500
+Jun 10, 2020 2:52:21 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-10T14:52:21.815040900
+Jun 10, 2020 2:53:35 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test2 
+  Password: test
+  Timestamp: 2020-06-10T14:53:35.681591300
+Jun 10, 2020 3:00:06 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test2 
+  Password: test
+  Timestamp: 2020-06-10T15:00:06.597426800
+Jun 10, 2020 3:00:52 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test2 
+  Password: test
+  Timestamp: 2020-06-10T15:00:52.894620400
+Jun 10, 2020 3:22:59 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test2 
+  Password: test
+  Timestamp: 2020-06-10T15:22:59.298561300
+Jun 10, 2020 3:24:56 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-10T15:24:56.910240700

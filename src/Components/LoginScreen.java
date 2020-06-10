@@ -16,7 +16,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import utils.DBUtils;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
@@ -33,7 +32,7 @@ import java.util.logging.*;
  */
 public class LoginScreen {
     // log user
-    Main main;
+    User user;
     private final static Logger USER_LOG = Logger.getLogger("userActivityLog.txt");
     GridPane mainGridPane = new GridPane();
     Stage primaryStage;
@@ -45,7 +44,9 @@ public class LoginScreen {
 
 
     // constructor
-    public LoginScreen() {}
+    public LoginScreen(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
 
     // build login screen
     private void build() {
@@ -117,7 +118,7 @@ public class LoginScreen {
             System.out.println(e);
             try {
                 validateUser(e, userNameTxtFld.getText(), passwordFld.getText());
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
@@ -151,55 +152,42 @@ public class LoginScreen {
     }
 
     // validate user input for login screen
-    private void validateUser(ActionEvent actionEvent, String userName, String password) throws IOException {
+    private void validateUser(ActionEvent actionEvent, String userName, String password) throws Exception {
         LogManager.getLogManager().getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.FINE);
-        try {
-            DbUserDao dbUserDao = new DbUserDao(DBUtils.getMySQLDataSource());
-            Optional<User> user = dbUserDao.getByNameAndPassword(userName, password);
+        DbUserDao dbUserDao = new DbUserDao(DBUtils.getMySQLDataSource());
+        Optional<User> user = dbUserDao.getByNameAndPassword(userName, password);
 //            Stream<User> validateUserStream = dbUserDao.getAll();
 //            boolean userNameExists = validateUserStream
 //                    .anyMatch(user -> user.getUserName().equals(userName) && user.getPassword().equals(password));
-            // RUBRIC J.   Provide the ability to track user activity by recording timestamps for user log-ins in
-            // a .txt file. Each new record should be appended to the log file, if the file already exists.
+        // RUBRIC J.   Provide the ability to track user activity by recording timestamps for user log-ins in
+        // a .txt file. Each new record should be appended to the log file, if the file already exists.
 
-            // disable default handlers
-            USER_LOG.setUseParentHandlers(false);
+        // disable default handlers
+        USER_LOG.setUseParentHandlers(false);
 
-            // set up file handler
-            FileHandler userLogFH;
-            userLogFH = new FileHandler("userActivityLog.txt", true);
-            SimpleFormatter sf = new SimpleFormatter();
-            userLogFH.setFormatter(sf);
-            USER_LOG.addHandler(userLogFH);
+        // set up file handler
+        FileHandler userLogFH;
+        userLogFH = new FileHandler("userActivityLog.txt", true);
+        SimpleFormatter sf = new SimpleFormatter();
+        userLogFH.setFormatter(sf);
+        USER_LOG.addHandler(userLogFH);
 
-            if(user.isPresent()) {
-                primaryStage.setScene(new Scene(new MainView(main).getView()));
+        if(user.isPresent()) {
+            primaryStage.setScene(new Scene(new MainView(user.get()).getView()));
 
-                int userId = dbUserDao.getAll().findAny().get().getId();
-
-                // log to userlog.txt
-                USER_LOG.setLevel(Level.INFO);
-                USER_LOG.log(Level.INFO, "SUCCESSFUL LOGIN:\n  UserName: " + userName  + " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString());
-
-                // set user data in Components.Main for global use
-                main.setUser(user.get());
-            } else {
-                // log to userlog.txt
-                USER_LOG.setLevel(Level.INFO);
-                USER_LOG.log(Level.INFO, "\n----------------------------------------\n" +
-                        "FAILED LOGIN:\n  UserName: " + userName  +
-                        " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString() +
-                        "\n----------------------------------------\n"
-                );
-                loginErrorLbl.getStyleClass().add("small");
-                loginErrorLbl.setText(rb.getString("loginErrorMessage"));
-            }
-        }catch(Exception e){
-            System.out.println(e.getMessage());
+            // log to userlog.txt
+            USER_LOG.setLevel(Level.INFO);
+            USER_LOG.log(Level.INFO, "SUCCESSFUL LOGIN:\n  UserName: " + userName  + " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString());
+        } else {
+            // log to userlog.txt
+            USER_LOG.setLevel(Level.INFO);
+            USER_LOG.log(Level.INFO, "\n----------------------------------------\n" +
+                    "FAILED LOGIN:\n  UserName: " + userName  +
+                    " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString() +
+                    "\n----------------------------------------\n"
+            );
+            loginErrorLbl.getStyleClass().add("small");
+            loginErrorLbl.setText(rb.getString("loginErrorMessage"));
         }
-    }
-
-    public void setMain(Main main, Stage primaryStage) {
-        this.main = main; this.primaryStage = primaryStage;
     }
 }

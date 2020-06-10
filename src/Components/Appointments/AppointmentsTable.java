@@ -1,10 +1,10 @@
 package Components.Appointments;
 
-import Components.Main;
 import DbDao.DbAppointmentDao;
 import DbDao.DbCustomerDao;
 import POJO.Appointment;
 import POJO.Customer;
+import POJO.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -27,12 +27,12 @@ import java.util.stream.Stream;
  */
 public class AppointmentsTable {
 
-    public AppointmentsTable(Main main) throws Exception {
+    public AppointmentsTable(User user) throws Exception {
         buildView();
-        this.main = main;
+        this.user = user;
     }
 
-    private Main main;
+    private User user;
     // VBox to hold static left side view
     private VBox leftSideView = new VBox(0);
 
@@ -204,7 +204,7 @@ public class AppointmentsTable {
 
         // New Button below the table
         newAppointmentBtn.setOnAction(e-> {
-              updateRightSideView(new AppointmentCard(AppointmentsTable.this, main).getNewAppointmentGridPane());
+              updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
         });
 
         // init table

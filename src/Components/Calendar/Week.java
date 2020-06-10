@@ -1,9 +1,9 @@
 package Components.Calendar;
 
 import Components.Appointments.AppointmentCard;
-import Components.Main;
 import DbDao.DbAppointmentDao;
 import POJO.Appointment;
+import POJO.User;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  * resource: https://gist.github.com/james-d/c4a2cf66efecbf3aa362
  **/
 public class Week {
-    private final Main main;
+    private final User user;
     private final LocalTime FIRST_SLOT_START = LocalTime.of(8, 0);
     private final Duration slotLength = Duration.ofMinutes(15);
     private final LocalTime LAST_SLOT_END = LocalTime.of(18, 59);
@@ -41,8 +41,8 @@ public class Week {
 
     private final List<TimeSlot> timeSlots = new ArrayList<>();
 
-    public Week(Main main) {
-        this.main = main;
+    public Week(User user) {
+        this.user = user;
     }
 
     public GridPane getView() throws Exception {
@@ -67,7 +67,7 @@ public class Week {
                 timeSlots.add(timeSlot);
 
                 timeSlot.getView().setOnMouseClicked(mouseEvent-> {
-                    AppointmentCard appointmentCard = new AppointmentCard(main, timeSlot.getStart().toLocalDate());
+                    AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate());
                     Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
                     popup.showAndWait();
                 });
@@ -132,7 +132,7 @@ public class Week {
                 long minutes = a.getEnd().getMinutes() - a.getStart().getMinutes();
                 Duration duration = Duration.ofMinutes(minutes);
                 TimeSlot existingSlot = new TimeSlot(a.getStart().toLocalDateTime(), Duration.ofMinutes(30));
-                if (timeSlot.getStart().equals(existingSlot.getStart())) {
+                if (timeSlot.getStart().equals(existingSlot.getStart()) && a.getUserId() == user.getId()) {
                     timeSlot.duration = Duration.ofMinutes(duration.toMinutes());
                     Duration tempD = Duration.ofMinutes(timeSlot.duration.toMinutes());
                     int j = i;

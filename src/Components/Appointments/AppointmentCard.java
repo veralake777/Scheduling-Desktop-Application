@@ -1,7 +1,6 @@
 package Components.Appointments;
 
 import Components.ComboBoxes;
-import Components.Main;
 import DbDao.DbAppointmentDao;
 import DbDao.DbCustomerDao;
 import DbDao.DbUserDao;
@@ -91,22 +90,22 @@ public class AppointmentCard {
     private ComboBox<Integer> endTxt = new ComboBoxes().getDurationTimes();
 
     // For popups in Components.Calendar.Week, Components.Calendar.Month
-    public AppointmentCard(Main main) {
+    public AppointmentCard(User user) {
         this.stage = new Stage();
-        user = main.getUser();
+        this.user = user;
     }
 
     // for grid pane in dynamic views of Components.Appointments.AppointmentsTable, Components.Customer.CustomersTable
-    public AppointmentCard(AppointmentsTable appointmentsTable, Main main) {
+    public AppointmentCard(AppointmentsTable appointmentsTable, User user) {
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
-        user = main.getUser();
+        this.user = user;
     }
 
     // for week view, new appointment
-    public AppointmentCard(Main main, LocalDate date) {
+    public AppointmentCard(User user, LocalDate date) {
         this.stage = new Stage();
-        user = main.getUser();
+        this.user = user;
         this.datePicker.setValue(date);
     }
 

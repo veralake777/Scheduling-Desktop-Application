@@ -13,8 +13,7 @@ public class Main extends Application {
     private LoginScreen loginScreen;
     @Override
     public void start(Stage primaryStage) throws Exception{
-        loginScreen = new LoginScreen();
-        loginScreen.setMain(this, primaryStage);
+        loginScreen = new LoginScreen(primaryStage);
         // maximized screen
         primaryStage.setMaximized(true);
 
@@ -30,9 +29,7 @@ public class Main extends Application {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public void setUser(User user) { this.user = user; }
 
     public static void main(String[] args) {
         launch(args);

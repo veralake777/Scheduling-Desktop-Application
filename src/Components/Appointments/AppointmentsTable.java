@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 public class AppointmentsTable {
 
     public AppointmentsTable(User user) throws Exception {
-        buildView();
         this.user = user;
+        buildView();
     }
 
     private User user;
@@ -139,12 +139,13 @@ public class AppointmentsTable {
                                 }
                             }
                         };
-                        cell.setMinWidth(100);
+                        cell.setMinWidth(125);
                         return cell;
                     }
                 };
 
         editColumn.setCellFactory(editBtnCellFactory);
+        editColumn.setMinWidth(100);
 
         TableColumn deleteColumn = new TableColumn("Delete");
         deleteColumn.setCellValueFactory(new PropertyValueFactory<>(null));
@@ -195,12 +196,13 @@ public class AppointmentsTable {
                                 }
                             }
                         };
-                        cell.setMinWidth(100);
+                        cell.setMinWidth(125);
                         return cell;
                     }
                 };
 
         deleteColumn.setCellFactory(deleteBtnCellFactory);
+        deleteColumn.setMinWidth(100);
 
         // New Button below the table
         newAppointmentBtn.setOnAction(e-> {
@@ -210,6 +212,8 @@ public class AppointmentsTable {
         // init table
         appointmentTableView.setEditable(true);
         appointmentTableView.setPrefHeight(800);
+        appointmentTableView.setPrefSize(600, Screen.getPrimary().getBounds().getHeight() - 175);
+        appointmentTableView.scrollTo(1);
         appointmentTableView.getColumns().addAll(type, customerName, editColumn, deleteColumn);
         appointmentTableView.setItems(appointments);
     }
@@ -218,14 +222,16 @@ public class AppointmentsTable {
         appointments.clear();
         Stream<Appointment> stream2 = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
         stream2.forEach(a ->{
-            Optional<Customer> customer = Optional.empty();
-            try {
-                customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(a.getCustomerId());
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(a.getUserId() == user.getId()) {
+                Optional<Customer> customer = Optional.empty();
+                try {
+                    customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(a.getCustomerId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                appointments.add(new LocalAppointment(a.getId(), a.getType(), customer.get().getCustomerName()));
             }
-            appointments.add(new LocalAppointment(a.getId(), a.getType(), customer.get().getCustomerName()));
-            });
+        });
     }
 
     private VBox getLeftSideView() throws Exception {
@@ -259,10 +265,14 @@ public class AppointmentsTable {
         return gridPane;
     }
 
+    public TableView getAppointmentTableView() {
+        type.setMinWidth(125);
+        customerName.setMinWidth(225);
+        return appointmentTableView;
+    }
+
     public void updateRightSideView(Node node) {
         rightSideView = node;
-        rightSideView.setStyle("-fx-alignment: CENTER;" +
-                "-fx-padding: 0 0 0 350");
         gridPane.getChildren().remove(1);
         gridPane.add(rightSideView, 1, 0);
     }

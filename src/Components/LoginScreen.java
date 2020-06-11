@@ -34,7 +34,7 @@ public class LoginScreen {
     // log user
     User user;
     private final static Logger USER_LOG = Logger.getLogger("userActivityLog.txt");
-    GridPane mainGridPane = new GridPane();
+    GridPane mainGridPane;
     Stage primaryStage;
     Label loginErrorLbl = new Label();
 
@@ -44,12 +44,14 @@ public class LoginScreen {
 
 
     // constructor
-    public LoginScreen(Stage primaryStage) {
+    public LoginScreen(User user, Stage primaryStage) {
+        this.user = user;
         this.primaryStage = primaryStage;
     }
 
     // build login screen
     private void build() {
+        mainGridPane = new GridPane();
         // basic set up of mainGridPane
         mainGridPane.getStylesheets().add("CSS/loginStyle.css");
         mainGridPane.getStyleClass().add("loginMainGridPane");
@@ -173,7 +175,10 @@ public class LoginScreen {
         USER_LOG.addHandler(userLogFH);
 
         if(user.isPresent()) {
-            primaryStage.setScene(new Scene(new MainView(user.get()).getView()));
+            GridPane mainView = new MainView(user.get()).getView();
+            Scene mainViewScene = new Scene(mainView);
+
+            primaryStage.setScene(mainViewScene);
 
             // log to userlog.txt
             USER_LOG.setLevel(Level.INFO);

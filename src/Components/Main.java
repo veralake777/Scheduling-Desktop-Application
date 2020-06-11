@@ -2,6 +2,7 @@ package Components;
 
 import POJO.User;
 import javafx.application.Application;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -13,13 +14,10 @@ public class Main extends Application {
     private LoginScreen loginScreen;
     @Override
     public void start(Stage primaryStage) throws Exception{
-        loginScreen = new LoginScreen(primaryStage);
+        loginScreen = new LoginScreen(user, primaryStage);
         // maximized screen
-        primaryStage.setMaximized(true);
-
-        // disable can resize screen - this application does not include CSS for different view sizes
-        primaryStage.setResizable(false);
-//        gridPane.add(new CustomersTableView().getView(),0, 0);
+        primaryStage.setWidth(Screen.getPrimary().getBounds().getWidth());
+        primaryStage.setHeight(Screen.getPrimary().getBounds().getHeight());
         primaryStage.setTitle("AcmeCO Scheduling Application");
         primaryStage.setScene(loginScreen.getScene());
         primaryStage.show();

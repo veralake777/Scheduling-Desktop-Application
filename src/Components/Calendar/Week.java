@@ -50,6 +50,7 @@ public class Week {
     }
 
     GridPane weekView = new GridPane();
+
     public ScrollPane getView(LocalDate monday) throws Exception {
         // clear gridpane
         weekView.getChildren().clear();
@@ -59,7 +60,7 @@ public class Week {
         // add col contraints
         ColumnConstraints col1 = new ColumnConstraints(55);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth((100.0/8) - col1.getPrefWidth());
+        col2.setPercentWidth((100.0 / 8) - col1.getPrefWidth());
         weekView.getColumnConstraints().addAll(col1, col2, col2, col2, col2, col2, col2, col2);
 
         // previous and next buttons
@@ -108,7 +109,7 @@ public class Week {
                 TimeSlot timeSlot = new TimeSlot(startTime, slotLength);
                 timeSlots.add(timeSlot);
 
-                timeSlot.getView().setOnMouseClicked(mouseEvent-> {
+                timeSlot.getView().setOnMouseClicked(mouseEvent -> {
                     AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate());
                     Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
                     popup.showAndWait();
@@ -133,13 +134,13 @@ public class Week {
             label.getStyleClass().add("days");
 
             // highlight today
-            if(LocalDate.now().equals(date)) {
+            if (LocalDate.now().equals(date)) {
                 label.setStyle("-fx-background-color: #38909b;" +
                         "-fx-font-size: 22;");
-            };
+            }
 
             GridPane.setHalignment(label, HPos.CENTER);
-            if(col == 1) {
+            if (col == 1) {
                 // add buttons to row
                 HBox hBox = new HBox(previousWeek, label);
                 hBox.setSpacing(5);
@@ -152,28 +153,27 @@ public class Week {
                 HBox.setHgrow(label, Priority.ALWAYS);
                 HBox.setHgrow(nextWeek, Priority.ALWAYS);
                 weekView.add(hBox, col, 0);
-            }
-            else {
+            } else {
                 weekView.add(label, col, 0);
             }
             col++;
         }
 
         // TIMES
-        int slotIndex = 1 ;
+        int slotIndex = 1;
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
         for (LocalDateTime startTime = monday.atTime(FIRST_SLOT_START);
-             ! startTime.isAfter(monday.atTime(LAST_SLOT_END));
+             !startTime.isAfter(monday.atTime(LAST_SLOT_END));
              startTime = startTime.plus(slotLength)) {
             Label label = new Label(startTime.format(timeFormatter));
             label.setPadding(new Insets(2));
             label.getStyleClass().add("times");
             GridPane.setHalignment(label, HPos.RIGHT);
             weekView.add(label, 0, slotIndex);
-            slotIndex++ ;
+            slotIndex++;
         }
         weekView.getStylesheets().add("CSS/calendarPane.css");
-        weekView.setMaxWidth(Screen.getPrimary().getBounds().getWidth()*.56);
+        weekView.setMaxWidth(Screen.getPrimary().getBounds().getWidth() * .56);
         setAppointments();
         ScrollPane scrollPane = new ScrollPane(weekView);
         scrollPane.pannableProperty().set(false);
@@ -198,10 +198,10 @@ public class Week {
     }
 
     private void setAppointments() throws Exception {
-        Stream<Appointment> appointmentStream =  new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+        Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
         ObservableList<Appointment> appointmentObservableList = FXCollections.observableArrayList();
         appointmentStream.forEach(appointmentObservableList::add);
-        for (int i = 0; i<timeSlots.size(); i++) {
+        for (int i = 0; i < timeSlots.size(); i++) {
             TimeSlot timeSlot = timeSlots.get(i);
 
             // set existing appointments
@@ -213,7 +213,7 @@ public class Week {
                     timeSlot.duration = Duration.ofMinutes(duration.toMinutes());
                     Duration tempD = Duration.ofMinutes(timeSlot.duration.toMinutes());
                     int j = i;
-                    while(tempD.toMinutes() >= 15) {
+                    while (tempD.toMinutes() >= 15) {
                         TimeSlot currentTimeSlot = timeSlots.get(j);
                         tempD = tempD.minusMinutes(15);
                         currentTimeSlot.setSelected(true);
@@ -256,15 +256,15 @@ public class Week {
 
     /**
      * *************************************************************************************
-     *   Provide the ability to add, update, and delete appointments, capturing the type of
-     *   appointment and a link to the specific customer record in the database.
+     * Provide the ability to add, update, and delete appointments, capturing the type of
+     * appointment and a link to the specific customer record in the database.
      * *************************************************************************************
      * on mouse released
      * *  show popup with new appointment holding values:
-     *      *  from the timeSlot:
-     *          *  WeekDay(s), Duration, Start & End times
-     *      *  info to fill in:
-     *          * customerName, Title, description, location, contact info, type, url
+     * *  from the timeSlot:
+     * *  WeekDay(s), Duration, Start & End times
+     * *  info to fill in:
+     * * customerName, Title, description, location, contact info, type, url
      *
      * @param timeSlot
      * @param mouseAnchor
@@ -280,7 +280,7 @@ public class Week {
         // setOnMouseDragEntered:
         timeSlot.getView().setOnMouseDragEntered(event -> {
             TimeSlot startSlot = mouseAnchor.get();
-            timeSlots.forEach(slot ->{
+            timeSlots.forEach(slot -> {
                 slot.setSelected(isBetween(slot, startSlot, timeSlot));
             });
         });
@@ -305,7 +305,7 @@ public class Week {
     // Finally we note that x <= y <= z or z <= y <= x if and only if (y-x)*(z-y) >= 0.
 
     private boolean isBetween(TimeSlot testSlot, TimeSlot startSlot, TimeSlot endSlot) {
-        boolean daysBetween = testSlot.getDayOfWeek().compareTo(startSlot.getDayOfWeek()) * endSlot.getDayOfWeek().compareTo(testSlot.getDayOfWeek()) == 0 ;
+        boolean daysBetween = testSlot.getDayOfWeek().compareTo(startSlot.getDayOfWeek()) * endSlot.getDayOfWeek().compareTo(testSlot.getDayOfWeek()) == 0;
 
         boolean timesBetween = testSlot.getTime().compareTo(startSlot.getTime())
                 * endSlot.getTime().compareTo(testSlot.getTime()) >= 0 && testSlot.getTime().compareTo(startSlot.getTime())
@@ -321,14 +321,14 @@ public class Week {
 
     public static class TimeSlot {
 
-        private final LocalDateTime start ;
-        private Duration duration ;
-        private final StackPane view ;
+        private final LocalDateTime start;
+        private Duration duration;
+        private final StackPane view;
 
         private final BooleanProperty selected = new SimpleBooleanProperty();
 
         public final BooleanProperty selectedProperty() {
-            return selected ;
+            return selected;
         }
 
         public final boolean isSelected() {
@@ -340,9 +340,9 @@ public class Week {
         }
 
         public TimeSlot(LocalDateTime start, Duration duration) {
-            this.start = start ;
+            this.start = start;
 
-            view = new StackPane() ;
+            view = new StackPane();
             view.setPrefWidth(50);
             view.setMinSize(80, 20);
             view.getStyleClass().addAll("time-slot", "time-slot:selected");

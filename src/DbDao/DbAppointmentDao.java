@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link AppointmentDao} that persists appointmentes in RDBMS.
  */
 public class DbAppointmentDao implements AppointmentDao {
@@ -42,8 +42,8 @@ public class DbAppointmentDao implements AppointmentDao {
      * Get all appointmentes as Java Stream.
      *
      * @return a lazily populated stream of appointmentes. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<Appointment> getAll() throws Exception {
@@ -72,9 +72,9 @@ public class DbAppointmentDao implements AppointmentDao {
         }
     }
 
-        private Connection getConnection() throws SQLException {
-            return (Connection) dataSource.getConnection();
-        }
+    private Connection getConnection() throws SQLException {
+        return (Connection) dataSource.getConnection();
+    }
 
     private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet) {
         try {
@@ -158,9 +158,9 @@ public class DbAppointmentDao implements AppointmentDao {
             statement.setString(9, appointment.getUrl());
             statement.setTimestamp(10, appointment.getStart());
             statement.setTimestamp(11, appointment.getEnd());
-            statement.setTimestamp(12,  appointment.getCreateDate());
+            statement.setTimestamp(12, appointment.getCreateDate());
             statement.setString(13, appointment.getCreatedBy());
-            statement.setTimestamp(14,appointment.getLastUpdate());
+            statement.setTimestamp(14, appointment.getLastUpdate());
             statement.setString(15, appointment.getLastUpdateBy());
             statement.execute();
             return true;
@@ -229,8 +229,7 @@ public class DbAppointmentDao implements AppointmentDao {
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 return resultSet.getInt(1);
-            }
-            else {
+            } else {
                 return -1;
             }
         } catch (SQLException ex) {

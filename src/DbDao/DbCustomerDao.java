@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link CustomerDao} that persists customers in RDBMS.
  */
 public class DbCustomerDao implements CustomerDao {
@@ -44,8 +44,8 @@ public class DbCustomerDao implements CustomerDao {
      * Get all customers as Java Stream.
      *
      * @return a lazily populated stream of customers. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<Customer> getAll() throws Exception {
@@ -189,23 +189,24 @@ public class DbCustomerDao implements CustomerDao {
      */
     @Override
     public boolean update(Customer customer) throws Exception {
-            try (var connection = getConnection();
-                 var statement =
-                         connection
-                                 .prepareStatement("UPDATE customer SET " +
-                                         "customerName = ?, " +
-                                         "addressId = ? " +
-                                         "WHERE customerId = ?")) {
-                //TODO add all updates you would like to make based on UI
-                statement.setString(1, customer.getCustomerName());
-                statement.setInt(2, customer.getAddressId());
-                statement.setInt(3, customer.getId());
-                statement.closeOnCompletion();
-                return statement.executeUpdate() > 0;
-            } catch (SQLException ex) {
-                throw new CustomException(ex.getMessage(), ex);
-            }
+        try (var connection = getConnection();
+             var statement =
+                     connection
+                             .prepareStatement("UPDATE customer SET " +
+                                     "customerName = ?, " +
+                                     "addressId = ? " +
+                                     "WHERE customerId = ?")) {
+            //TODO add all updates you would like to make based on UI
+            statement.setString(1, customer.getCustomerName());
+            statement.setInt(2, customer.getAddressId());
+            statement.setInt(3, customer.getId());
+            statement.closeOnCompletion();
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        }
     }
+
     /**
      * {@inheritDoc}
      */
@@ -216,7 +217,7 @@ public class DbCustomerDao implements CustomerDao {
         try (var connection = getConnection();
              var s1 = connection.prepareStatement("DELETE FROM appointment WHERE customerId = ?")) {
             s1.setInt(1, customer.getId());
-            statement1 =  s1.executeUpdate() > 0;
+            statement1 = s1.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new CustomException(ex.getMessage(), ex);
         }

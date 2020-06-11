@@ -41,7 +41,8 @@ public class MainMenu {
 
     //Label styling
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    int twentyFivePercentScreenWidth = (screenSize.width/4)-2;
+    int twentyFivePercentScreenWidth = (screenSize.width / 4) - 2;
+
     private String mainLabelsStyle() {
         return "-fx-font-family: 'Roboto Bold'; " +
                 "-fx-font-size: 18; " +
@@ -49,17 +50,17 @@ public class MainMenu {
                 "-fx-font-weight: BOLD;" +
                 "-fx-padding: 25 20;" +
                 "-fx-background-color:#ebaa5d;" +
-                "-fx-pref-width: "+ twentyFivePercentScreenWidth + ";" +
+                "-fx-pref-width: " + twentyFivePercentScreenWidth + ";" +
                 "-fx-border-radius: 50;" +
                 "-fx-border-style: none none solid none;" +
                 "-fx-border-width: 10;" +
                 "-fx-border-color: WHITE;";
-    };
+    }
 
     private void buildMainMenu() {
         mainMenu.getStylesheets().add("CSS/mainMenu.css");
         mainMenu.getStyleClass().add("hbox");
-        mainMenu.setMaxWidth(Screen.getPrimary().getBounds().getWidth()-15);
+        mainMenu.setMaxWidth(Screen.getPrimary().getBounds().getWidth() - 15);
 
 
         // CALENDAR
@@ -109,7 +110,7 @@ public class MainMenu {
                 lblCustomers,
                 lblReports
         );
-    };
+    }
 
     public HBox getView() {
         return mainMenu;

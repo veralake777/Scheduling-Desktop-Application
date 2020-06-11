@@ -10,10 +10,10 @@ import java.util.stream.Stream;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An in memory implementation of {@link CountryDao}, which stores the countries in JVM memory and
  * data is lost when the application exits.
- *
+ * <p>
  * This implementation is useful as temporary database or for testing.
  */
 

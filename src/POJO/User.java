@@ -44,7 +44,7 @@ public class User {
     }
 
     public void setActive(boolean active) {
-         this.active = active;
+        this.active = active;
     }
 
     public String getCreateDate() {

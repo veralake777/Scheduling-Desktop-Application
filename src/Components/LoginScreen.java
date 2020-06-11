@@ -26,9 +26,9 @@ import java.util.logging.*;
 /**
  * RUBRIC A. Create a log-in form that can determine the user’s location and translate log-in and error control
  * messages (e.g., “The username and password did not match.”) into two languages.
- *
- *      Use of ResourceBundle and Locale are used in conjunction to set the text of the Labels and Buttons in two languages:
- *          English and French
+ * <p>
+ * Use of ResourceBundle and Locale are used in conjunction to set the text of the Labels and Buttons in two languages:
+ * English and French
  */
 public class LoginScreen {
     // log user
@@ -110,13 +110,13 @@ public class LoginScreen {
         passwordFld.setText(rb.getString("enterYourPassword"));
         passwordFld.setId("passwordTxtFld");
 
-        if(KeyEvent.KEY_PRESSED.getName().equals("VK_ENTER")){
+        if (KeyEvent.KEY_PRESSED.getName().equals("VK_ENTER")) {
             System.out.println("ENTER KEY PRESSED");
         }
 
         HBox btnHBox = new HBox(25);
         Button loginBtn = new Button(rb.getString("login"));
-        loginBtn.setOnAction(e-> {
+        loginBtn.setOnAction(e -> {
             System.out.println(e);
             try {
                 validateUser(e, userNameTxtFld.getText(), passwordFld.getText());
@@ -149,7 +149,7 @@ public class LoginScreen {
 
 
     private void onClickExit(ActionEvent actionEvent) {
-        primaryStage = (Stage)  ((Node)actionEvent.getSource()).getScene().getWindow();
+        primaryStage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         primaryStage.close();
     }
 
@@ -174,7 +174,7 @@ public class LoginScreen {
         userLogFH.setFormatter(sf);
         USER_LOG.addHandler(userLogFH);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             GridPane mainView = new MainView(user.get()).getView();
             Scene mainViewScene = new Scene(mainView);
 
@@ -182,12 +182,12 @@ public class LoginScreen {
 
             // log to userlog.txt
             USER_LOG.setLevel(Level.INFO);
-            USER_LOG.log(Level.INFO, "SUCCESSFUL LOGIN:\n  UserName: " + userName  + " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString());
+            USER_LOG.log(Level.INFO, "SUCCESSFUL LOGIN:\n  UserName: " + userName + " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString());
         } else {
             // log to userlog.txt
             USER_LOG.setLevel(Level.INFO);
             USER_LOG.log(Level.INFO, "\n----------------------------------------\n" +
-                    "FAILED LOGIN:\n  UserName: " + userName  +
+                    "FAILED LOGIN:\n  UserName: " + userName +
                     " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString() +
                     "\n----------------------------------------\n"
             );

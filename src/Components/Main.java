@@ -7,13 +7,13 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
     /**
-     * @LoginScreen
-     * pass user data as new User() from Components/LoginScreen to be used globally throughout the application
+     * @LoginScreen pass user data as new User() from Components/LoginScreen to be used globally throughout the application
      */
     private User user;
     private LoginScreen loginScreen;
+
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         loginScreen = new LoginScreen(user, primaryStage);
         // maximized screen
         primaryStage.setWidth(Screen.getPrimary().getBounds().getWidth());
@@ -27,7 +27,9 @@ public class Main extends Application {
         return user;
     }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public static void main(String[] args) {
         launch(args);

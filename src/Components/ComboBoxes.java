@@ -33,27 +33,29 @@ public class ComboBoxes extends ComboBox {
         customerStream.forEach(list::add);
         customers.setEditable(false);
         customers.setItems(list);
-        customers.setOnAction(e-> customers.getSelectionModel().getSelectedItem());
+        customers.setOnAction(e -> customers.getSelectionModel().getSelectedItem());
     }
 
     private void countries() throws Exception {
         ObservableList<String> list = FXCollections.observableArrayList();
         Stream<Country> countryStream = new DbCountryDao((DBUtils.getMySQLDataSource())).getAll();
-        countryStream.forEach(c->{
+        countryStream.forEach(c -> {
             list.add(c.getCountry());
         });
         countries.setItems(list);
-        countries.setOnAction(e->countries.getSelectionModel().getSelectedItem());
+        countries.setOnAction(e -> countries.getSelectionModel().getSelectedItem());
     }
 
     private void cities() throws Exception {
         ObservableList<String> list = FXCollections.observableArrayList();
         Stream<City> cityStream = new DbCityDao(DBUtils.getMySQLDataSource()).getAll();
-        cityStream.forEach(c-> {
+        cityStream.forEach(c -> {
             list.add(c.getCity());
         });
         cities.setItems(list);
-        cities.setOnAction(e->{System.out.println(cities.getSelectionModel().getSelectedItem());});
+        cities.setOnAction(e -> {
+            System.out.println(cities.getSelectionModel().getSelectedItem());
+        });
     }
 
     private void fifteenMinuteAppointmentSlots() throws ParseException {
@@ -63,8 +65,8 @@ public class ComboBoxes extends ComboBox {
         int minutes = 60;
         int increment = 15;
 
-        for(int i=6; i< hours; i++) {
-            for(int j=0; j< minutes; j+=increment) {
+        for (int i = 6; i < hours; i++) {
+            for (int j = 0; j < minutes; j += increment) {
                 list.add(LocalTime.of(i, j, 0));
 //                if(Local.equals("11:45:00")) {
 //                    list.add(LocalTime.of(12, 0, 0));

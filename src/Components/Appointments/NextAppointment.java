@@ -42,16 +42,16 @@ public class NextAppointment {
             String today = dateFormat.format(cal.getTime());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             nextAppointment = dbDao.getAll()
-            .filter(appointment-> today.equals(sdf.format(appointment.getStart()))) // filter by today's date
-            .findFirst()                                                      // find first instance for date
-            .orElse(null);                                              // else nextAppointment is null
+                    .filter(appointment -> today.equals(sdf.format(appointment.getStart()))) // filter by today's date
+                    .findFirst()                                                      // find first instance for date
+                    .orElse(null);                                              // else nextAppointment is null
 
             // header
             Text header = new Text("NEXT APPOINTMENT");
             header.setStyle("-fx-underline: true;");
             header.setFont(Font.font("Roboto", FontWeight.NORMAL, 20));
             header.setWrappingWidth(250);
-            if(nextAppointment != null) {
+            if (nextAppointment != null) {
                 // appointment data
                 Label type = new Label("TYPE:    " + nextAppointment.getType());
                 Label startTime = new Label("TIME:    " +

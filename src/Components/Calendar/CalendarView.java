@@ -40,7 +40,7 @@ public class CalendarView {
             month.build(YearMonth.now());
             week = new Week(user).getView(LocalDate.now().with(DayOfWeek.MONDAY));
             week.getStylesheets().add("CSS/tableView.css");
-            week.setMaxWidth(Screen.getPrimary().getBounds().getWidth()*.6 - 15);
+            week.setMaxWidth(Screen.getPrimary().getBounds().getWidth() * .6 - 15);
             week.setMaxHeight(Screen.getPrimary().getVisualBounds().getHeight() - 175);
             firstColumn.getChildren().addAll(month.getView(), new NextAppointment().getNextAppointmentVBox());
         } catch (Exception e) {

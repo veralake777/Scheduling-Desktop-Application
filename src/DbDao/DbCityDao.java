@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link CityDao} that persists cities in RDBMS.
  */
 public class DbCityDao implements CityDao {
@@ -43,8 +43,8 @@ public class DbCityDao implements CityDao {
      * Get all cities as Java Stream.
      *
      * @return a lazily populated stream of cities. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<City> getAll() throws Exception {
@@ -75,9 +75,9 @@ public class DbCityDao implements CityDao {
         }
     }
 
-        private Connection getConnection() throws SQLException {
-            return (Connection) dataSource.getConnection();
-        }
+    private Connection getConnection() throws SQLException {
+        return (Connection) dataSource.getConnection();
+    }
 
     private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet) {
         try {
@@ -135,7 +135,6 @@ public class DbCityDao implements CityDao {
         if (getById(city.getId()).isPresent()) {
             return false;
         }
-
 
 
         try (var connection = getConnection();

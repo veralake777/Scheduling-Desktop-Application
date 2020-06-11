@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * In an application the Data Access Object (DAO) is a part of Data access layer. It is an object
  * that provides an interface to some type of persistence mechanism. By mapping application calls to
  * the persistence layer, DAO provides some specific data operations without exposing details of the
@@ -21,15 +21,15 @@ import java.util.stream.Stream;
  * <p>Any change in the way data is stored and retrieved will not change the client code as the
  * client will be using interface and need not worry about exact source.
  *
- *  @see InMemoryAddressDao
- *  @see DbAddressDao
-**/
+ * @see InMemoryAddressDao
+ * @see DbAddressDao
+ **/
 public interface AddressDao {
     /**
      * Get all addresses
      *
      * @return all the addresses as a stream. The stream may be lazily or eagerly evaluated based on the implementation.
-     *         The stream must be closed after use.
+     * The stream must be closed after use.
      * @throws Exception if any error occurs.
      */
     Stream<Address> getAll() throws Exception;

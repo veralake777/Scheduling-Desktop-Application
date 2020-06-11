@@ -132,15 +132,15 @@ public class Address {
         this.lastUpdateBy = lastUpdateBy;
     }
 
-       @Override
+    @Override
     public String toString() {
-        return   "Address{" +
+        return "Address{" +
                 "addressId=" + getId() +
                 ", address='" + getAddress() + '\'' +
                 ", address2=" + getAddress2() + '\'' +
                 ", cityId=" + getCityId() + '\'' +
-                ", postalCode=" + getPostalCode() +'\'' +
-                ", phone=" + getPhone()  +'\'' +
+                ", postalCode=" + getPostalCode() + '\'' +
+                ", phone=" + getPhone() + '\'' +
                 '}';
     }
 
@@ -149,7 +149,7 @@ public class Address {
         var isEqual = false;
         if (this == that) {
             isEqual = true;
-        } else if( that != null && getClass() == that.getClass()) {
+        } else if (that != null && getClass() == that.getClass()) {
             final var address = (Address) that;
             if (getId() == address.getId()) {
                 isEqual = true;

@@ -22,11 +22,11 @@ import java.time.LocalDate;
 public class Reports {
     /**
      * I.   Provide the ability to generate each  of the following reports:
-     *
+     * <p>
      * •   number of appointment types by month
-     *
+     * <p>
      * •   the schedule for each consultant
-     *
+     * <p>
      * •   one additional report of your choice
      **/
     User user;
@@ -50,7 +50,7 @@ public class Reports {
         // get distinct type count and generate row constraints
         PreparedStatement typeCountStatement = (PreparedStatement) connection.prepareStatement("SELECT COUNT(DISTINCT type) FROM appointment");
         ResultSet typeCountRS = typeCountStatement.executeQuery();
-        if(typeCountRS.next()) {
+        if (typeCountRS.next()) {
             typeCount = typeCountRS.getInt(1);
         }
 
@@ -65,17 +65,17 @@ public class Reports {
         ResultSet typesRS = typesStatement.executeQuery();
         String[] types = new String[typeCount];
         int i = -1;
-        while(typesRS.next()) {
+        while (typesRS.next()) {
             i++;
             String type = typesRS.getString(1);
             types[i] = type;
         }
 
         // add types to col 0, row i of gridPane
-        for(i=0; i<types.length; i++) {
+        for (i = 0; i < types.length; i++) {
             Label label = new Label(types[i]);
             GridPane.setHalignment(label, HPos.CENTER);
-            gridPane.add(label, 0, i +1);
+            gridPane.add(label, 0, i + 1);
         }
 
         // generate column constraints
@@ -140,7 +140,7 @@ public class Reports {
         while (resultSet.next()) {
             // row index in gridpane matches month value
             int colIndex = 0;
-            switch(resultSet.getInt(1)) {
+            switch (resultSet.getInt(1)) {
                 case 1:
                     colIndex = 1;
                     // january label
@@ -210,8 +210,8 @@ public class Reports {
     }
 
     private void addCountRow(GridPane gridPane, String[] types, ResultSet resultSet, int colIndex) throws SQLException {
-        for(int rowIndex=0; rowIndex<types.length; rowIndex++) {
-            if(resultSet.getString(2).equals(types[rowIndex])) {
+        for (int rowIndex = 0; rowIndex < types.length; rowIndex++) {
+            if (resultSet.getString(2).equals(types[rowIndex])) {
                 Label label = new Label(String.valueOf(resultSet.getInt(3)));
                 GridPane.setHalignment(label, HPos.CENTER);
                 gridPane.add(label, colIndex, rowIndex + 1);

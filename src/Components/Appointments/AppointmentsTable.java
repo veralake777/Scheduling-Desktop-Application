@@ -54,7 +54,6 @@ public class AppointmentsTable {
     Button newAppointmentBtn = new Button("New Appointment");
 
 
-
     public static class LocalAppointment {
         private int appointmentId;
         private String appointmentType;
@@ -78,6 +77,7 @@ public class AppointmentsTable {
             return customerName;
         }
     }
+
     public void initialize() throws Exception {
         // set columns to fill full width of table evenly
         appointmentTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -205,8 +205,8 @@ public class AppointmentsTable {
         deleteColumn.setMinWidth(100);
 
         // New Button below the table
-        newAppointmentBtn.setOnAction(e-> {
-              updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
+        newAppointmentBtn.setOnAction(e -> {
+            updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
         });
 
         // init table
@@ -221,8 +221,8 @@ public class AppointmentsTable {
     private void setAppointments() throws Exception {
         appointments.clear();
         Stream<Appointment> stream2 = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
-        stream2.forEach(a ->{
-            if(a.getUserId() == user.getId()) {
+        stream2.forEach(a -> {
+            if (a.getUserId() == user.getId()) {
                 Optional<Customer> customer = Optional.empty();
                 try {
                     customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(a.getCustomerId());
@@ -237,8 +237,8 @@ public class AppointmentsTable {
     private VBox getLeftSideView() throws Exception {
         initialize();
         Rectangle2D screenSize = Screen.getPrimary().getBounds();
-        newAppointmentBtn.setMaxWidth(screenSize.getWidth()/2);
-        newAppointmentBtn.setMinHeight(screenSize.getHeight()*.1);
+        newAppointmentBtn.setMaxWidth(screenSize.getWidth() / 2);
+        newAppointmentBtn.setMinHeight(screenSize.getHeight() * .1);
         newAppointmentBtn.setStyle("-fx-font-family: 'Roboto Bold';\n" +
                 "-fx-font-size: 25;\n" +
                 "-fx-alignment: center;\n" +

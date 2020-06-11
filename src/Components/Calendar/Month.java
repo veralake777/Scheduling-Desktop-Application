@@ -51,6 +51,7 @@ public class Month {
 
     /**
      * Create a calendar view
+     *
      * @param yearMonth year month to create the calendar of
      */
     public void build(YearMonth yearMonth) throws Exception {
@@ -65,15 +66,15 @@ public class Month {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 7; j++) {
                 AnchorPaneNode ap = new AnchorPaneNode();
-                ap.setPrefSize(200,200);
-                calendar.add(ap,j,i);
+                ap.setPrefSize(200, 200);
+                calendar.add(ap, j, i);
                 allCalendarDays.add(ap);
             }
         }
         // Days of the week labels
-        Text[] dayNames = new Text[]{ new Text("SUN"), new Text("MON"), new Text("TUE"),
+        Text[] dayNames = new Text[]{new Text("SUN"), new Text("MON"), new Text("TUE"),
                 new Text("WED"), new Text("THU"), new Text("FRI"),
-                new Text("SAT") };
+                new Text("SAT")};
         GridPane dayLabels = new GridPane();
         dayLabels.getStylesheets().add("CSS/calendarPane.css");
         dayLabels.getStyleClass().add("day-labels");
@@ -138,13 +139,14 @@ public class Month {
 
     /**
      * Set the days of the calendar to correspond to the appropriate date
+     *
      * @param yearMonth year and month of month to render
      */
     public void populateCalendar(YearMonth yearMonth) throws Exception {
         // Get the date we want to start with on the calendar
         LocalDate calendarDate = LocalDate.of(yearMonth.getYear(), yearMonth.getMonthValue(), 1);
         // Dial back the day until it is SUNDAY (unless the month starts on a sunday)
-        while (!calendarDate.getDayOfWeek().toString().equals("SUNDAY") ) {
+        while (!calendarDate.getDayOfWeek().toString().equals("SUNDAY")) {
             calendarDate = calendarDate.minusDays(1);
         }
         // Populate the calendar with day numbers
@@ -165,10 +167,10 @@ public class Month {
 
             ap.removeEventHandler(EventType.ROOT, Event::consume);
             LocalDate finalCalendarDate = calendarDate;
-            ap.setOnMouseClicked(e-> {
+            ap.setOnMouseClicked(e -> {
                 Stage appointmentStage;
                 try {
-                    if(ap.appointments.size() > 0 ) {
+                    if (ap.appointments.size() > 0) {
                         appointmentStage = ap.thisDaysAppointmentsStage(ap.appointments);
                     } else {
                         appointmentStage = new AppointmentCard(finalCalendarDate, user.getId()).getNewAppointmentStage();
@@ -179,7 +181,7 @@ public class Month {
                 }
             });
 
-            if(isAppointment(ap.getDate(), ap)) {
+            if (isAppointment(ap.getDate(), ap)) {
                 ap.setStyle("-fx-background-color: rgba(210, 145, 188, .5)");
             }
             calendarDate = calendarDate.plusDays(1);
@@ -193,7 +195,7 @@ public class Month {
      */
 
     private void buildAppointmentsThisMonth() {
-        appointmentStream.forEach(a-> {
+        appointmentStream.forEach(a -> {
             appointmentsThisMonth.add(a);
         });
     }
@@ -209,6 +211,7 @@ public class Month {
         }
         return match;
     }
+
     /**
      * Move the month back by one. Repopulate the calendar with the correct dates.
      */
@@ -247,8 +250,10 @@ public class Month {
 
         // Appointment IDs associated with this pane
         private ObservableList<Appointment> appointments = FXCollections.observableArrayList();
+
         /**
          * Create a anchor pane node. Date is not assigned in the constructor.
+         *
          * @param children children of the anchor pane
          */
         public AnchorPaneNode(Node... children) {
@@ -259,7 +264,7 @@ public class Month {
                 Stage appointmentStage;
 
                 try {
-                    if(appointments.size() > 0 ) {
+                    if (appointments.size() > 0) {
                         appointmentStage = thisDaysAppointmentsStage(appointments);
                     } else {
                         appointmentStage = new AppointmentCard(user).getNewAppointmentStage();
@@ -331,7 +336,7 @@ public class Month {
                 HBox appt = new HBox(20);
                 appt.getChildren().addAll(new Label(appointmentType), new Label(customerName), updateAppointmentBtn, deleteAppointmentBtn);
                 appointmentVBox.getChildren().addAll(appt, separator);
-                newAppointmentBtn.setOnAction(e-> {
+                newAppointmentBtn.setOnAction(e -> {
                     try {
                         stage.setScene(new Scene(new AppointmentCard(date, user.getId()).getNewAppointmentGridPane()));
                     } catch (Exception ex) {

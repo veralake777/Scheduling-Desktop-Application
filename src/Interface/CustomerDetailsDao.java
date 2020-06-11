@@ -28,7 +28,7 @@ public interface CustomerDetailsDao {
      * Get all customersDetails
      *
      * @return all the customers as a stream. The stream may be lazily or eagerly evaluated based on the implementation.
-     *         The stream must be closed after use.
+     * The stream must be closed after use.
      * @throws Exception if any error occurs.
      */
     Stream<CustomerDetails> getAll() throws Exception;

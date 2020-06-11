@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 
 /**
  * RUBRIC B.   Provide the ability to add, update, and delete customer records in the database, including name, address, and phone number.
- *
  */
 public class CustomersTable {
     private TableView<CustomerDetails> customerTableView = new TableView<CustomerDetails>();
@@ -177,15 +176,15 @@ public class CustomersTable {
         initialize();
         Rectangle2D screenSize = Screen.getPrimary().getBounds();
         Button newCustomerBtn = new Button("New Customer");
-        newCustomerBtn.setMaxWidth(screenSize.getWidth()/2);
-        newCustomerBtn.setMinHeight(screenSize.getHeight()*.1);
+        newCustomerBtn.setMaxWidth(screenSize.getWidth() / 2);
+        newCustomerBtn.setMinHeight(screenSize.getHeight() * .1);
         newCustomerBtn.setStyle("-fx-font-family: 'Roboto Bold';\n" +
                 "-fx-font-size: 25;\n" +
                 "-fx-alignment: center;\n" +
                 "-fx-font-weight: BOLD;\n" +
                 "-fx-padding: 25 20;\n" +
                 "-fx-background-color:#ebaa5d;\n");
-        newCustomerBtn.setOnAction(e-> {
+        newCustomerBtn.setOnAction(e -> {
             try {
                 updateRightSideView(new CustomerCard().getNewCustomerCard());
             } catch (Exception ex) {
@@ -202,7 +201,7 @@ public class CustomersTable {
         rightSideView = new Label("Click a button to load a view.");
         rightSideView.setStyle("-fx-alignment: CENTER;" +
                 "-fx-padding: 0 0 0 450");
-        gridPane.add(rightSideView, 1, 0 );
+        gridPane.add(rightSideView, 1, 0);
         return gridPane;
     }
 

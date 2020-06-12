@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- * <p>
+ *
  * An implementation of {@link CustomerDao} that persists customers in RDBMS.
  */
 public class DbCustomerDao implements CustomerDao {
@@ -44,8 +44,8 @@ public class DbCustomerDao implements CustomerDao {
      * Get all customers as Java Stream.
      *
      * @return a lazily populated stream of customers. Note the stream returned must be closed to free
-     * all the acquired resources. The stream keeps an open connection to the database till it is
-     * complete or is closed manually.
+     *     all the acquired resources. The stream keeps an open connection to the database till it is
+     *     complete or is closed manually.
      */
     @Override
     public Stream<Customer> getAll() throws Exception {
@@ -159,14 +159,22 @@ public class DbCustomerDao implements CustomerDao {
              // int id, String customerName, int addressId, boolean active, String createDate,
              // String createdBy, String lastUpdate, String lastUpdateBy
              //-- CALL new_customer('name', 'address1', 'address2', 'Quebec', '88888', '555-5555', 1);
-             var statement = connection.prepareStatement("INSERT INTO customer(customerId, customerName, addressId, active, createDate, lastUpdate) VALUES (?,?,?,?, now(), now())")) {
+             var statement = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?)")) {
             // dates to strings
             // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
             // set customerId to null bc of auto_increment on table
             statement.setInt(1, customer.getId());
             statement.setString(2, customer.getCustomerName());
             statement.setInt(3, customer.getAddressId());
-            statement.setInt(4, 1);
+            if (customer.isActive()) {
+                statement.setInt(4, 1);
+            } else {
+                statement.setInt(4, 0);
+            }
+            statement.setString(5, "NOW()");
+            statement.setString(6, "test");
+            statement.setString(7, "NOW()");
+            statement.setString(8, "test");
 
             // customer isActive is always set to 1
             statement.execute();
@@ -198,7 +206,6 @@ public class DbCustomerDao implements CustomerDao {
             throw new CustomException(ex.getMessage(), ex);
         }
     }
-
     /**
      * {@inheritDoc}
      */
@@ -209,7 +216,7 @@ public class DbCustomerDao implements CustomerDao {
         try (var connection = getConnection();
              var s1 = connection.prepareStatement("DELETE FROM appointment WHERE customerId = ?")) {
             s1.setInt(1, customer.getId());
-            statement1 = s1.executeUpdate() > 0;
+            statement1 =  s1.executeUpdate() > 0;
         } catch (SQLException ex) {
             throw new CustomException(ex.getMessage(), ex);
         }

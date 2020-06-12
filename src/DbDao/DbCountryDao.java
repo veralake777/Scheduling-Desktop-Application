@@ -184,4 +184,25 @@ public class DbCountryDao implements CountryDao {
     }
 
 
+    public Optional<Country> getByName(String country) throws CustomException, SQLException {
+        ResultSet resultSet = null;
+
+        try (var connection = getConnection();
+             var statement = connection.prepareStatement("SELECT * FROM city WHERE city = ?")) {
+
+            statement.setString(1, country);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(createCountry(resultSet));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException | ParseException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        }
+    }
 }

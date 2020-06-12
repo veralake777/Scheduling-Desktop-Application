@@ -19,8 +19,8 @@ import java.util.stream.Stream;
 
 public class ComboBoxes extends ComboBox {
     private ComboBox<Customer> customers = new ComboBox<>();
-    private ComboBox<String> countries = new ComboBox<>();
-    private ComboBox<String> cities = new ComboBox<>();
+    private ComboBox<Country> countries = new ComboBox<>();
+    private ComboBox<City> cities = new ComboBox<>();
     private ComboBox<LocalTime> appointmentTimes = new ComboBox<>();
     private ComboBox<User> consultants = new ComboBox<>();
 
@@ -46,24 +46,20 @@ public class ComboBoxes extends ComboBox {
     }
 
     private void countries() throws Exception {
-        ObservableList<String> list = FXCollections.observableArrayList();
+        ObservableList<Country> list = FXCollections.observableArrayList();
         Stream<Country> countryStream = new DbCountryDao((DBUtils.getMySQLDataSource())).getAll();
-        countryStream.forEach(c -> {
-            list.add(c.getCountry());
-        });
+        countryStream.forEach(list::add);
         countries.setItems(list);
         countries.setOnAction(e -> countries.getSelectionModel().getSelectedItem());
     }
 
     private void cities() throws Exception {
-        ObservableList<String> list = FXCollections.observableArrayList();
+        ObservableList<City> list = FXCollections.observableArrayList();
         Stream<City> cityStream = new DbCityDao(DBUtils.getMySQLDataSource()).getAll();
-        cityStream.forEach(c -> {
-            list.add(c.getCity());
-        });
+        cityStream.forEach(list::add);
         cities.setItems(list);
         cities.setOnAction(e -> {
-            System.out.println(cities.getSelectionModel().getSelectedItem());
+           cities.getSelectionModel().getSelectedItem();
         });
     }
 
@@ -98,12 +94,12 @@ public class ComboBoxes extends ComboBox {
         return customers;
     }
 
-    public ComboBox<String> getCountries() throws Exception {
+    public ComboBox<Country> getCountries() throws Exception {
         countries();
         return countries;
     }
 
-    public ComboBox<String> getCities() throws Exception {
+    public ComboBox<City> getCities() throws Exception {
         cities();
         return cities;
     }

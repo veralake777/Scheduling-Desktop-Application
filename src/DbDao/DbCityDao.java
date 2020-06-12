@@ -189,20 +189,20 @@ public class DbCityDao implements CityDao {
     }
 
 
-    public int getByName(String city) throws CustomException, SQLException {
+    public Optional<City> getByName(String city) throws CustomException, SQLException {
         ResultSet resultSet = null;
 
         try (var connection = getConnection();
-             var statement = connection.prepareStatement("SELECT cityId FROM city WHERE city = ?")) {
+             var statement = connection.prepareStatement("SELECT * FROM city WHERE city = ?")) {
 
             statement.setString(1, city);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                return Optional.of(createCity(resultSet));
             } else {
-                return -1;
+                return Optional.empty();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ParseException ex) {
             throw new CustomException(ex.getMessage(), ex);
         } finally {
             if (resultSet != null) {

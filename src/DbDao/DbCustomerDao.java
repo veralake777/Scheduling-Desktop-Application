@@ -159,22 +159,14 @@ public class DbCustomerDao implements CustomerDao {
              // int id, String customerName, int addressId, boolean active, String createDate,
              // String createdBy, String lastUpdate, String lastUpdateBy
              //-- CALL new_customer('name', 'address1', 'address2', 'Quebec', '88888', '555-5555', 1);
-             var statement = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?)")) {
+             var statement = connection.prepareStatement("INSERT INTO customer(customerId, customerName, addressId, active, createDate, lastUpdate) VALUES (?,?,?,?, now(), now())")) {
             // dates to strings
             // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
             // set customerId to null bc of auto_increment on table
             statement.setInt(1, customer.getId());
             statement.setString(2, customer.getCustomerName());
             statement.setInt(3, customer.getAddressId());
-            if (customer.isActive()) {
-                statement.setInt(4, 1);
-            } else {
-                statement.setInt(4, 0);
-            }
-            statement.setString(5, "NOW()");
-            statement.setString(6, "test");
-            statement.setString(7, "NOW()");
-            statement.setString(8, "test");
+            statement.setInt(4, 1);
 
             // customer isActive is always set to 1
             statement.execute();

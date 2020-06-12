@@ -8,6 +8,7 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -280,8 +281,10 @@ public class Reports {
 
     // one additional report of your choice
     private AnchorPane numberOfCustomersPerCountry() {
-        Label label = new Label("productivity");
-        AnchorPane anchorPane = new AnchorPane(label);
+        Label title = new Label("productivity");
+        AnchorPane anchorPane = new AnchorPane(title);
+        anchorPane.setMinHeight(300);
+        anchorPane.setStyle("-fx-background-color: WHITE;");
         return anchorPane;
     }
 
@@ -297,7 +300,9 @@ public class Reports {
         Label reportTitle = new Label("REPORTS");
         reportTitle.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 30));
         gridPane.add(reportTitle, 0, 0);
-        gridPane.add(numberOfAppointmentTypesPerMonth(), 0, 1);
+        GridPane numberOfAppointmentTypesPerMonth = numberOfAppointmentTypesPerMonth();
+        assert numberOfAppointmentTypesPerMonth != null;
+        gridPane.add(new ScrollPane(numberOfAppointmentTypesPerMonth), 0, 1);
         gridPane.add(numberOfCustomersPerCountry(), 0, 2);
 
 
@@ -305,7 +310,7 @@ public class Reports {
         GridPane consultantSchedule = consultantSchedule();
         consultantSchedule.getColumnConstraints().clear();
         consultantSchedule.setPadding(new Insets(0, 0, 0, 10));
-        gridPane.add(consultantSchedule, 1, 1);
+        gridPane.add(consultantSchedule, 1, 1, 1, 2);
 
         return gridPane;
     }

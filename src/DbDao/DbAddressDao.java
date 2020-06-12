@@ -224,7 +224,7 @@ public class DbAddressDao implements AddressDao {
         }
     }
 
-    public int maxId() throws CustomException, SQLException {
+    public int getMaxId() throws CustomException, SQLException {
         ResultSet resultSet = null;
 
         try (var connection = getConnection();

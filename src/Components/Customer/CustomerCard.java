@@ -2,10 +2,10 @@ package Components.Customer;
 
 import Components.ComboBoxes;
 import DbDao.DbAddressDao;
+import DbDao.DbCityDao;
+import DbDao.DbCountryDao;
 import DbDao.DbCustomerDao;
-import POJO.Address;
-import POJO.Customer;
-import POJO.CustomerDetails;
+import POJO.*;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
@@ -33,9 +33,9 @@ public class CustomerCard {
 
     CustomerDetails customer;
     Customer customerForBoxSelection;
+    City city;
+    Country country;
     GridPane gridPane = new GridPane();
-    HBox hBox = new HBox(25);
-    Button editBtn = new Button("Edit");
 
     // Labels for card view; textFields for onActionEditButton
     Label title = new Label();
@@ -54,13 +54,13 @@ public class CustomerCard {
 
     Label cityLbl = new Label("City");
     // TODO fix city and coutnry combo boxes like customers
-    ComboBox<String> cityComboBox = new ComboBoxes().getCities();
+    ComboBox<City> cityComboBox = new ComboBoxes().getCities();
 
     Label postalCodeLbl = new Label("Postal Code");
     TextField postalCodeTxtFld = new TextField();
 
     Label countryLbl = new Label("Country");
-    ComboBox<String> countryComboBox = new ComboBoxes().getCountries();
+    ComboBox<Country> countryComboBox = new ComboBoxes().getCountries();
 
     public CustomerCard() throws Exception {
     }
@@ -68,14 +68,16 @@ public class CustomerCard {
     // get by object
     public CustomerCard(CustomerDetails customer) throws Exception {
         this.customer = customer;
+        this.city = new DbCityDao(DBUtils.getMySQLDataSource()).getByName(customer.getCity()).get();
+        this.country = new DbCountryDao(DBUtils.getMySQLDataSource()).getByName(customer.getCountry()).get();
         customerForBoxSelection = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customer.getCustomerId()).get();
         customerComboBox.getSelectionModel().select(customerForBoxSelection);
         phoneTxtFld.setText(customer.getPhone());
         addressLine1TxtFld.setText(customer.getAddress());
         addressLine2TxtFld.setText(customer.getAddress2());
-        cityComboBox.getSelectionModel().select(customer.getCity());
+        cityComboBox.getSelectionModel().select(city);
         postalCodeTxtFld.setText(customer.getPostalCode());
-        countryComboBox.getSelectionModel().select(customer.getCountry());
+        countryComboBox.getSelectionModel().select(country);
     }
 
     private GridPane buildNewCustomerGridPane() {
@@ -147,9 +149,23 @@ public class CustomerCard {
             try {
                 DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
                 Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
-                customerDao.add(new Customer(customerDao.maxId() + 1, customerNameTextFld.getText(), address.get().getId()));
+                if(address.isPresent()) {
+                    customerDao.add(new Customer(customerDao.maxId() + 1, customerNameTextFld.getText(), address.get().getId()));
+                } else {
+                    DbAddressDao addressDao = new DbAddressDao(DBUtils.getMySQLDataSource());
+                    Address addressToAdd = new Address(
+                            addressDao.getMaxId() + 1,
+                            addressLine1TxtFld.getText(),
+                            addressLine2TxtFld.getText(),
+                            cityComboBox.getSelectionModel().getSelectedItem().getId(),
+                            postalCodeTxtFld.getText(),
+                            phoneTxtFld.getText());
+                    addressDao.add(addressToAdd);
+                    customerDao.add(new Customer(customerDao.maxId() + 1, customerNameTextFld.getText(), addressToAdd.getId()));
+                }
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText("Customer successfully added to the database.");
+                alert.showAndWait();
             } catch (Exception ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("There was an error with the database.");
@@ -228,7 +244,7 @@ public class CustomerCard {
         HBox cityHBox = new HBox(50);
         cityLbl.setMinSize(minWidth, 25);
         cityComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
-        cityComboBox.getSelectionModel().select(customer.getCity());
+        cityComboBox.getSelectionModel().select(city);
         cityHBox.getChildren().addAll(cityLbl, cityComboBox);
         gridPane.add(cityHBox, 0, 5);
 
@@ -242,7 +258,7 @@ public class CustomerCard {
         HBox countryHBox = new HBox(50);
         countryLbl.setMinSize(minWidth, 25);
         countryComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
-        countryComboBox.getSelectionModel().select(customer.getCountry());
+        countryComboBox.getSelectionModel().select(country);
         countryHBox.getChildren().addAll(countryLbl, countryComboBox);
         gridPane.add(countryHBox, 0, 7);
         //END LABELS AND INPUTS
@@ -258,12 +274,12 @@ public class CustomerCard {
                 Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
                 if (address.isPresent()) {
                     // update current address
-                    addressDao.update(new Address(address.get().getId(), addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
+                    addressDao.update(new Address(address.get().getId(), addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
                 } else {
                     // add new address to address table
                     // get maxId and increment by 1 for unique addressId (PK)
-                    int newId = addressDao.maxId() + 1;
-                    addressDao.add(new Address(newId, addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
+                    int newId = addressDao.getMaxId() + 1;
+                    addressDao.add(new Address(newId, addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
                     // set address to new address
                     address = addressDao.getById(newId);
                 }

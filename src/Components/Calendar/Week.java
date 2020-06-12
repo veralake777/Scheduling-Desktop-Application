@@ -34,7 +34,7 @@ import java.util.stream.Stream;
  * resource: https://gist.github.com/james-d/c4a2cf66efecbf3aa362
  **/
 public class Week {
-    private final User user;
+    private User user;
     private final LocalTime FIRST_SLOT_START = LocalTime.of(8, 0);
     private final Duration slotLength = Duration.ofMinutes(15);
     private final LocalTime LAST_SLOT_END = LocalTime.of(18, 59);
@@ -52,6 +52,137 @@ public class Week {
     GridPane weekView = new GridPane();
 
     public ScrollPane getView(LocalDate monday) throws Exception {
+        // clear gridpane
+        weekView.getChildren().clear();
+        weekView.getColumnConstraints().clear();
+        weekView.getRowConstraints().clear();
+
+        // add col contraints
+        ColumnConstraints col1 = new ColumnConstraints(55);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth((100.0 / 8) - col1.getPrefWidth());
+        weekView.getColumnConstraints().addAll(col1, col2, col2, col2, col2, col2, col2, col2);
+
+        // previous and next buttons
+        Button previousWeek = new Button("<");
+        previousWeek.setOnAction(e -> {
+            try {
+                previousWeek();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button nextWeek = new Button(">");
+        nextWeek.setOnAction(e -> {
+            try {
+                nextWeek();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        previousWeek.setStyle("-fx-padding: 10 5;" +
+                "-fx-font-family: 'Roboto Bold';" +
+                "-fx-font-weight: BOLD;" +
+                "-fx-font-size: 14;" +
+                "-fx-background-color: #38909b;");
+        nextWeek.setStyle("-fx-padding: 10 5;" +
+                "-fx-font-family: 'Roboto Bold';" +
+                "-fx-font-weight: BOLD;" +
+                "-fx-font-size: 14;" +
+                "-fx-background-color: #38909b;");
+
+        // mouse anchor for dragging appointment
+        ObjectProperty<TimeSlot> mouseAnchor = new SimpleObjectProperty<>();
+
+        // go through end of week
+        LocalDate endOfWeek = monday.plusDays(4);
+        int col = 1;
+        for (LocalDate date = monday; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
+            int slotIndex = 1;
+            for (LocalDateTime startTime = date.atTime(FIRST_SLOT_START);
+                 !startTime.isAfter(date.atTime(LAST_SLOT_END));
+                 startTime = startTime.plus(slotLength)) {
+
+                // this is the time slot cell
+                TimeSlot timeSlot = new TimeSlot(startTime, slotLength);
+                timeSlots.add(timeSlot);
+
+                timeSlot.getView().setOnMouseClicked(mouseEvent -> {
+                    AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate());
+                    Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
+                    popup.showAndWait();
+                });
+
+                // drag handler
+                registerDragHandlers(timeSlot, mouseAnchor);
+                weekView.add(timeSlot.getView(), col, slotIndex);
+
+                slotIndex++;
+            }
+            col++;
+        }
+
+        // DAY NAMES:
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEEE d");
+        col = 1;
+        for (LocalDate date = monday; !date.isAfter(endOfWeek); date = date.plusDays(1)) {
+            Label label = new Label(date.format(dayFormatter));
+            label.setPadding(new Insets(1));
+            label.setTextAlignment(TextAlignment.CENTER);
+            label.getStyleClass().add("days");
+
+            // highlight today
+            if (LocalDate.now().equals(date)) {
+                label.setStyle("-fx-background-color: #38909b;" +
+                        "-fx-font-size: 22;");
+            }
+
+            GridPane.setHalignment(label, HPos.CENTER);
+            if (col == 1) {
+                // add buttons to row
+                HBox hBox = new HBox(previousWeek, label);
+                hBox.setSpacing(5);
+                HBox.setHgrow(label, Priority.ALWAYS);
+                HBox.setHgrow(nextWeek, Priority.ALWAYS);
+                weekView.add(hBox, col, 0);
+            } else if (col == 5) {
+                HBox hBox = new HBox(label, nextWeek);
+                hBox.setSpacing(5);
+                HBox.setHgrow(label, Priority.ALWAYS);
+                HBox.setHgrow(nextWeek, Priority.ALWAYS);
+                weekView.add(hBox, col, 0);
+            } else {
+                weekView.add(label, col, 0);
+            }
+            col++;
+        }
+
+        // TIMES
+        int slotIndex = 1;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        for (LocalDateTime startTime = monday.atTime(FIRST_SLOT_START);
+             !startTime.isAfter(monday.atTime(LAST_SLOT_END));
+             startTime = startTime.plus(slotLength)) {
+            Label label = new Label(startTime.format(timeFormatter));
+            label.setPadding(new Insets(2));
+            label.getStyleClass().add("times");
+            GridPane.setHalignment(label, HPos.RIGHT);
+            weekView.add(label, 0, slotIndex);
+            slotIndex++;
+        }
+        weekView.getStylesheets().add("CSS/calendarPane.css");
+        weekView.setMaxWidth(Screen.getPrimary().getBounds().getWidth() * .56);
+        setAppointments();
+        ScrollPane scrollPane = new ScrollPane(weekView);
+        scrollPane.pannableProperty().set(false);
+        scrollPane.getStylesheets().add("CSS/tableView.css");
+        return scrollPane;
+    }
+
+    public ScrollPane getView(User user, LocalDate monday) throws Exception {
+        this.user = user;
         // clear gridpane
         weekView.getChildren().clear();
         weekView.getColumnConstraints().clear();

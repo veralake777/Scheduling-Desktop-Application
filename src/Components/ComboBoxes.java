@@ -3,9 +3,11 @@ package Components;
 import DbDao.DbCityDao;
 import DbDao.DbCountryDao;
 import DbDao.DbCustomerDao;
+import DbDao.DbUserDao;
 import POJO.City;
 import POJO.Country;
 import POJO.Customer;
+import POJO.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -20,11 +22,18 @@ public class ComboBoxes extends ComboBox {
     private ComboBox<String> countries = new ComboBox<>();
     private ComboBox<String> cities = new ComboBox<>();
     private ComboBox<LocalTime> appointmentTimes = new ComboBox<>();
-
-    // for auto complete
-    String filter = "";
+    private ComboBox<User> consultants = new ComboBox<>();
 
     public ComboBoxes() {
+    }
+
+    private void consultants() throws Exception {
+        ObservableList<User> list = FXCollections.observableArrayList();
+        Stream<User> userStream = new DbUserDao(DBUtils.getMySQLDataSource()).getAll();
+        userStream.forEach(list::add);
+        consultants.setEditable(false);
+        consultants.setItems(list);
+        consultants.setOnAction(e -> consultants.getSelectionModel().getSelectedItem());
     }
 
     private void customers() throws Exception {
@@ -106,5 +115,10 @@ public class ComboBoxes extends ComboBox {
 
     public ComboBox<Integer> getDurationTimes() {
         return durationTimes();
+    }
+
+    public ComboBox<User> getConsultants() throws Exception {
+        consultants();
+        return consultants;
     }
 }

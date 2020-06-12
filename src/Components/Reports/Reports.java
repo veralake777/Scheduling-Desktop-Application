@@ -1,15 +1,14 @@
 package Components.Reports;
 
-import Components.Appointments.AppointmentsTable;
 import Components.Calendar.Week;
+import Components.ComboBoxes;
 import POJO.User;
 import com.mysql.jdbc.PreparedStatement;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import utils.DBUtils;
@@ -36,7 +35,7 @@ public class Reports {
     }
 
     // number of appointment types by month
-    public GridPane numberOfAppointmentTypesPerMonth() throws Exception {
+    private GridPane numberOfAppointmentTypesPerMonth() throws Exception {
         int typeCount = 0;
         GridPane gridPane = new GridPane();
         gridPane.setGridLinesVisible(true);
@@ -56,7 +55,7 @@ public class Reports {
 
         for (int i = 1; i <= typeCount + 1; i++) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setMinHeight(75);
+            rowConst.setMinHeight(40);
             rowConst.setFillHeight(true);
             gridPane.getRowConstraints().add(rowConst);
         }
@@ -74,6 +73,7 @@ public class Reports {
         // add types to col 0, row i of gridPane
         for (i = 0; i < types.length; i++) {
             Label label = new Label(types[i]);
+            label.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
             GridPane.setHalignment(label, HPos.CENTER);
             gridPane.add(label, 0, i + 1);
         }
@@ -82,55 +82,71 @@ public class Reports {
         int numCols = 13;
         for (i = 0; i < numCols; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPercentWidth(100.0 / numCols);
+            if(i==0) {
+                colConst.setMinWidth(100);
+            } else {
+                colConst.setPercentWidth(100.0 / numCols - 1);
+            }
             gridPane.getColumnConstraints().add(colConst);
         }
 
-        Label januaryReport = new Label("January");
+        Label januaryReport = new Label("JAN");
+        januaryReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(januaryReport, 1, 0);
         GridPane.setHalignment(januaryReport, HPos.CENTER);
 
-        Label februaryReport = new Label("February");
+        Label februaryReport = new Label("FEB");
+        februaryReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(februaryReport, 2, 0);
         GridPane.setHalignment(februaryReport, HPos.CENTER);
 
-        Label marchReport = new Label("March");
+        Label marchReport = new Label("MAR");
+        marchReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(marchReport, 3, 0);
         GridPane.setHalignment(marchReport, HPos.CENTER);
 
-        Label aprilReport = new Label("April");
+        Label aprilReport = new Label("APR");
+        aprilReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(aprilReport, 4, 0);
         GridPane.setHalignment(aprilReport, HPos.CENTER);
 
-        Label mayReport = new Label("May");
+        Label mayReport = new Label("MAY");
+        mayReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(mayReport, 5, 0);
         GridPane.setHalignment(mayReport, HPos.CENTER);
 
-        Label juneReport = new Label("June");
+        Label juneReport = new Label("JUN");
+        juneReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(juneReport, 6, 0);
         GridPane.setHalignment(juneReport, HPos.CENTER);
 
-        Label julyReport = new Label("July");
+        Label julyReport = new Label("JUL");
+        julyReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(julyReport, 7, 0);
         GridPane.setHalignment(julyReport, HPos.CENTER);
 
-        Label augustReport = new Label("August");
+        Label augustReport = new Label("AUG");
+        augustReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(augustReport, 8, 0);
         GridPane.setHalignment(augustReport, HPos.CENTER);
 
-        Label septemberReport = new Label("September");
+        Label septemberReport = new Label("SEP");
+        septemberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(septemberReport, 9, 0);
         GridPane.setHalignment(septemberReport, HPos.CENTER);
 
-        Label octoberReport = new Label("October");
+        Label octoberReport = new Label("OCT");
+        octoberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(octoberReport, 10, 0);
         GridPane.setHalignment(octoberReport, HPos.CENTER);
 
-        Label novemberReport = new Label("November");
+        Label novemberReport = new Label("NOV");
+        novemberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(novemberReport, 11, 0);
         GridPane.setHalignment(novemberReport, HPos.CENTER);
 
-        Label decemberReport = new Label("December");
+        Label decemberReport = new Label("DEC");
+        decemberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
         gridPane.add(decemberReport, 12, 0);
         GridPane.setHalignment(decemberReport, HPos.CENTER);
 
@@ -213,6 +229,7 @@ public class Reports {
         for (int rowIndex = 0; rowIndex < types.length; rowIndex++) {
             if (resultSet.getString(2).equals(types[rowIndex])) {
                 Label label = new Label(String.valueOf(resultSet.getInt(3)));
+                label.setFont(Font.font("Roboto Light", FontWeight.MEDIUM, 12));
                 GridPane.setHalignment(label, HPos.CENTER);
                 gridPane.add(label, colIndex, rowIndex + 1);
             }
@@ -220,7 +237,8 @@ public class Reports {
     }
 
     // the schedule for each consultant
-    public GridPane consultantSchedule() throws Exception {
+    private GridPane consultantSchedule() throws Exception {
+        Week week = new Week(user);
         LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
         // 2 col gridpane
         GridPane gridPane = new GridPane();
@@ -231,20 +249,64 @@ public class Reports {
         gridPane.getColumnConstraints().addAll(col1, col2);
 
         // appointment table (left)
-        Label title = new Label(user.getUserName() + "'s Current Schedule");
-        title.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 30));
-        title.setPadding(new Insets(20, 0, 20, 0));
-        GridPane.setHalignment(title, HPos.CENTER);
 
-        gridPane.add(title, 0, 0, 2, 1);
-        gridPane.add(new AppointmentsTable(user).getAppointmentTableView(), 0, 1);
-        gridPane.add(new Week(user).getView(LocalDate.now().with(DayOfWeek.MONDAY)), 1, 1);
+        HBox hBox = new HBox(2);
+        Label title = new Label("'s Current Schedule");
+        ComboBox<User> consultants = new ComboBoxes().getConsultants();
+        consultants.getSelectionModel().select(user);
+        consultants.setMinHeight(30);
+        consultants.setStyle("-fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, white;" +
+                "    -fx-background-insets: 0 0 -1 0, 0, 1, 2;" +
+                "    -fx-background-radius: 3px, 3px, 2px, 1px;" +
+                "-fx-font-size: 20;");
+        consultants.setEditable(true);
+        consultants.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+                    user = consultants.getSelectionModel().getSelectedItem();
+                    try {
+                        week.getView(user, monday);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
+        title.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 30));
+        hBox.getChildren().addAll(consultants, title);
+
+        gridPane.add(hBox, 1, 0);
+        gridPane.add(week.getView(monday), 1, 1);
         return gridPane;
     }
 
 
     // one additional report of your choice
-    public void numberOfCustomersPerCountry() {
+    private AnchorPane numberOfCustomersPerCountry() {
+        Label label = new Label("productivity");
+        AnchorPane anchorPane = new AnchorPane(label);
+        return anchorPane;
+    }
 
+    public GridPane getView() throws Exception {
+        GridPane gridPane = new GridPane();
+        ColumnConstraints columnConstraints1 = new ColumnConstraints();
+        columnConstraints1.setPercentWidth(40);
+        ColumnConstraints columnConstraints2 = new ColumnConstraints();
+        columnConstraints1.setPercentWidth(60);
+        gridPane.getColumnConstraints().addAll(columnConstraints2, columnConstraints1);
+
+        // Reports (left)
+        Label reportTitle = new Label("REPORTS");
+        reportTitle.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 30));
+        gridPane.add(reportTitle, 0, 0);
+        gridPane.add(numberOfAppointmentTypesPerMonth(), 0, 1);
+        gridPane.add(numberOfCustomersPerCountry(), 0, 2);
+
+
+        // consultant schedule with combobox (right)
+        GridPane consultantSchedule = consultantSchedule();
+        consultantSchedule.getColumnConstraints().clear();
+        consultantSchedule.setPadding(new Insets(0, 0, 0, 10));
+        gridPane.add(consultantSchedule, 1, 1);
+
+        return gridPane;
     }
 }

@@ -88,7 +88,7 @@ public class MainMenu {
         lblReports.setStyle(mainLabelsStyle());
         lblReports.onMouseClickedProperty().set(mouseEvent -> {
             try {
-                updateMainView(new Reports(user).consultantSchedule());
+                updateMainView(new Reports(user).getView());
             } catch (Exception e) {
                 e.printStackTrace();
             }

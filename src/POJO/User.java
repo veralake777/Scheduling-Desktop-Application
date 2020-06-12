@@ -94,4 +94,9 @@ public class User {
     public final void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public String toString() {
+        return this.getUserName();
+    }
 }

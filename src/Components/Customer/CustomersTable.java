@@ -86,7 +86,7 @@ public class CustomersTable {
                                     editBtn.setOnAction(event -> {
                                         CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
                                         try {
-                                            updateRightSideView(new CustomerCard(customerDetails).getEditCustomerCard());
+                                            updateRightSideView(new CustomerCard(customerDetails).getCustomerCard());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -186,7 +186,7 @@ public class CustomersTable {
                 "-fx-background-color:#ebaa5d;\n");
         newCustomerBtn.setOnAction(e -> {
             try {
-                updateRightSideView(new CustomerCard().getNewCustomerCard());
+                updateRightSideView(new CustomerCard().getNewCustomerCardGridPane());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

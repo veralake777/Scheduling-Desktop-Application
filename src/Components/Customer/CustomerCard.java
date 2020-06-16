@@ -32,6 +32,8 @@ public class CustomerCard {
      */
 
     CustomerDetails customer;
+    // for on update, update table data
+    CustomersTable customersTable;
 
     GridPane gridPane = new GridPane();
     // Labels for card view; textFields for onActionEditButton
@@ -60,20 +62,24 @@ public class CustomerCard {
 
     Optional<City> city;
     Optional<Country> country;
-    public CustomerCard() throws Exception {
+    public CustomerCard(CustomersTable customersTable) throws Exception {
+        this.customersTable = customersTable;
     }
 
-    public CustomerCard(CustomerDetails customer) throws Exception {
+    public CustomerCard(CustomerDetails customer, CustomersTable customersTable) throws Exception {
         this.customer = customer;
+        this.customersTable = customersTable;
         this.city = new DbCityDao(DBUtils.getMySQLDataSource()).getByName(customer.getCity());
-        this.country = new DbCountryDao(DBUtils.getMySQLDataSource()).getByName(customer.getCountry());
+        this.country = new DbCountryDao(DBUtils.getMySQLDataSource()).getById(city.get().getCountryId());
+        if(city.isPresent() && country.isPresent()) {
+            cityComboBox.getSelectionModel().select(city.get());
+            countryComboBox.getSelectionModel().select(country.get());
+        }
         customerComboBox.getSelectionModel().select(customer.getCustomerId());
         phoneTxtFld.setText(customer.getPhone());
         addressLine1TxtFld.setText(customer.getAddress());
         addressLine2TxtFld.setText(customer.getAddress2());
-        cityComboBox.getSelectionModel().select(city.get());
         postalCodeTxtFld.setText(customer.getPostalCode());
-        countryComboBox.getSelectionModel().select(country.get());
     }
 
     private GridPane buildNewCustomerGridPane() {
@@ -141,6 +147,7 @@ public class CustomerCard {
                 DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
                 Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
                 customerDao.add(new Customer(customerDao.maxId()+1, customerNameTextFld.getText(), address.get().getId()));
+                customersTable.initialize();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText("Customer successfully added to the database.");
             } catch (Exception ex) {
@@ -260,7 +267,7 @@ public class CustomerCard {
                                 customerComboBox.getSelectionModel().getSelectedItem().getCustomerName(),
                                 address.get().getId())
                 );
-
+                customersTable.initialize();
                 // Alert for success
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText("Customer successfully updated.");

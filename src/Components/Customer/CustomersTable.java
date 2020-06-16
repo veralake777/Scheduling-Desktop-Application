@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 /**
  * RUBRIC B.   Provide the ability to add, update, and delete customer records in the database, including name, address, and phone number.
+ *
  */
 public class CustomersTable {
     private TableView<CustomerDetails> customerTableView = new TableView<CustomerDetails>();
@@ -42,6 +43,7 @@ public class CustomersTable {
     GridPane gridPane = new GridPane();
 
     public void initialize() throws Exception {
+        customerTableView.getItems().clear();
         customerTableView.getStylesheets().add("CSS/tableView.css");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
@@ -51,6 +53,7 @@ public class CustomersTable {
         cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
         countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
 
+        customers.clear();
         Stream<CustomerDetails> stream = new DbCustomerDetailsDao(DBUtils.getMySQLDataSource()).getAll();
         stream.forEach(customer -> customers.add(customer));
 
@@ -63,7 +66,6 @@ public class CustomersTable {
          *     are sure they would like to permanently delete the customer and all their corresponding data
          *     (address, appointments) from the database
          **/
-
         TableColumn editColumn = new TableColumn("Edit");
         editColumn.setCellValueFactory(new PropertyValueFactory<>(null));
 
@@ -84,9 +86,9 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     editBtn.setOnAction(event -> {
-                                        CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
+                                        CustomerDetails customer = getTableView().getItems().get(getIndex());
                                         try {
-                                            updateRightSideView(new CustomerCard(customerDetails).getCustomerCard());
+                                            updateRightSideView(new CustomerCard(customer, CustomersTable.this).getCustomerCard());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -122,8 +124,15 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     deleteBtn.setOnAction(event -> {
-                                        CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
+                                        CustomerDetails customerDetails = getTableView().getItems().get(getIndex());
                                         // delete customer from database
+                                        try {
+                                            DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                                            Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
+                                            dao.delete(customer);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                         // delete customer from table
 
                                         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
@@ -138,14 +147,6 @@ public class CustomersTable {
                                                 // remove customer from table
                                                 getTableView().getItems().remove(customerDetails);
                                                 // TODO remove from database
-                                                try {
-                                                    DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
-                                                    Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
-                                                    dao.delete(customer);
-                                                    customerTableView.refresh();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
                                             } else if (btnType == ButtonType.CANCEL) {
                                                 a.close();
                                             }
@@ -176,17 +177,17 @@ public class CustomersTable {
         initialize();
         Rectangle2D screenSize = Screen.getPrimary().getBounds();
         Button newCustomerBtn = new Button("New Customer");
-        newCustomerBtn.setMaxWidth(screenSize.getWidth() / 2);
-        newCustomerBtn.setMinHeight(screenSize.getHeight() * .1);
+        newCustomerBtn.setMaxWidth(screenSize.getWidth()/2);
+        newCustomerBtn.setMinHeight(screenSize.getHeight()*.1);
         newCustomerBtn.setStyle("-fx-font-family: 'Roboto Bold';\n" +
                 "-fx-font-size: 25;\n" +
                 "-fx-alignment: center;\n" +
                 "-fx-font-weight: BOLD;\n" +
                 "-fx-padding: 25 20;\n" +
                 "-fx-background-color:#ebaa5d;\n");
-        newCustomerBtn.setOnAction(e -> {
+        newCustomerBtn.setOnAction(e-> {
             try {
-                updateRightSideView(new CustomerCard().getNewCustomerCardGridPane());
+                updateRightSideView(new CustomerCard(this).getNewCustomerCardGridPane());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -201,7 +202,7 @@ public class CustomersTable {
         rightSideView = new Label("Click a button to load a view.");
         rightSideView.setStyle("-fx-alignment: CENTER;" +
                 "-fx-padding: 0 0 0 450");
-        gridPane.add(rightSideView, 1, 0);
+        gridPane.add(rightSideView, 1, 0 );
         return gridPane;
     }
 
@@ -212,4 +213,5 @@ public class CustomersTable {
         gridPane.getChildren().remove(1);
         gridPane.add(rightSideView, 1, 0);
     }
+
 }

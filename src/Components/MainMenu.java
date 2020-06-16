@@ -3,19 +3,21 @@ package Components;
 import Components.Appointments.AppointmentsTable;
 import Components.Calendar.CalendarView;
 import Components.Customer.CustomersTable;
+import POJO.User;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 import java.awt.*;
 
 public class MainMenu {
-    Main main;
+    User user;
     GridPane mainView;
 
     // main menu
-    public MainMenu(Main main, GridPane mainView) throws Exception {
-        this.main = main;
+    public MainMenu(User user, GridPane mainView) throws Exception {
+        this.user = user;
         this.mainView = mainView;
         buildMainMenu();
     }
@@ -61,7 +63,7 @@ public class MainMenu {
         lblCalendar.setStyle(mainLabelsStyle());
         lblCalendar.onMouseClickedProperty().set(mouseEvent -> {
             try {
-                updateMainView(new CalendarView(main).getView());
+                updateMainView(new CalendarView(user).getView());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -72,7 +74,7 @@ public class MainMenu {
         lblAppointments.setStyle(mainLabelsStyle());
         lblAppointments.onMouseClickedProperty().set(mouseEvent -> {
             try {
-                updateMainView(new AppointmentsTable(main).getGridPane());
+                updateMainView(new AppointmentsTable(user).getGridPane());
             } catch (Exception e) {
                 e.printStackTrace();
             }

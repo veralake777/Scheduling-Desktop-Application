@@ -1,7 +1,6 @@
 package Components.Appointments;
 
 import Components.ComboBoxes;
-import Components.Main;
 import DbDao.DbAppointmentDao;
 import DbDao.DbCustomerDao;
 import DbDao.DbUserDao;
@@ -44,7 +43,7 @@ public class AppointmentCard {
     }
 
     // User
-    private User user;
+    public int userId;
 
     // Title
     private Label titleLbl = new Label("Title");
@@ -91,23 +90,26 @@ public class AppointmentCard {
     private ComboBox<Integer> endTxt = new ComboBoxes().getDurationTimes();
 
     // For popups in Components.Calendar.Week, Components.Calendar.Month
-    public AppointmentCard(Main main) {
+    public AppointmentCard(User user) {
         this.stage = new Stage();
-        user = main.getUser();
+        this.userId = user.getId();
+        System.out.println("constructor1: " + userId);
     }
 
     // for grid pane in dynamic views of Components.Appointments.AppointmentsTable, Components.Customer.CustomersTable
-    public AppointmentCard(AppointmentsTable appointmentsTable, Main main) {
+    public AppointmentCard(AppointmentsTable appointmentsTable, User user) {
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
-        user = main.getUser();
+        this.userId = user.getId();
+        System.out.println("constructor2: " + userId);
     }
 
     // for week view, new appointment
-    public AppointmentCard(Main main, LocalDate date) {
+    public AppointmentCard(User user, LocalDate date) {
         this.stage = new Stage();
-        user = main.getUser();
+        this.userId = user.getId();
         this.datePicker.setValue(date);
+        System.out.println("constructor3: " + userId);
     }
 
     /**
@@ -117,6 +119,7 @@ public class AppointmentCard {
      * Use with edit appointment buttons where you pass in a selected appointment
      */
     public AppointmentCard(int appointmentId) throws Exception {
+        System.out.println("constructor5: " + userId);
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
@@ -131,7 +134,6 @@ public class AppointmentCard {
 
             assert customerNameTxt != null;
             customerNameTxt.getSelectionModel().select(customer.get());
-            user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
             titleTxt.setText(this.appointment.getTitle());
             descriptionTxt.setText(this.appointment.getDescription());
             locationTxt.setText(this.appointment.getLocation());
@@ -157,6 +159,7 @@ public class AppointmentCard {
      * Use with edit appointment buttons where you pass in a selected appointment
      */
     public AppointmentCard(int appointmentId, AppointmentsTable appointmentsTable) throws Exception {
+        System.out.println("constructor6: " + userId);
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
@@ -171,7 +174,8 @@ public class AppointmentCard {
 
             assert customerNameTxt != null;
             customerNameTxt.getSelectionModel().select(customer.get());
-            user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
+            User user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
+            this.userId = user.getId();
             titleTxt.setText(this.appointment.getTitle());
             descriptionTxt.setText(this.appointment.getDescription());
             locationTxt.setText(this.appointment.getLocation());
@@ -190,7 +194,7 @@ public class AppointmentCard {
     }
 
     public AppointmentCard(int appointmentId, LocalDate date) throws Exception {
-        this.appointmentsTable = appointmentsTable;
+        System.out.println("constructor7: " + userId);
         this.stage = new Stage();
 
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
@@ -205,7 +209,8 @@ public class AppointmentCard {
 
             assert customerNameTxt != null;
             customerNameTxt.getSelectionModel().select(customer.get());
-            user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
+            User user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
+            this.userId = user.getId();
             titleTxt.setText(this.appointment.getTitle());
             descriptionTxt.setText(this.appointment.getDescription());
             locationTxt.setText(this.appointment.getLocation());
@@ -224,7 +229,9 @@ public class AppointmentCard {
     }
 
 
-    public AppointmentCard(LocalDate date) {
+    public AppointmentCard(LocalDate date, int userId) {
+        System.out.println("constructor8: " + userId);
+        this.userId = userId;
         this.stage = new Stage();
         this.datePicker.setValue(date);
     }
@@ -282,10 +289,11 @@ public class AppointmentCard {
             }
             try {
                 assert dao != null;
+                System.out.println("userId: " + userId);
                 dao.add(new Appointment(
                         dao.getMaxId() + 1,
                         customerNameTxt.getValue().getId(),
-                        user.getId(),
+                        userId,
                         titleTxt.getText(),
                         descriptionTxt.getText(),
                         locationTxt.getText(),

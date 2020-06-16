@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public class AppointmentCard {
     // Appointment Table (parent)
-    private AppointmentsTable appointmentsTable;
+    private AppointmentsTable appointmentsTable = null;
     // Appointment Id
     private Appointment appointment;
     // Customer Name **
@@ -120,7 +120,6 @@ public class AppointmentCard {
      */
     public AppointmentCard(int appointmentId) throws Exception {
         System.out.println("constructor5: " + userId);
-        this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
         // special LocalAppointment class for building the table that includes customer names
@@ -289,8 +288,7 @@ public class AppointmentCard {
             }
             try {
                 assert dao != null;
-                System.out.println("userId: " + userId);
-                dao.add(new Appointment(
+                Appointment appointmentToAdd = new Appointment(
                         dao.getMaxId() + 1,
                         customerNameTxt.getValue().getId(),
                         userId,
@@ -305,10 +303,17 @@ public class AppointmentCard {
                         Timestamp.valueOf(LocalDateTime.now()),
                         "default",
                         Timestamp.valueOf(LocalDateTime.now()),
-                        "default"
-                ));
+                        "default");
+                dao.add(appointmentToAdd);
                 Alert a = new Alert(Alert.AlertType.INFORMATION, "Success!");
                 a.showAndWait();
+                if(appointmentsTable != null) {
+                    appointmentsTable.appointments.add(
+                            new AppointmentsTable.LocalAppointment(
+                                    appointmentToAdd.getId(),
+                                    appointmentToAdd.getType(),
+                                    new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointmentToAdd.getCustomerId()).get().getCustomerName()));
+                }
             } catch (Exception ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR, "Something went wrong.");
                 a.showAndWait();
@@ -416,6 +421,17 @@ public class AppointmentCard {
                 assert dao != null;
                 setAppointment(appointment);
                 dao.update(appointment);
+                if(appointmentsTable != null) {
+                    // get customer name
+                    String customerName = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointment.getCustomerId()).get().getCustomerName();
+                    // find appointment in AppoinmentTable.appointments and match it with appointment --> update
+                    for(int i=0; i<appointmentsTable.appointments.size(); i++) {
+                        if(appointmentsTable.appointments.get(i).getAppointmentId() == appointment.getId()) {
+                            appointmentsTable.appointments.get(i).setAppointmentType(appointment.getType());
+                            appointmentsTable.appointments.get(i).setCustomerName(customerName);
+                        }
+                    }
+                }
                 appointmentsTable.updateRightSideView(new Label("Appointment was successfully updated!"));
             } catch (Exception ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR, "Something went wrong.");
@@ -428,6 +444,15 @@ public class AppointmentCard {
             try {
                 DbAppointmentDao dao = new DbAppointmentDao(DBUtils.getMySQLDataSource());
                 dao.delete(appointment);
+                if(appointmentsTable != null) {
+                    // get customer name
+                    // find appointment in AppoinmentTable.appointments and match it with appointment --> update
+                    for(int i=0; i<appointmentsTable.appointments.size(); i++) {
+                        if(appointmentsTable.appointments.get(i).getAppointmentId() == appointment.getId()) {
+                            appointmentsTable.appointments.remove(i);
+                        }
+                    }
+                }
                 appointmentsTable.updateRightSideView(new Label("Appointment was successfully deleted!"));
             } catch (Exception ex) {
                 ex.printStackTrace();

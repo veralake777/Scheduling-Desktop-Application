@@ -74,8 +74,16 @@ public class AppointmentsTable {
             return appointmentType;
         }
 
+        public void setAppointmentType(String appointmentType) {
+            this.appointmentType = appointmentType;
+        }
+
         public String getCustomerName() {
             return customerName;
+        }
+
+        public void setCustomerName(String customerName) {
+            this.customerName = customerName;
         }
     }
     public void initialize() throws Exception {

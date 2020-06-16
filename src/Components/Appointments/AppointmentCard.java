@@ -1,5 +1,6 @@
 package Components.Appointments;
 
+import Components.Calendar.Week;
 import Components.ComboBoxes;
 import DbDao.DbAppointmentDao;
 import DbDao.DbCustomerDao;
@@ -25,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class AppointmentCard {
+    // Calendar.Week
+    private Week weekView = null;
     // Appointment Table (parent)
     private AppointmentsTable appointmentsTable = null;
     // Appointment Id
@@ -88,7 +91,7 @@ public class AppointmentCard {
 
     // Duration (end time)
     private Label endLbl = new Label("Duration");
-    private ComboBox<Integer> endTxt = new ComboBoxes().getDurationTimes();
+    private ComboBox<Integer> durationComboBox = new ComboBoxes().getDurationTimes();
 
     // For popups in Components.Calendar.Week, Components.Calendar.Month
     public AppointmentCard(User user) {
@@ -106,10 +109,11 @@ public class AppointmentCard {
     }
 
     // for week view, new appointment
-    public AppointmentCard(User user, LocalDate date) {
+    public AppointmentCard(User user, LocalDate date, Duration duration) {
         this.stage = new Stage();
         this.userId = user.getId();
         this.datePicker.setValue(date);
+        this.durationComboBox.getSelectionModel().select(Integer.parseInt(String.valueOf(duration.toMinutes())));
         System.out.println("constructor3: " + userId);
     }
 
@@ -143,7 +147,7 @@ public class AppointmentCard {
             assert startTxt != null;
             startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
             sdf = new SimpleDateFormat("mm");
-            endTxt.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
         } else {
             System.out.println("Appointment not found.");
         }
@@ -183,16 +187,16 @@ public class AppointmentCard {
             assert startTxt != null;
             startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
             sdf = new SimpleDateFormat("mm");
-            endTxt.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
         } else {
             System.out.println("Appointment not found.");
         }
     }
 
-    public AppointmentCard(int appointmentId, LocalDate date) throws Exception {
+    public AppointmentCard(int appointmentId, LocalDate date, Week weekView) throws Exception {
         System.out.println("constructor7: " + userId);
         this.stage = new Stage();
-
+        this.weekView = weekView;
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
         // special LocalAppointment class for building the table that includes customer names
         Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
@@ -218,7 +222,7 @@ public class AppointmentCard {
             assert startTxt != null;
             startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
             sdf = new SimpleDateFormat("mm");
-            endTxt.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
         } else {
             System.out.println("Appointment not found.");
         }
@@ -247,7 +251,7 @@ public class AppointmentCard {
         final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
         LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
-        LocalTime endTime = startTime.plusMinutes(endTxt.getSelectionModel().getSelectedItem());
+        LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
 
         if (datePicker.getValue() != null && startTime != null && endTime != null) {
             appointment.setStart(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)));
@@ -275,7 +279,7 @@ public class AppointmentCard {
             final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
             LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
-            LocalTime endTime = startTime.plusMinutes(endTxt.getSelectionModel().getSelectedItem());
+            LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
             // DAO.add()
             DbAppointmentDao dao = null;
             try {
@@ -310,6 +314,10 @@ public class AppointmentCard {
                                     appointmentToAdd.getId(),
                                     appointmentToAdd.getType(),
                                     new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointmentToAdd.getCustomerId()).get().getCustomerName()));
+                } else {
+                    // else you are using calendar view and need to update the week
+                    weekView.getView(weekView.monday);
+                    stage.close();
                 }
             } catch (Exception ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR, "Something went wrong.");
@@ -350,7 +358,7 @@ public class AppointmentCard {
         gridPane.add(startLbl, 0, 8);
         gridPane.add(startTxt, 1, 8);
         gridPane.add(endLbl, 0, 9);
-        gridPane.add(endTxt, 1, 9);
+        gridPane.add(durationComboBox, 1, 9);
         gridPane.add(newAppointmentButtonBar(), 1, 10);
 
         return gridPane;
@@ -386,8 +394,8 @@ public class AppointmentCard {
         startTxt.getSelectionModel().select(LocalTime.from(start));
         gridPane.add(startTxt, 1, 8);
         gridPane.add(endLbl, 0, 9);
-        endTxt.setValue((int) duration.toMinutes());
-        gridPane.add(endTxt, 1, 9);
+        durationComboBox.setValue((int) duration.toMinutes());
+        gridPane.add(durationComboBox, 1, 9);
         gridPane.add(newAppointmentButtonBar(), 1, 10);
 
 
@@ -419,6 +427,7 @@ public class AppointmentCard {
                 assert dao != null;
                 setAppointment(appointment);
                 dao.update(appointment);
+                // if appointmentsTable is not null then it is from the AppointmentsTable view
                 if(appointmentsTable != null) {
                     // get customer name
                     String customerName = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointment.getCustomerId()).get().getCustomerName();
@@ -429,8 +438,14 @@ public class AppointmentCard {
                             appointmentsTable.appointments.get(i).setCustomerName(customerName);
                         }
                     }
+                    appointmentsTable.updateRightSideView(new Label("Appointment was successfully updated!"));
+                } else {
+                    // show success message for calendar view
+                    weekView.getView(weekView.monday);
+                    stage.close();
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated.");
+                    alert.showAndWait();
                 }
-                appointmentsTable.updateRightSideView(new Label("Appointment was successfully updated!"));
             } catch (Exception ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR, "Something went wrong.");
                 a.showAndWait();
@@ -450,8 +465,13 @@ public class AppointmentCard {
                             appointmentsTable.appointments.remove(i);
                         }
                     }
+                    appointmentsTable.updateRightSideView(new Label("Appointment was successfully deleted!"));
+                } else {
+                    weekView.getView(weekView.monday);
+                    stage.close();
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment Deleted.");
+                    alert.showAndWait();
                 }
-                appointmentsTable.updateRightSideView(new Label("Appointment was successfully deleted!"));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -495,7 +515,7 @@ public class AppointmentCard {
         gridPane.add(startLbl, 0, 8);
         gridPane.add(startTxt, 1, 8);
         gridPane.add(endLbl, 0, 9);
-        gridPane.add(endTxt, 1, 9);
+        gridPane.add(durationComboBox, 1, 9);
         gridPane.add(editAppointmentButtonBar(), 1, 10);
 
         return gridPane;

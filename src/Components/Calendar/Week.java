@@ -39,7 +39,7 @@ public class Week {
     private final Duration slotLength = Duration.ofMinutes(15);
     private final LocalTime LAST_SLOT_END = LocalTime.of(18, 59);
     // Start week on Monday + date
-    LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
+    public LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
 
     private static final PseudoClass SELECTED_PSEUDO_CLASS = PseudoClass.getPseudoClass("selected");
 
@@ -110,7 +110,7 @@ public class Week {
                 timeSlots.add(timeSlot);
 
                 timeSlot.getView().setOnMouseClicked(mouseEvent -> {
-                    AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate());
+                    AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate(), timeSlot.getDuration());
                     Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
                     popup.showAndWait();
                 });
@@ -241,7 +241,7 @@ public class Week {
                 timeSlots.add(timeSlot);
 
                 timeSlot.getView().setOnMouseClicked(mouseEvent -> {
-                    AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate());
+                    AppointmentCard appointmentCard = new AppointmentCard(user, timeSlot.getStart().toLocalDate(), timeSlot.getDuration());
                     Stage popup = appointmentCard.getNewAppointmentStage(timeSlot.getStart(), slotLength);
                     popup.showAndWait();
                 });
@@ -339,7 +339,7 @@ public class Week {
             for (Appointment a : appointmentObservableList) {
                 long minutes = a.getEnd().getMinutes() - a.getStart().getMinutes();
                 Duration duration = Duration.ofMinutes(minutes);
-                TimeSlot existingSlot = new TimeSlot(a.getStart().toLocalDateTime(), Duration.ofMinutes(30));
+                TimeSlot existingSlot = new TimeSlot(a.getStart().toLocalDateTime(), Duration.ofMinutes(a.getEnd().getTime() - a.getStart().getTime()));
                 if (timeSlot.getStart().equals(existingSlot.getStart()) && a.getUserId() == user.getId()) {
                     timeSlot.duration = Duration.ofMinutes(duration.toMinutes());
                     Duration tempD = Duration.ofMinutes(timeSlot.duration.toMinutes());
@@ -368,7 +368,7 @@ public class Week {
         timeSlot.getView().setOnMouseClicked(mouseEvent -> {
             AppointmentCard appointmentCard = null;
             try {
-                appointmentCard = new AppointmentCard(a.getId(), timeSlot.getStart().toLocalDate());
+                appointmentCard = new AppointmentCard(a.getId(), timeSlot.getStart().toLocalDate(), this);
             } catch (Exception e) {
                 e.printStackTrace();
             }

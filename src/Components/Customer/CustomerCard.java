@@ -6,6 +6,7 @@ import DbDao.DbCustomerDao;
 import POJO.Address;
 import POJO.Customer;
 import POJO.CustomerDetails;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -32,11 +33,13 @@ public class CustomerCard {
      */
 
         CustomerDetails customer;
-
+        Customer customerForBoxSelection;
         GridPane gridPane = new GridPane();
         HBox hBox = new HBox(25);
         Button editBtn = new Button("Edit");
+
         // Labels for card view; textFields for onActionEditButton
+        Label title = new Label();
         Label customerNameLbl = new Label("Customer");
         ComboBox<Customer> customerComboBox = new ComboBoxes().getCustomers();
         TextField customerNameTextFld = new TextField();
@@ -63,9 +66,11 @@ public class CustomerCard {
     public CustomerCard() throws Exception {
     }
 
+    // get by object
     public CustomerCard(CustomerDetails customer) throws Exception {
         this.customer = customer;
-        customerComboBox.getSelectionModel().select(customer.getCustomerId());
+        customerForBoxSelection = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customer.getCustomerId()).get();
+        customerComboBox.getSelectionModel().select(customerForBoxSelection);
         phoneTxtFld.setText(customer.getPhone());
         addressLine1TxtFld.setText(customer.getAddress());
         addressLine2TxtFld.setText(customer.getAddress2());
@@ -74,7 +79,7 @@ public class CustomerCard {
         countryComboBox.getSelectionModel().select(customer.getCountry());
     }
 
-        private GridPane buildNewCustomerGridPane() {
+    private GridPane buildNewCustomerGridPane() {
             ColumnConstraints columnConstraints = new ColumnConstraints(150);
             ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
             gridPane.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
@@ -88,47 +93,52 @@ public class CustomerCard {
             double minWidth = 75;
 
             //START LABELS AND INPUTS
+            title.setMinSize(minWidth*3, 50);
+            title.setAlignment(Pos.CENTER);
+            title.setText("NEW CUSTOMER");
+            gridPane.add(title, 0, 0);
+
             HBox nameHBox = new HBox(50);
             customerNameLbl.setMinSize(minWidth, 25);
             customerNameTextFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
             nameHBox.getChildren().addAll(customerNameLbl, customerNameTextFld);
-            gridPane.add(nameHBox, 0, 0);
+            gridPane.add(nameHBox, 0, 1);
 
             HBox phoneHbox = new HBox(50);
             phoneLbl.setMinSize(minWidth, 25);
             phoneTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
             phoneHbox.getChildren().addAll(phoneLbl,phoneTxtFld);
-            gridPane.add(phoneHbox, 0, 1);
+            gridPane.add(phoneHbox, 0, 2);
 
             HBox address1HBox = new HBox(50);
             addressLine1Lbl.setMinSize(minWidth, 25);
             addressLine1TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
             address1HBox.getChildren().addAll(addressLine1Lbl, addressLine1TxtFld);
-            gridPane.add(address1HBox, 0, 2);
+            gridPane.add(address1HBox, 0, 3);
 
             HBox address2 = new HBox(50);
             addressLine2Lbl.setMinSize(minWidth, 25);
             addressLine2TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
             address2.getChildren().addAll(addressLine2Lbl, addressLine2TxtFld);
-            gridPane.add(address2, 0, 3);
+            gridPane.add(address2, 0, 4);
 
             HBox cityHBox = new HBox(50);
             cityLbl.setMinSize(minWidth, 25);
             cityComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
             cityHBox.getChildren().addAll(cityLbl, cityComboBox);
-            gridPane.add(cityHBox, 0, 4);
+            gridPane.add(cityHBox, 0, 5);
 
             HBox postalCodeHBox = new HBox(50);
             postalCodeLbl.setMinSize(minWidth, 25);
             postalCodeTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
             postalCodeHBox.getChildren().addAll(postalCodeLbl, postalCodeTxtFld);
-            gridPane.add(postalCodeHBox, 0, 5);
+            gridPane.add(postalCodeHBox, 0, 6);
 
             HBox countryHBox = new HBox(50);
             countryLbl.setMinSize(minWidth, 25);
             countryComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
             countryHBox.getChildren().addAll(countryLbl, countryComboBox);
-            gridPane.add(countryHBox, 0, 6);
+            gridPane.add(countryHBox, 0, 7);
             //END LABELS AND INPUTS
 
             // START BUTTONS
@@ -156,7 +166,7 @@ public class CustomerCard {
             // END BUTTONS
             // END BUTTONS
 
-            gridPane.add(buttonBar, 1, 7);
+            gridPane.add(buttonBar, 1, 8);
             gridPane.setStyle(
                             "-fx-border-width: 3.5; " +
                             "-fx-border-radius: 10; " +
@@ -181,54 +191,61 @@ public class CustomerCard {
         double minWidth = 75;
 
         //START LABELS AND INPUTS
+        title.setMinSize(minWidth*3, 50);
+        title.setAlignment(Pos.CENTER);
+        title.setText("EDIT CUSTOMER");
+        gridPane.add(title, 0, 0);
+
         HBox nameHBox = new HBox(50);
         customerNameLbl.setMinSize(minWidth, 25);
-        customerComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
-        customerComboBox.getSelectionModel().select(customer.getCustomerId());
-        nameHBox.getChildren().addAll(customerNameLbl, customerComboBox);
-        gridPane.add(nameHBox, 0, 0);
+        customerNameTextFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+        customerNameTextFld.setDisable(true);
+        customerNameTextFld.setText(customer.getCustomerName());
+
+        nameHBox.getChildren().addAll(customerNameLbl, customerNameTextFld);
+        gridPane.add(nameHBox, 0, 1);
 
         HBox phoneHbox = new HBox(50);
         phoneLbl.setMinSize(minWidth, 25);
         phoneTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
         phoneTxtFld.setText(customer.getPhone());
         phoneHbox.getChildren().addAll(phoneLbl,phoneTxtFld);
-        gridPane.add(phoneHbox, 0, 1);
+        gridPane.add(phoneHbox, 0, 2);
 
         HBox address1HBox = new HBox(50);
         addressLine1Lbl.setMinSize(minWidth, 25);
         addressLine1TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
         addressLine1TxtFld.setText(customer.getAddress());
         address1HBox.getChildren().addAll(addressLine1Lbl, addressLine1TxtFld);
-        gridPane.add(address1HBox, 0, 2);
+        gridPane.add(address1HBox, 0, 3);
 
         HBox address2 = new HBox(50);
         addressLine2Lbl.setMinSize(minWidth, 25);
         addressLine2TxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
         addressLine2TxtFld.setText(customer.getAddress2());
         address2.getChildren().addAll(addressLine2Lbl, addressLine2TxtFld);
-        gridPane.add(address2, 0, 3);
+        gridPane.add(address2, 0, 4);
 
         HBox cityHBox = new HBox(50);
         cityLbl.setMinSize(minWidth, 25);
         cityComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
         cityComboBox.getSelectionModel().select(customer.getCity());
         cityHBox.getChildren().addAll(cityLbl, cityComboBox);
-        gridPane.add(cityHBox, 0, 4);
+        gridPane.add(cityHBox, 0, 5);
 
         HBox postalCodeHBox = new HBox(50);
         postalCodeLbl.setMinSize(minWidth, 25);
         postalCodeTxtFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
         postalCodeTxtFld.setText(customer.getPostalCode());
         postalCodeHBox.getChildren().addAll(postalCodeLbl, postalCodeTxtFld);
-        gridPane.add(postalCodeHBox, 0, 5);
+        gridPane.add(postalCodeHBox, 0, 6);
 
         HBox countryHBox = new HBox(50);
         countryLbl.setMinSize(minWidth, 25);
         countryComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
         countryComboBox.getSelectionModel().select(customer.getCountry());
         countryHBox.getChildren().addAll(countryLbl, countryComboBox);
-        gridPane.add(countryHBox, 0, 6);
+        gridPane.add(countryHBox, 0, 7);
         //END LABELS AND INPUTS
 
         // START BUTTONS
@@ -255,7 +272,7 @@ public class CustomerCard {
                 customerDao.update(
                         new Customer(
                                 customer.getCustomerId(),
-                                customerComboBox.getSelectionModel().getSelectedItem().getCustomerName(),
+                                customerNameTextFld.getText(),
                                 address.get().getId())
                 );
 
@@ -277,7 +294,7 @@ public class CustomerCard {
         buttonBar.getButtons().addAll(updateBtn);
         // END BUTTONS
 
-        gridPane.add(buttonBar, 1, 7);
+        gridPane.add(buttonBar, 1, 8);
         gridPane.setStyle(
                 "-fx-border-width: 3.5; " +
                 "-fx-border-radius: 10; " +
@@ -287,12 +304,14 @@ public class CustomerCard {
         );
     }
 
-    public GridPane getCustomerCard() {
+    public GridPane getEditCustomerCard() {
+        customerNameTextFld.setDisable(true);
         buildEditCustomerGridPane();
         return gridPane;
     }
 
-    public GridPane getNewCustomerCardGridPane() {
-        return buildNewCustomerGridPane();
+    public GridPane getNewCustomerCard() {
+        buildNewCustomerGridPane();
+        return gridPane;
     }
 }

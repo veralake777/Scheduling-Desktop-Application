@@ -64,6 +64,7 @@ public class CustomersTable {
          *     are sure they would like to permanently delete the customer and all their corresponding data
          *     (address, appointments) from the database
          **/
+
         TableColumn editColumn = new TableColumn("Edit");
         editColumn.setCellValueFactory(new PropertyValueFactory<>(null));
 
@@ -84,9 +85,9 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     editBtn.setOnAction(event -> {
-                                        CustomerDetails customer = getTableView().getItems().get(getIndex()-1);
+                                        CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
                                         try {
-                                            updateRightSideView(new CustomerCard(customer).getCustomerCard());
+                                            updateRightSideView(new CustomerCard(customerDetails).getEditCustomerCard());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -122,15 +123,8 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     deleteBtn.setOnAction(event -> {
-                                        CustomerDetails customerDetails = getTableView().getItems().get(getIndex());
+                                        CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
                                         // delete customer from database
-                                        try {
-                                            DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
-                                            Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
-                                            dao.delete(customer);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
                                         // delete customer from table
 
                                         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
@@ -145,6 +139,14 @@ public class CustomersTable {
                                                 // remove customer from table
                                                 getTableView().getItems().remove(customerDetails);
                                                 // TODO remove from database
+                                                try {
+                                                    DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                                                    Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
+                                                    dao.delete(customer);
+                                                    customerTableView.refresh();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
                                             } else if (btnType == ButtonType.CANCEL) {
                                                 a.close();
                                             }
@@ -185,7 +187,7 @@ public class CustomersTable {
                 "-fx-background-color:#ebaa5d;\n");
         newCustomerBtn.setOnAction(e-> {
             try {
-                updateRightSideView(new CustomerCard().getNewCustomerCardGridPane());
+                updateRightSideView(new CustomerCard().getNewCustomerCard());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

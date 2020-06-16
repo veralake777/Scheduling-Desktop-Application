@@ -87,13 +87,13 @@ public class CustomerDetails {
 
     @Override
     public String toString() {
-        return   "CustomerDetails{" +
+        return "CustomerDetails{" +
                 "customerName=" + getCustomerName() +
                 ", phone='" + getPhone() + '\'' +
                 ", address1=" + getAddress() + '\'' +
                 ", address2=" + getAddress2() + '\'' +
-                ", city=" + getCity() +'\'' +
-                ", country=" + getCountry()  +'\'' +
+                ", city=" + getCity() + '\'' +
+                ", country=" + getCountry() + '\'' +
                 '}';
     }
 

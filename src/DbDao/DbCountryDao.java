@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link CountryDao} that persists countries in RDBMS.
  */
 public class DbCountryDao implements CountryDao {
@@ -43,8 +43,8 @@ public class DbCountryDao implements CountryDao {
      * Get all countries as Java Stream.
      *
      * @return a lazily populated stream of countries. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<Country> getAll() throws Exception {
@@ -73,9 +73,9 @@ public class DbCountryDao implements CountryDao {
         }
     }
 
-        private Connection getConnection() throws SQLException {
-            return (Connection) dataSource.getConnection();
-        }
+    private Connection getConnection() throws SQLException {
+        return (Connection) dataSource.getConnection();
+    }
 
     private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet) {
         try {
@@ -184,4 +184,25 @@ public class DbCountryDao implements CountryDao {
     }
 
 
+    public Optional<Country> getByName(String country) throws CustomException, SQLException {
+        ResultSet resultSet = null;
+
+        try (var connection = getConnection();
+             var statement = connection.prepareStatement("SELECT * FROM city WHERE city = ?")) {
+
+            statement.setString(1, country);
+            resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(createCountry(resultSet));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException | ParseException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        }
+    }
 }

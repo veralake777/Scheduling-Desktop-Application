@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link AddressDao} that persists addresses in RDBMS.
  */
 public class DbAddressDao implements AddressDao {
@@ -42,8 +42,8 @@ public class DbAddressDao implements AddressDao {
      * Get all addresses as Java Stream.
      *
      * @return a lazily populated stream of addresses. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<Address> getAll() throws Exception {
@@ -72,9 +72,9 @@ public class DbAddressDao implements AddressDao {
         }
     }
 
-        private Connection getConnection() throws SQLException {
-            return (Connection) dataSource.getConnection();
-        }
+    private Connection getConnection() throws SQLException {
+        return (Connection) dataSource.getConnection();
+    }
 
     private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet) {
         try {
@@ -224,7 +224,7 @@ public class DbAddressDao implements AddressDao {
         }
     }
 
-    public int maxId() throws CustomException, SQLException {
+    public int getMaxId() throws CustomException, SQLException {
         ResultSet resultSet = null;
 
         try (var connection = getConnection();

@@ -43,6 +43,7 @@ public class CustomersTable {
     GridPane gridPane = new GridPane();
 
     public void initialize() throws Exception {
+        customerTableView.getItems().clear();
         customerTableView.getStylesheets().add("CSS/tableView.css");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
@@ -52,6 +53,7 @@ public class CustomersTable {
         cityColumn.setCellValueFactory(new PropertyValueFactory<>("city"));
         countryColumn.setCellValueFactory(new PropertyValueFactory<>("country"));
 
+        customers.clear();
         Stream<CustomerDetails> stream = new DbCustomerDetailsDao(DBUtils.getMySQLDataSource()).getAll();
         stream.forEach(customer -> customers.add(customer));
 
@@ -64,7 +66,6 @@ public class CustomersTable {
          *     are sure they would like to permanently delete the customer and all their corresponding data
          *     (address, appointments) from the database
          **/
-
         TableColumn editColumn = new TableColumn("Edit");
         editColumn.setCellValueFactory(new PropertyValueFactory<>(null));
 
@@ -85,9 +86,9 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     editBtn.setOnAction(event -> {
-                                        CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
+                                        CustomerDetails customer = getTableView().getItems().get(getIndex());
                                         try {
-                                            updateRightSideView(new CustomerCard(customerDetails).getEditCustomerCard());
+                                            updateRightSideView(new CustomerCard(customer, CustomersTable.this).getCustomerCard());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -123,8 +124,15 @@ public class CustomersTable {
                                     setText(null);
                                 } else {
                                     deleteBtn.setOnAction(event -> {
-                                        CustomerDetails customerDetails = getTableView().getItems().get(this.getIndex());
+                                        CustomerDetails customerDetails = getTableView().getItems().get(getIndex());
                                         // delete customer from database
+                                        try {
+                                            DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                                            Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
+                                            dao.delete(customer);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                         // delete customer from table
 
                                         Alert a = new Alert(Alert.AlertType.CONFIRMATION);
@@ -139,14 +147,6 @@ public class CustomersTable {
                                                 // remove customer from table
                                                 getTableView().getItems().remove(customerDetails);
                                                 // TODO remove from database
-                                                try {
-                                                    DbCustomerDao dao = new DbCustomerDao(DBUtils.getMySQLDataSource());
-                                                    Customer customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(customerDetails.getCustomerId()).get();
-                                                    dao.delete(customer);
-                                                    customerTableView.refresh();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
                                             } else if (btnType == ButtonType.CANCEL) {
                                                 a.close();
                                             }
@@ -187,7 +187,7 @@ public class CustomersTable {
                 "-fx-background-color:#ebaa5d;\n");
         newCustomerBtn.setOnAction(e-> {
             try {
-                updateRightSideView(new CustomerCard().getNewCustomerCard());
+                updateRightSideView(new CustomerCard(this).getNewCustomerCardGridPane());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -213,4 +213,5 @@ public class CustomersTable {
         gridPane.getChildren().remove(1);
         gridPane.add(rightSideView, 1, 0);
     }
+
 }

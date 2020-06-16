@@ -34,6 +34,7 @@ public class AppointmentCard {
     private ComboBox<Customer> customerNameTxt;
 
     private Stage stage;
+
     {
         try {
             customerNameTxt = new ComboBoxes().getCustomers();
@@ -114,9 +115,7 @@ public class AppointmentCard {
 
     /**
      * @param appointmentId passed in from Calendar.CalendarView, Calendar.Month, Calendar.Week
-     * @throws Exception
-     *
-     * Use with edit appointment buttons where you pass in a selected appointment
+     * @throws Exception Use with edit appointment buttons where you pass in a selected appointment
      */
     public AppointmentCard(int appointmentId) throws Exception {
         System.out.println("constructor5: " + userId);
@@ -126,7 +125,7 @@ public class AppointmentCard {
         // special LocalAppointment class for building the table that includes customer names
         Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
         // set appointment
-        if(appointment.isPresent()) {
+        if (appointment.isPresent()) {
             this.appointment = appointment.get();
 
             // get customer
@@ -152,11 +151,9 @@ public class AppointmentCard {
     }
 
     /**
-     * @param appointmentId passed in from Components.AppointmentsTable
+     * @param appointmentId     passed in from Components.AppointmentsTable
      * @param appointmentsTable for access to updateRightSide() in Components.AppointmentsTable
-     * @throws Exception
-     *
-     * Use with edit appointment buttons where you pass in a selected appointment
+     * @throws Exception Use with edit appointment buttons where you pass in a selected appointment
      */
     public AppointmentCard(int appointmentId, AppointmentsTable appointmentsTable) throws Exception {
         System.out.println("constructor6: " + userId);
@@ -166,7 +163,7 @@ public class AppointmentCard {
         // special LocalAppointment class for building the table that includes customer names
         Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
         // set appointment
-        if(appointment.isPresent()) {
+        if (appointment.isPresent()) {
             this.appointment = appointment.get();
 
             // get customer
@@ -201,7 +198,7 @@ public class AppointmentCard {
         // special LocalAppointment class for building the table that includes customer names
         Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
         // set appointment
-        if(appointment.isPresent()) {
+        if (appointment.isPresent()) {
             this.appointment = appointment.get();
 
             // get customer
@@ -253,7 +250,7 @@ public class AppointmentCard {
         LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
         LocalTime endTime = startTime.plusMinutes(endTxt.getSelectionModel().getSelectedItem());
 
-        if(datePicker.getValue() != null && startTime != null && endTime != null) {
+        if (datePicker.getValue() != null && startTime != null && endTime != null) {
             appointment.setStart(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)));
             appointment.setEnd(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)));
         } else {
@@ -274,7 +271,7 @@ public class AppointmentCard {
         ButtonBar.setButtonData(cancelBtn, ButtonBar.ButtonData.CANCEL_CLOSE);
         buttonBar.getButtons().addAll(okBtn, cancelBtn);
 
-        okBtn.setOnAction(e->{
+        okBtn.setOnAction(e -> {
             // Date formatter for date picker and time combo boxes
             final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
@@ -316,7 +313,7 @@ public class AppointmentCard {
             }
         });
 
-        cancelBtn.setOnAction(e-> stage.close());
+        cancelBtn.setOnAction(e -> stage.close());
 
         return buttonBar;
     }
@@ -343,7 +340,7 @@ public class AppointmentCard {
         gridPane.add(typeTxt, 1, 5);
         gridPane.add(urlLbl, 0, 6);
         gridPane.add(urlTxt, 1, 6);
-        gridPane.add(datePickerLbl,0,7);
+        gridPane.add(datePickerLbl, 0, 7);
         gridPane.add(datePicker, 1, 7);
         gridPane.add(startLbl, 0, 8);
         gridPane.add(startTxt, 1, 8);
@@ -353,6 +350,7 @@ public class AppointmentCard {
 
         return gridPane;
     }
+
     // Overloaded function that includes start and duration of the appointment - used to set values in the GridPane
     private void newAppointmentGridPane(LocalDateTime start, Duration duration) {
         // style gridPane
@@ -376,7 +374,7 @@ public class AppointmentCard {
         gridPane.add(typeTxt, 1, 5);
         gridPane.add(urlLbl, 0, 6);
         gridPane.add(urlTxt, 1, 6);
-        gridPane.add(datePickerLbl,0,7);
+        gridPane.add(datePickerLbl, 0, 7);
         datePicker.setValue(start.toLocalDate());
         gridPane.add(datePicker, 1, 7);
         gridPane.add(startLbl, 0, 8);
@@ -404,7 +402,7 @@ public class AppointmentCard {
         ButtonBar.setButtonData(cancelBtn, ButtonBar.ButtonData.CANCEL_CLOSE);
         buttonBar.getButtons().addAll(okBtn, deleteBtn, cancelBtn);
 
-        okBtn.setOnAction(e->{
+        okBtn.setOnAction(e -> {
             // DAO.add()
             DbAppointmentDao dao = null;
             try {
@@ -424,7 +422,7 @@ public class AppointmentCard {
             }
         });
 
-        deleteBtn.setOnAction(e-> {
+        deleteBtn.setOnAction(e -> {
             try {
                 DbAppointmentDao dao = new DbAppointmentDao(DBUtils.getMySQLDataSource());
                 dao.delete(appointment);
@@ -434,10 +432,11 @@ public class AppointmentCard {
             }
         });
 
-        cancelBtn.setOnAction(e-> stage.close());
+        cancelBtn.setOnAction(e -> stage.close());
 
         return buttonBar;
     }
+
     // Build Edit Appointment Stage
     private GridPane editAppointmentGridPane() {
         // style gridPane
@@ -510,5 +509,8 @@ public class AppointmentCard {
     public GridPane getNewAppointmentGridPane() {
         return newAppointmentGridPane();
     }
-    public GridPane getEditAppointmentGridPane() { return editAppointmentGridPane();}
+
+    public GridPane getEditAppointmentGridPane() {
+        return editAppointmentGridPane();
+    }
 }

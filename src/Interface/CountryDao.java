@@ -28,7 +28,7 @@ public interface CountryDao {
      * Get all countrys
      *
      * @return all the countries as a stream. The stream may be lazily or eagerly evaluated based on the implementation.
-     *         The stream must be closed after use.
+     * The stream must be closed after use.
      * @throws Exception if any error occurs.
      */
     Stream<Country> getAll() throws Exception;

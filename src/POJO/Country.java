@@ -66,4 +66,9 @@ public class Country {
     }
 
     private String lastUpdateBy; //userName
+
+    @Override
+    public String toString() {
+        return this.getCountry();
+    }
 }

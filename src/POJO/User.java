@@ -44,7 +44,7 @@ public class User {
     }
 
     public void setActive(boolean active) {
-         this.active = active;
+        this.active = active;
     }
 
     public String getCreateDate() {
@@ -93,5 +93,10 @@ public class User {
 
     public final void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return this.getUserName();
     }
 }

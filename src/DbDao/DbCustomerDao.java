@@ -189,22 +189,22 @@ public class DbCustomerDao implements CustomerDao {
      */
     @Override
     public boolean update(Customer customer) throws Exception {
-            try (var connection = getConnection();
-                 var statement =
-                         connection
-                                 .prepareStatement("UPDATE customer SET " +
-                                         "customerName = ?, " +
-                                         "addressId = ? " +
-                                         "WHERE customerId = ?")) {
-                //TODO add all updates you would like to make based on UI
-                statement.setString(1, customer.getCustomerName());
-                statement.setInt(2, customer.getAddressId());
-                statement.setInt(3, customer.getId());
-                statement.closeOnCompletion();
-                return statement.executeUpdate() > 0;
-            } catch (SQLException ex) {
-                throw new CustomException(ex.getMessage(), ex);
-            }
+        try (var connection = getConnection();
+             var statement =
+                     connection
+                             .prepareStatement("UPDATE customer SET " +
+                                     "customerName = ?, " +
+                                     "addressId = ? " +
+                                     "WHERE customerId = ?")) {
+            //TODO add all updates you would like to make based on UI
+            statement.setString(1, customer.getCustomerName());
+            statement.setInt(2, customer.getAddressId());
+            statement.setInt(3, customer.getId());
+            statement.closeOnCompletion();
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            throw new CustomException(ex.getMessage(), ex);
+        }
     }
     /**
      * {@inheritDoc}

@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link CityDao} that persists cities in RDBMS.
  */
 public class DbCityDao implements CityDao {
@@ -43,8 +43,8 @@ public class DbCityDao implements CityDao {
      * Get all cities as Java Stream.
      *
      * @return a lazily populated stream of cities. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<City> getAll() throws Exception {
@@ -75,9 +75,9 @@ public class DbCityDao implements CityDao {
         }
     }
 
-        private Connection getConnection() throws SQLException {
-            return (Connection) dataSource.getConnection();
-        }
+    private Connection getConnection() throws SQLException {
+        return (Connection) dataSource.getConnection();
+    }
 
     private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet) {
         try {
@@ -137,7 +137,6 @@ public class DbCityDao implements CityDao {
         }
 
 
-
         try (var connection = getConnection();
              var statement = connection.prepareStatement("INSERT INTO city VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")) {
             // dates to strings
@@ -190,20 +189,20 @@ public class DbCityDao implements CityDao {
     }
 
 
-    public int getByName(String city) throws CustomException, SQLException {
+    public Optional<City> getByName(String city) throws CustomException, SQLException {
         ResultSet resultSet = null;
 
         try (var connection = getConnection();
-             var statement = connection.prepareStatement("SELECT cityId FROM city WHERE city = ?")) {
+             var statement = connection.prepareStatement("SELECT * FROM city WHERE city = ?")) {
 
             statement.setString(1, city);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getInt(1);
+                return Optional.of(createCity(resultSet));
             } else {
-                return -1;
+                return Optional.empty();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ParseException ex) {
             throw new CustomException(ex.getMessage(), ex);
         } finally {
             if (resultSet != null) {

@@ -75,4 +75,9 @@ public class City {
         this.lastUpdate = lastUpdate;
         this.lastUpdateBy = lastUpdatedBy;
     }
+
+    @Override
+    public String toString() {
+        return this.getCity();
+    }
 }

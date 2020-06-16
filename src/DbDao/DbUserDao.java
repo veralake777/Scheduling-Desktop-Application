@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 
 /**
  * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
- *
+ * <p>
  * An implementation of {@link UserDao} that persists users in RDBMS.
  */
 public class DbUserDao implements UserDao {
@@ -44,8 +44,8 @@ public class DbUserDao implements UserDao {
      * Get all users as Java Stream.
      *
      * @return a lazily populated stream of users. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<User> getAll() throws Exception {
@@ -74,9 +74,9 @@ public class DbUserDao implements UserDao {
         }
     }
 
-        private Connection getConnection() throws SQLException {
-            return (Connection) dataSource.getConnection();
-        }
+    private Connection getConnection() throws SQLException {
+        return (Connection) dataSource.getConnection();
+    }
 
     private void mutedClose(Connection connection, PreparedStatement statement, ResultSet resultSet) {
         try {
@@ -161,13 +161,12 @@ public class DbUserDao implements UserDao {
         }
 
 
-
         try (var connection = getConnection();
              var statement = connection.prepareStatement("INSERT INTO user VALUES (?,?,?,?,?,?,?,?)")) {
             statement.setInt(1, user.getId());
             statement.setString(2, user.getUserName());
             statement.setString(3, user.getPassword());
-            if(user.getActive()) {
+            if (user.getActive()) {
                 statement.setInt(4, 1);
             } else {
                 statement.setInt(4, 0);

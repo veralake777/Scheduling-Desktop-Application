@@ -21,7 +21,7 @@ public class DbCustomerDetailsDao implements CustomerDetailsDao {
 
     /**
      * resource: https://github.com/iluwatar/java-design-patterns/tree/master/dao
-     *
+     * <p>
      * Creates an instance of {@link DbCustomerDetailsDao} which uses provided dataSource to
      * store and retrieve customer information.
      *
@@ -35,8 +35,8 @@ public class DbCustomerDetailsDao implements CustomerDetailsDao {
      * Get all customers as Java Stream.
      *
      * @return a lazily populated stream of customers. Note the stream returned must be closed to free
-     *     all the acquired resources. The stream keeps an open connection to the database till it is
-     *     complete or is closed manually.
+     * all the acquired resources. The stream keeps an open connection to the database till it is
+     * complete or is closed manually.
      */
     @Override
     public Stream<CustomerDetails> getAll() throws Exception {

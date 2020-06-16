@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 public class AppointmentsTable {
 
     public AppointmentsTable(User user) throws Exception {
-        buildView();
         this.user = user;
+        buildView();
     }
 
     private User user;
@@ -52,7 +52,6 @@ public class AppointmentsTable {
 
     // new appointment button - edit and delete buttons are built into the table
     Button newAppointmentBtn = new Button("New Appointment");
-
 
 
     public static class LocalAppointment {
@@ -86,6 +85,7 @@ public class AppointmentsTable {
             this.customerName = customerName;
         }
     }
+
     public void initialize() throws Exception {
         // set columns to fill full width of table evenly
         appointmentTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -147,12 +147,13 @@ public class AppointmentsTable {
                                 }
                             }
                         };
-                        cell.setMinWidth(100);
+                        cell.setMinWidth(125);
                         return cell;
                     }
                 };
 
         editColumn.setCellFactory(editBtnCellFactory);
+        editColumn.setMinWidth(100);
 
         TableColumn deleteColumn = new TableColumn("Delete");
         deleteColumn.setCellValueFactory(new PropertyValueFactory<>(null));
@@ -203,21 +204,24 @@ public class AppointmentsTable {
                                 }
                             }
                         };
-                        cell.setMinWidth(100);
+                        cell.setMinWidth(125);
                         return cell;
                     }
                 };
 
         deleteColumn.setCellFactory(deleteBtnCellFactory);
+        deleteColumn.setMinWidth(100);
 
         // New Button below the table
-        newAppointmentBtn.setOnAction(e-> {
-              updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
+        newAppointmentBtn.setOnAction(e -> {
+            updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
         });
 
         // init table
         appointmentTableView.setEditable(true);
         appointmentTableView.setPrefHeight(800);
+        appointmentTableView.setPrefSize(600, Screen.getPrimary().getBounds().getHeight() - 175);
+        appointmentTableView.scrollTo(1);
         appointmentTableView.getColumns().addAll(type, customerName, editColumn, deleteColumn);
         appointmentTableView.setItems(appointments);
     }
@@ -225,22 +229,24 @@ public class AppointmentsTable {
     private void setAppointments() throws Exception {
         appointments.clear();
         Stream<Appointment> stream2 = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
-        stream2.forEach(a ->{
-            Optional<Customer> customer = Optional.empty();
-            try {
-                customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(a.getCustomerId());
-            } catch (Exception e) {
-                e.printStackTrace();
+        stream2.forEach(a -> {
+            if (a.getUserId() == user.getId()) {
+                Optional<Customer> customer = Optional.empty();
+                try {
+                    customer = new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(a.getCustomerId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                appointments.add(new LocalAppointment(a.getId(), a.getType(), customer.get().getCustomerName()));
             }
-            appointments.add(new LocalAppointment(a.getId(), a.getType(), customer.get().getCustomerName()));
-            });
+        });
     }
 
     private VBox getLeftSideView() throws Exception {
         initialize();
         Rectangle2D screenSize = Screen.getPrimary().getBounds();
-        newAppointmentBtn.setMaxWidth(screenSize.getWidth()/2);
-        newAppointmentBtn.setMinHeight(screenSize.getHeight()*.1);
+        newAppointmentBtn.setMaxWidth(screenSize.getWidth() / 2);
+        newAppointmentBtn.setMinHeight(screenSize.getHeight() * .1);
         newAppointmentBtn.setStyle("-fx-font-family: 'Roboto Bold';\n" +
                 "-fx-font-size: 25;\n" +
                 "-fx-alignment: center;\n" +
@@ -267,10 +273,14 @@ public class AppointmentsTable {
         return gridPane;
     }
 
+    public TableView getAppointmentTableView() {
+        type.setMinWidth(125);
+        customerName.setMinWidth(225);
+        return appointmentTableView;
+    }
+
     public void updateRightSideView(Node node) {
         rightSideView = node;
-        rightSideView.setStyle("-fx-alignment: CENTER;" +
-                "-fx-padding: 0 0 0 350");
         gridPane.getChildren().remove(1);
         gridPane.add(rightSideView, 1, 0);
     }

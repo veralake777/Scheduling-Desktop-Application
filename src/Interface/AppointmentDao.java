@@ -28,7 +28,7 @@ public interface AppointmentDao {
      * Get all appointments
      *
      * @return all the appointments as a stream. The stream may be lazily or eagerly evaluated based on the implementation.
-     *         The stream must be closed after use.
+     * The stream must be closed after use.
      * @throws Exception if any error occurs.
      */
     Stream<Appointment> getAll() throws Exception;

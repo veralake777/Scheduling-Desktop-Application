@@ -1,8 +1,6 @@
 package POJO;
 
-import DbDao.DbCityDao;
 import utils.CustomException;
-import utils.DBUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -42,11 +40,11 @@ public class Address {
         this.lastUpdateBy = lastUpdateBy;
     }
 
-    public Address(int addressId, String address, String address2, String city, String postalCode, String phone) throws IOException, CustomException, SQLException {
+    public Address(int addressId, String address, String address2, int cityId, String postalCode, String phone) throws IOException, CustomException, SQLException {
         this.id = addressId;
         this.address = address;
         this.address2 = address2;
-        this.cityId = new DbCityDao(DBUtils.getMySQLDataSource()).getByName(city);
+        this.cityId = cityId;
         this.postalCode = postalCode;
         this.phone = phone;
     }
@@ -132,15 +130,15 @@ public class Address {
         this.lastUpdateBy = lastUpdateBy;
     }
 
-       @Override
+    @Override
     public String toString() {
-        return   "Address{" +
+        return "Address{" +
                 "addressId=" + getId() +
                 ", address='" + getAddress() + '\'' +
                 ", address2=" + getAddress2() + '\'' +
                 ", cityId=" + getCityId() + '\'' +
-                ", postalCode=" + getPostalCode() +'\'' +
-                ", phone=" + getPhone()  +'\'' +
+                ", postalCode=" + getPostalCode() + '\'' +
+                ", phone=" + getPhone() + '\'' +
                 '}';
     }
 
@@ -149,7 +147,7 @@ public class Address {
         var isEqual = false;
         if (this == that) {
             isEqual = true;
-        } else if( that != null && getClass() == that.getClass()) {
+        } else if (that != null && getClass() == that.getClass()) {
             final var address = (Address) that;
             if (getId() == address.getId()) {
                 isEqual = true;

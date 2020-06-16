@@ -28,7 +28,7 @@ public interface CityDao {
      * Get all citys
      *
      * @return all the cities as a stream. The stream may be lazily or eagerly evaluated based on the implementation.
-     *         The stream must be closed after use.
+     * The stream must be closed after use.
      * @throws Exception if any error occurs.
      */
     Stream<City> getAll() throws Exception;

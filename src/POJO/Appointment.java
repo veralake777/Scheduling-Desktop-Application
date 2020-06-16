@@ -172,14 +172,14 @@ public class Appointment {
 //                ", customerId='" + getCustomerId() + '\n' +
 //                ", userId=" + getUserId() + '\'' +
                 "Title: " + getTitle() + System.getProperty("line.separator") +
-                "Description: " + getDescription() + System.getProperty("line.separator") +
-                "Customer: " + getCustomerId() + System.getProperty("line.separator") +
-                "Location: " + getLocation()  + System.getProperty("line.separator")+
-                "Contact: " + getContact()  + System.getProperty("line.separator")+
-                "Type: " + getType()  + System.getProperty("line.separator")+
-                "Url: " + getUrl()  + System.getProperty("line.separator") +
-                "Start: " + getStart()  + System.getProperty("line.separator") +
-                "End: " + getEnd()  + System.getProperty("line.separator")
+                        "Description: " + getDescription() + System.getProperty("line.separator") +
+                        "Customer: " + getCustomerId() + System.getProperty("line.separator") +
+                        "Location: " + getLocation() + System.getProperty("line.separator") +
+                        "Contact: " + getContact() + System.getProperty("line.separator") +
+                        "Type: " + getType() + System.getProperty("line.separator") +
+                        "Url: " + getUrl() + System.getProperty("line.separator") +
+                        "Start: " + getStart() + System.getProperty("line.separator") +
+                        "End: " + getEnd() + System.getProperty("line.separator")
 //                ", createDate=" + getCreateDate()  +'\'' +
 //                ", createdBy=" + getCreatedBy()  +'\'' +
 //                ", lastUpdate=" + getLastUpdate()  +'\'' +
@@ -193,7 +193,7 @@ public class Appointment {
         var isEqual = false;
         if (this == that) {
             isEqual = true;
-        } else if( that != null && getClass() == that.getClass()) {
+        } else if (that != null && getClass() == that.getClass()) {
             final var address = (POJO.Address) that;
             if (getId() == address.getId()) {
                 isEqual = true;

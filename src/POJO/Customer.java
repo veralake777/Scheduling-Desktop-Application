@@ -1,23 +1,29 @@
 package POJO;
 
+import java.sql.Timestamp;
+
 public class Customer {
     private int id; // PK
     private String customerName;
     private int addressId;
     private boolean active;
-    private String createDate;
+    private Timestamp createDate;
     private String createdBy; // userName
-    private String lastUpdate;
+    private Timestamp lastUpdate;
     private String lastUpdateBy; // userName
 
     // without active, create, last update info
-    public Customer(int id, String customerName, int addressId) {
+    public Customer(int id, String customerName, int addressId, Timestamp createDate, String createdBy, Timestamp lastUpdate, String lastUpdateBy) {
         this.id = id;
         this.customerName = customerName;
         this.addressId = addressId;
+        this.createDate = createDate;
+        this.createdBy = createdBy;
+        this.lastUpdate = lastUpdate;
+        this.lastUpdateBy = lastUpdateBy;
     }
 
-    public Customer(int id, String customerName, int addressId, boolean active, String createDate, String createdBy, String lastUpdate, String lastUpdateBy) {
+    public Customer(int id, String customerName, int addressId, boolean active, Timestamp createDate, String createdBy, Timestamp lastUpdate, String lastUpdateBy) {
         this.id = id;
         this.customerName = customerName;
         this.addressId = addressId;
@@ -63,11 +69,11 @@ public class Customer {
         this.active = active;
     }
 
-    public String getCreateDate() {
+    public Timestamp getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(Timestamp createDate) {
         this.createDate = createDate;
     }
 
@@ -79,11 +85,11 @@ public class Customer {
         this.createdBy = createdBy;
     }
 
-    public String getLastUpdate() {
+    public Timestamp getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(String lastUpdate) {
+    public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 

@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import utils.DBUtils;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 public class CustomerCard {
@@ -30,7 +31,7 @@ public class CustomerCard {
      *      Customer Phone
      *
      */
-
+    User user;
     CustomerDetails customer;
     // for on update, update table data
     CustomersTable customersTable;
@@ -38,7 +39,6 @@ public class CustomerCard {
     GridPane gridPane = new GridPane();
     // Labels for card view; textFields for onActionEditButton
     Label customerNameLbl = new Label("Customer");
-    ComboBox<Customer> customerComboBox = new ComboBoxes().getCustomers();
     TextField customerNameTextFld = new TextField();
 
     Label phoneLbl = new Label("Phone");
@@ -62,11 +62,13 @@ public class CustomerCard {
 
     Optional<City> city;
     Optional<Country> country;
-    public CustomerCard(CustomersTable customersTable) throws Exception {
+    public CustomerCard(CustomersTable customersTable, User user) throws Exception {
         this.customersTable = customersTable;
+        this.user = user;
     }
 
-    public CustomerCard(CustomerDetails customer, CustomersTable customersTable) throws Exception {
+    public CustomerCard(CustomerDetails customer, CustomersTable customersTable, User user) throws Exception {
+        this.user = user;
         this.customer = customer;
         this.customersTable = customersTable;
         this.city = new DbCityDao(DBUtils.getMySQLDataSource()).getByName(customer.getCity());
@@ -75,7 +77,7 @@ public class CustomerCard {
             cityComboBox.getSelectionModel().select(city.get());
             countryComboBox.getSelectionModel().select(country.get());
         }
-        customerComboBox.getSelectionModel().select(customer.getCustomerId());
+       customerNameTextFld.setText(customer.getCustomerName());
         phoneTxtFld.setText(customer.getPhone());
         addressLine1TxtFld.setText(customer.getAddress());
         addressLine2TxtFld.setText(customer.getAddress2());
@@ -123,6 +125,13 @@ public class CustomerCard {
         HBox cityHBox = new HBox(50);
         cityLbl.setMinSize(minWidth, 25);
         cityComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
+        cityComboBox.onActionProperty().set(e-> {
+            try {
+                countryComboBox.getSelectionModel().select(new DbCountryDao(DBUtils.getMySQLDataSource()).getById(cityComboBox.getSelectionModel().getSelectedItem().getCountryId()).get());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         cityHBox.getChildren().addAll(cityLbl, cityComboBox);
         gridPane.add(cityHBox, 0, 4);
 
@@ -145,9 +154,49 @@ public class CustomerCard {
         addBtn.onMouseClickedProperty().set(e-> {
             try {
                 DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
+                DbAddressDao addressDao = new DbAddressDao(DBUtils.getMySQLDataSource());
                 Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
-                customerDao.add(new Customer(customerDao.maxId()+1, customerNameTextFld.getText(), address.get().getId()));
-                customersTable.initialize();
+                if(address.isPresent()){
+                    // update current address
+                    Address addressToUpdate = address.get();
+                    addressToUpdate.setAddress(addressLine1TxtFld.getText());
+                    addressToUpdate.setAddress2(addressLine2TxtFld.getText());
+                    addressToUpdate.setCityId(cityComboBox.getSelectionModel().getSelectedItem().getId());
+                    addressToUpdate.setPostalCode(postalCodeTxtFld.getText());
+                    addressToUpdate.setPhone(phoneTxtFld.getText());
+                    addressDao.update(addressToUpdate);
+                } else {
+                    // add new address to address table
+                    // get maxId and increment by 1 for unique addressId (PK)
+                    int newId = addressDao.getMaxId()+1;
+                    addressDao.add(new Address(newId, addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
+                    // set address to new address
+                    address = addressDao.getById(newId);
+                }
+                Customer customerToAdd = new Customer(
+                        customerDao.maxId()+1,
+                        customerNameTextFld.getText(),
+                        address.get().getId(),
+                        new Timestamp(System.currentTimeMillis()),
+                        user.getUserName(),
+                        new Timestamp(System.currentTimeMillis()),
+                        user.getUserName()
+                );
+                customerDao.add(customerToAdd);
+                CustomerDetails customerDetailsToAdd = new CustomerDetails(
+                        customerToAdd.getId(),
+                        customerToAdd.getCustomerName(),
+                        address.get().getPhone(),
+                        address.get().getAddress(),
+                        address.get().getAddress2(),
+                        cityComboBox.getSelectionModel().getSelectedItem().getCity(),
+                        address.get().getPostalCode(),
+                        countryComboBox.getSelectionModel().getSelectedItem().getCountry()
+                );
+                customersTable.getCustomersList().add(customerDetailsToAdd);
+                customersTable.updateRightSideView(new Label("Customer successfully added to the database!"));
+                customersTable.getTableView().scrollTo(customerDetailsToAdd);
+                customersTable.getTableView().getSelectionModel().select(customerDetailsToAdd);
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText("Customer successfully added to the database.");
             } catch (Exception ex) {
@@ -192,9 +241,8 @@ public class CustomerCard {
         //START LABELS AND INPUTS
         HBox nameHBox = new HBox(50);
         customerNameLbl.setMinSize(minWidth, 25);
-        customerComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
-        customerComboBox.getSelectionModel().select(customer.getCustomerId());
-        nameHBox.getChildren().addAll(customerNameLbl, customerComboBox);
+        customerNameTextFld.setMinSize(columnConstraints1.getPrefWidth(), 25);
+        nameHBox.getChildren().addAll(customerNameLbl, customerNameTextFld);
         gridPane.add(nameHBox, 0, 0);
 
         HBox phoneHbox = new HBox(50);
@@ -251,8 +299,14 @@ public class CustomerCard {
                 Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
                 if(address.isPresent()){
                     // update current address
-                    addressDao.update(new Address(address.get().getId(), addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
-                } else {
+                    Address addressToUpdate = address.get();
+                    addressToUpdate.setAddress(addressLine1TxtFld.getText());
+                    addressToUpdate.setAddress2(addressLine2TxtFld.getText());
+                    addressToUpdate.setCityId(cityComboBox.getSelectionModel().getSelectedItem().getId());
+                    addressToUpdate.setPostalCode(postalCodeTxtFld.getText());
+                    addressToUpdate.setPhone(phoneTxtFld.getText());
+                    addressDao.update(addressToUpdate);                }
+                else {
                     // add new address to address table
                     // get maxId and increment by 1 for unique addressId (PK)
                     int newId = addressDao.getMaxId()+1;
@@ -261,13 +315,23 @@ public class CustomerCard {
                     address = addressDao.getById(newId);
                 }
                 // update customer table
-                customerDao.update(
-                        new Customer(
-                                customer.getCustomerId(),
-                                customerComboBox.getSelectionModel().getSelectedItem().getCustomerName(),
-                                address.get().getId())
-                );
-                customersTable.initialize();
+                Customer customerToUpdate = customerDao.getById(customer.getCustomerId()).get();
+                customerToUpdate.setAddressId(address.get().getId());
+                customerToUpdate.setLastUpdate( new Timestamp(System.currentTimeMillis()));
+                customerToUpdate.setLastUpdateBy(user.getUserName());
+                customerDao.update(customerToUpdate);
+                for(int i = 0; i<customersTable.getCustomersList().size(); i++) {
+                    CustomerDetails customerInTable = customersTable.getCustomersList().get(i);
+                    if(customerInTable.getCustomerId() == customerToUpdate.getId()) {
+                        customerInTable.setPhone(address.get().getPhone());
+                        customerInTable.setAddress(address.get().getAddress());
+                        customerInTable.setAddress2(address.get().getAddress2());
+                        customerInTable.setCity(cityComboBox.getSelectionModel().getSelectedItem().getCity());
+                        customerInTable.setPostalCode(address.get().getPostalCode());
+                        customerInTable.setCountry(countryComboBox.getSelectionModel().getSelectedItem().getCountry());
+                        customersTable.getTableView().refresh();
+                    }
+                }
                 // Alert for success
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setContentText("Customer successfully updated.");

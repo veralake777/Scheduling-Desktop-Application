@@ -94,9 +94,9 @@ public class DbCustomerDao implements CustomerDao {
                 resultSet.getString("customerName"),
                 resultSet.getInt("addressId"),
                 resultSet.getBoolean("active"),
-                String.valueOf(resultSet.getDate("createDate")),
+                resultSet.getTimestamp("createDate"),
                 resultSet.getString("createdBy"),
-                String.valueOf(resultSet.getDate("lastUpdate")),
+                resultSet.getTimestamp("lastUpdate"),
                 resultSet.getString("lastUpdateBy"));
     }
 
@@ -160,9 +160,6 @@ public class DbCustomerDao implements CustomerDao {
              // String createdBy, String lastUpdate, String lastUpdateBy
              //-- CALL new_customer('name', 'address1', 'address2', 'Quebec', '88888', '555-5555', 1);
              var statement = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?)")) {
-            // dates to strings
-            // TODO fix types for calendar - must be in 'YYYY-MM-DD 00:00:00'
-            // set customerId to null bc of auto_increment on table
             statement.setInt(1, customer.getId());
             statement.setString(2, customer.getCustomerName());
             statement.setInt(3, customer.getAddressId());
@@ -171,10 +168,10 @@ public class DbCustomerDao implements CustomerDao {
             } else {
                 statement.setInt(4, 0);
             }
-            statement.setString(5, "NOW()");
-            statement.setString(6, "test");
-            statement.setString(7, "NOW()");
-            statement.setString(8, "test");
+            statement.setTimestamp(5, customer.getCreateDate());
+            statement.setString(6, customer.getCreatedBy());
+            statement.setTimestamp(7, customer.getLastUpdate());
+            statement.setString(8, customer.getLastUpdateBy());
 
             // customer isActive is always set to 1
             statement.execute();

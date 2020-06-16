@@ -4,6 +4,7 @@ import DbDao.DbCustomerDao;
 import DbDao.DbCustomerDetailsDao;
 import POJO.Customer;
 import POJO.CustomerDetails;
+import POJO.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -23,6 +24,7 @@ import java.util.stream.Stream;
  *
  */
 public class CustomersTable {
+    private User user;
     private TableView<CustomerDetails> customerTableView = new TableView<CustomerDetails>();
     private TableColumn<CustomerDetails, String> nameColumn = new TableColumn("Name");
     private TableColumn<CustomerDetails, String> phoneColumn = new TableColumn("Phone");
@@ -32,6 +34,10 @@ public class CustomersTable {
     private TableColumn<CustomerDetails, String> cityColumn = new TableColumn("City");
     private TableColumn<CustomerDetails, String> countryColumn = new TableColumn("Country");
     ObservableList<CustomerDetails> customers = FXCollections.observableArrayList();
+
+    public CustomersTable(User user) {
+        this.user = user;
+    }
 
     // VBox to hold static left side view
     private VBox leftSideView = new VBox(10);
@@ -43,7 +49,6 @@ public class CustomersTable {
     GridPane gridPane = new GridPane();
 
     public void initialize() throws Exception {
-        customerTableView.getItems().clear();
         customerTableView.getStylesheets().add("CSS/tableView.css");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
@@ -88,7 +93,7 @@ public class CustomersTable {
                                     editBtn.setOnAction(event -> {
                                         CustomerDetails customer = getTableView().getItems().get(getIndex());
                                         try {
-                                            updateRightSideView(new CustomerCard(customer, CustomersTable.this).getCustomerCard());
+                                            updateRightSideView(new CustomerCard(customer, CustomersTable.this, CustomersTable.this.user).getCustomerCard());
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -150,9 +155,6 @@ public class CustomersTable {
                                             } else if (btnType == ButtonType.CANCEL) {
                                                 a.close();
                                             }
-//                                            clearDialogOptionSelections();;
-//                                        System.out.println(customer.getCustomerName()
-//                                                + "   " + customer.getPhone());
                                         });
                                     });
                                     setGraphic(deleteBtn);
@@ -187,7 +189,7 @@ public class CustomersTable {
                 "-fx-background-color:#ebaa5d;\n");
         newCustomerBtn.setOnAction(e-> {
             try {
-                updateRightSideView(new CustomerCard(this).getNewCustomerCardGridPane());
+                updateRightSideView(new CustomerCard(this, user).getNewCustomerCardGridPane());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -214,4 +216,11 @@ public class CustomersTable {
         gridPane.add(rightSideView, 1, 0);
     }
 
+    public ObservableList<CustomerDetails> getCustomersList() {
+        return customers;
+    }
+
+    public TableView getTableView() {
+        return customerTableView;
+    }
 }

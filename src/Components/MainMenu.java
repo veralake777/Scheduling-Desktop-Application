@@ -98,7 +98,7 @@ public class MainMenu {
         lblCustomers.setStyle(mainLabelsStyle());
         lblCustomers.onMouseClickedProperty().set(mouseEvent -> {
             try {
-                updateMainView(new CustomersTable().getView());
+                updateMainView(new CustomersTable(user).getView());
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -42,6 +42,7 @@ public class Reports {
         gridPane.setGridLinesVisible(true);
         gridPane.maxHeight(Double.MAX_VALUE);
         gridPane.maxWidth(Double.MAX_VALUE);
+        gridPane.setStyle("-fx-background-color: WHITE;");
 
 
         // get connection
@@ -54,29 +55,30 @@ public class Reports {
             typeCount = typeCountRS.getInt(1);
         }
 
-        for (int i = 1; i <= typeCount + 1; i++) {
+        // build row constraints
+        for (int i = 1; i <= typeCount + 2; i++) {
             RowConstraints rowConst = new RowConstraints();
             rowConst.setMinHeight(40);
             rowConst.setFillHeight(true);
             gridPane.getRowConstraints().add(rowConst);
         }
 
-        PreparedStatement typesStatement = (PreparedStatement) connection.prepareStatement("SELECT type FROM appointment");
+        PreparedStatement typesStatement = (PreparedStatement) connection.prepareStatement("SELECT DISTINCT type FROM appointment");
         ResultSet typesRS = typesStatement.executeQuery();
         String[] types = new String[typeCount];
-        int i = -1;
+        int i = 0;
         while (typesRS.next()) {
-            i++;
             String type = typesRS.getString(1);
             types[i] = type;
+            i++;
         }
 
-        // add types to col 0, row i of gridPane
+        // add types to col 0, row i + 2 of gridPane
         for (i = 0; i < types.length; i++) {
             Label label = new Label(types[i]);
             label.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
             GridPane.setHalignment(label, HPos.CENTER);
-            gridPane.add(label, 0, i + 1);
+            gridPane.add(label, 0, i + 2);
         }
 
         // generate column constraints
@@ -93,63 +95,64 @@ public class Reports {
 
         Label januaryReport = new Label("JAN");
         januaryReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(januaryReport, 1, 0);
+        gridPane.add(januaryReport, 1, 1);
         GridPane.setHalignment(januaryReport, HPos.CENTER);
 
         Label februaryReport = new Label("FEB");
         februaryReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(februaryReport, 2, 0);
+        gridPane.add(februaryReport, 2, 1);
         GridPane.setHalignment(februaryReport, HPos.CENTER);
 
         Label marchReport = new Label("MAR");
         marchReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(marchReport, 3, 0);
+        gridPane.add(marchReport, 3, 1);
         GridPane.setHalignment(marchReport, HPos.CENTER);
 
         Label aprilReport = new Label("APR");
         aprilReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(aprilReport, 4, 0);
+        gridPane.add(aprilReport, 4, 1);
         GridPane.setHalignment(aprilReport, HPos.CENTER);
 
         Label mayReport = new Label("MAY");
         mayReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(mayReport, 5, 0);
+        gridPane.add(mayReport, 5, 1);
         GridPane.setHalignment(mayReport, HPos.CENTER);
 
         Label juneReport = new Label("JUN");
         juneReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(juneReport, 6, 0);
+        gridPane.add(juneReport, 6, 1);
         GridPane.setHalignment(juneReport, HPos.CENTER);
 
         Label julyReport = new Label("JUL");
         julyReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(julyReport, 7, 0);
+        gridPane.add(julyReport, 7, 1);
         GridPane.setHalignment(julyReport, HPos.CENTER);
 
         Label augustReport = new Label("AUG");
         augustReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(augustReport, 8, 0);
+        gridPane.add(augustReport, 8, 1);
         GridPane.setHalignment(augustReport, HPos.CENTER);
 
         Label septemberReport = new Label("SEP");
         septemberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(septemberReport, 9, 0);
+        gridPane.add(septemberReport, 9, 1);
         GridPane.setHalignment(septemberReport, HPos.CENTER);
 
         Label octoberReport = new Label("OCT");
         octoberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(octoberReport, 10, 0);
+        gridPane.add(octoberReport, 10, 1);
         GridPane.setHalignment(octoberReport, HPos.CENTER);
 
         Label novemberReport = new Label("NOV");
         novemberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(novemberReport, 11, 0);
+        gridPane.add(novemberReport, 11, 1);
         GridPane.setHalignment(novemberReport, HPos.CENTER);
 
         Label decemberReport = new Label("DEC");
         decemberReport.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
-        gridPane.add(decemberReport, 12, 0);
+        gridPane.add(decemberReport, 12, 1);
         GridPane.setHalignment(decemberReport, HPos.CENTER);
+
 
         PreparedStatement statement = (PreparedStatement) connection.prepareStatement("SELECT MONTH(start), type, COUNT(*) as count " +
                 "FROM appointment GROUP BY MONTH(start), type ORDER BY MONTH(start)");
@@ -222,7 +225,12 @@ public class Reports {
                     return null;
             }
         }
-
+        Label title = new Label("Appointment Type Count for ALL users");
+        title.setStyle("-fx-background-color: radial-gradient(radius 75%, #ebaa5d, #38909b);" +
+                "-fx-padding:10 150;");
+        title.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
+        gridPane.add(title, 0, 0, gridPane.getColumnCount(), 1);
+        GridPane.setHalignment(title, HPos.CENTER);
         return gridPane;
     }
 
@@ -232,7 +240,7 @@ public class Reports {
                 Label label = new Label(String.valueOf(resultSet.getInt(3)));
                 label.setFont(Font.font("Roboto Light", FontWeight.MEDIUM, 12));
                 GridPane.setHalignment(label, HPos.CENTER);
-                gridPane.add(label, colIndex, rowIndex + 1);
+                gridPane.add(label, colIndex, rowIndex + 2);
             }
         }
     }

@@ -35,7 +35,7 @@ public class Week {
     private User user;
     private final LocalTime FIRST_SLOT_START = LocalTime.of(8, 0);
     private final Duration slotLength = Duration.ofMinutes(15);
-    private final LocalTime LAST_SLOT_END = LocalTime.of(18, 59);
+    private final LocalTime LAST_SLOT_END = LocalTime.of(18, 0);
     // Start week on Monday + date
     public LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
 
@@ -171,7 +171,7 @@ public class Week {
 
         // TIMES
         int slotIndex = 1;
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm");
         for (LocalDateTime startTime = monday.atTime(FIRST_SLOT_START);
              !startTime.isAfter(monday.atTime(LAST_SLOT_END));
              startTime = startTime.plus(slotLength)) {
@@ -458,9 +458,11 @@ public class Week {
             TimeSlot startSlot = mouseAnchor.get();
             timeSlots.forEach(slot -> {
                 if(isBetween(slot, startSlot, timeSlot)) {
-                    timeSlot.duration = timeSlot.duration.plusMinutes(15);
+                    slot.addFifteenMinutes();
                     slot.setSelected(true);
                     slot.getView().setStyle("-fx-background-color: rgba(" + r + "," + g + "," + b + ",.25);");
+                } else {
+                    slot.setDuration(Duration.ofMinutes(15));
                 }
             });
         });
@@ -578,6 +580,15 @@ public class Week {
 
         public void addLabel(Label label) {
             view.getChildren().add(label);
+        }
+
+
+        private int durationCount = 1;
+        public void addFifteenMinutes() {
+            this.durationCount++;
+            if(durationCount > 2) {
+                this.duration = this.duration.plusMinutes(15);
+            }
         }
     }
 }

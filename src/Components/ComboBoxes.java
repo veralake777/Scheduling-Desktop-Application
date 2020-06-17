@@ -14,7 +14,9 @@ import javafx.scene.control.ComboBox;
 import utils.DBUtils;
 
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.stream.Stream;
 
 public class ComboBoxes extends ComboBox {
@@ -63,20 +65,14 @@ public class ComboBoxes extends ComboBox {
         });
     }
 
-    private void fifteenMinuteAppointmentSlots() throws ParseException {
+    private void fifteenMinuteAppointmentSlots() {
         // 15 minute increments
         ObservableList<LocalTime> list = FXCollections.observableArrayList();
-        int hours = 12;
-        int minutes = 60;
-        int increment = 15;
-
-        for (int i = 6; i < hours; i++) {
-            for (int j = 0; j < minutes; j += increment) {
-                list.add(LocalTime.of(i, j, 0));
-//                if(Local.equals("11:45:00")) {
-//                    list.add(LocalTime.of(12, 0, 0));
-//                }
-            }
+        for (LocalTime startTime = LocalTime.of(8, 0);
+             !startTime.isAfter(LocalTime.of(18, 0));
+             startTime = startTime.plus(Duration.ofMinutes(15))) {
+            DateTimeFormatter timeFormatter2 = DateTimeFormatter.ofPattern("h:mm");
+            list.add(startTime);
         }
         appointmentTimes.setItems(list);
     }

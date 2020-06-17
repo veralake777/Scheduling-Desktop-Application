@@ -119,20 +119,16 @@ public class AppointmentCard {
         this.timeSlot = timeSlot;
         assert this.startTxt != null;
         this.startTxt.getSelectionModel().select(timeSlot.getTime());
-        int durationToInt = (int) timeSlot.getDuration().toMinutes();
-        switch (durationToInt) {
-            case 15:
-                this.durationComboBox.getSelectionModel().selectFirst();
-                break;
-            case 30:
-                this.durationComboBox.getSelectionModel().select(2);
-                break;
-            case 45:
-                this.durationComboBox.getSelectionModel().select(3);
-            case 60:
-                this.durationComboBox.getSelectionModel().select(4);
-            default:
-                this.durationComboBox.getSelectionModel().clearSelection();
+        if (Duration.ofMinutes(15).equals(timeSlot.getDuration())) {
+            this.durationComboBox.getSelectionModel().selectFirst();
+        } else if (Duration.ofMinutes(30).equals(timeSlot.getDuration())) {
+            this.durationComboBox.getSelectionModel().select(Integer.valueOf(30));
+        } else if (Duration.ofMinutes(45).equals(timeSlot.getDuration())) {
+            this.durationComboBox.getSelectionModel().select(Integer.valueOf(45));
+        } else if (Duration.ofMinutes(60).equals(timeSlot.getDuration())) {
+            this.durationComboBox.getSelectionModel().select(Integer.valueOf(60));
+        } else {
+            this.durationComboBox.getSelectionModel().clearSelection();
         }
         System.out.println("constructor3: " + userId);
     }
@@ -167,7 +163,7 @@ public class AppointmentCard {
             assert startTxt != null;
             startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
             sdf = new SimpleDateFormat("mm");
-            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime() - this.appointment.getStart().getTime())));
         } else {
             System.out.println("Appointment not found.");
         }
@@ -202,7 +198,7 @@ public class AppointmentCard {
             contactTxt.setText(this.appointment.getContact());
             typeTxt.setText(this.appointment.getType());
             urlTxt.setText(this.appointment.getUrl());
-
+            datePicker.setValue(LocalDate.from(appointment.get().getStart().toLocalDateTime()));
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
             assert startTxt != null;
             startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
@@ -347,6 +343,9 @@ public class AppointmentCard {
         });
 
         cancelBtn.setOnAction(e -> {stage.close();
+            if(appointmentsTable != null) {
+                appointmentsTable.updateRightSideView(new Label("Press Edit, Delete, or New Appointment to load a view."));
+            }
 
             try {
                 if(timeSlot != null) {
@@ -513,7 +512,12 @@ public class AppointmentCard {
             }
         });
 
-        cancelBtn.setOnAction(e -> stage.close());
+        cancelBtn.setOnAction(e -> {
+            stage.close();
+            if(appointmentsTable != null) {
+                appointmentsTable.updateRightSideView(new Label("Press Edit, Delete, or New Appointment to load a view."));
+            }}
+            );
 
         return buttonBar;
     }

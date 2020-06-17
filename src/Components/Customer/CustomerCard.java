@@ -269,7 +269,15 @@ public class CustomerCard {
         HBox cityHBox = new HBox(50);
         cityLbl.setMinSize(minWidth, 25);
         cityComboBox.setMinSize(columnConstraints1.getPrefWidth(), 25);
+        cityComboBox.onActionProperty().set(e-> {
+            try {
+                countryComboBox.getSelectionModel().select(new DbCountryDao(DBUtils.getMySQLDataSource()).getById(cityComboBox.getSelectionModel().getSelectedItem().getCountryId()).get());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         cityComboBox.getSelectionModel().select(city.get());
+
         cityHBox.getChildren().addAll(cityLbl, cityComboBox);
         gridPane.add(cityHBox, 0, 4);
 

@@ -156,23 +156,7 @@ public class CustomerCard {
                 DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
                 DbAddressDao addressDao = new DbAddressDao(DBUtils.getMySQLDataSource());
                 Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
-                if(address.isPresent()){
-                    // update current address
-                    Address addressToUpdate = address.get();
-                    addressToUpdate.setAddress(addressLine1TxtFld.getText());
-                    addressToUpdate.setAddress2(addressLine2TxtFld.getText());
-                    addressToUpdate.setCityId(cityComboBox.getSelectionModel().getSelectedItem().getId());
-                    addressToUpdate.setPostalCode(postalCodeTxtFld.getText());
-                    addressToUpdate.setPhone(phoneTxtFld.getText());
-                    addressDao.update(addressToUpdate);
-                } else {
-                    // add new address to address table
-                    // get maxId and increment by 1 for unique addressId (PK)
-                    int newId = addressDao.getMaxId()+1;
-                    addressDao.add(new Address(newId, addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
-                    // set address to new address
-                    address = addressDao.getById(newId);
-                }
+                address = getAddress(addressDao, address);
                 Customer customerToAdd = new Customer(
                         customerDao.maxId()+1,
                         customerNameTextFld.getText(),
@@ -304,24 +288,8 @@ public class CustomerCard {
                 DbCustomerDao customerDao = new DbCustomerDao(DBUtils.getMySQLDataSource());
                 DbAddressDao addressDao = new DbAddressDao(DBUtils.getMySQLDataSource());
                 // TODO address needs to update all or add new to all
-                Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getByAddress(addressLine1TxtFld.getText(), phoneTxtFld.getText());
-                if(address.isPresent()){
-                    // update current address
-                    Address addressToUpdate = address.get();
-                    addressToUpdate.setAddress(addressLine1TxtFld.getText());
-                    addressToUpdate.setAddress2(addressLine2TxtFld.getText());
-                    addressToUpdate.setCityId(cityComboBox.getSelectionModel().getSelectedItem().getId());
-                    addressToUpdate.setPostalCode(postalCodeTxtFld.getText());
-                    addressToUpdate.setPhone(phoneTxtFld.getText());
-                    addressDao.update(addressToUpdate);                }
-                else {
-                    // add new address to address table
-                    // get maxId and increment by 1 for unique addressId (PK)
-                    int newId = addressDao.getMaxId()+1;
-                    addressDao.add(new Address(newId, addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
-                    // set address to new address
-                    address = addressDao.getById(newId);
-                }
+                Optional<Address> address = new DbAddressDao(DBUtils.getMySQLDataSource()).getById(customerDao.getById(customer.getCustomerId()).get().getAddressId());
+                address = getAddress(addressDao, address);
                 // update customer table
                 Customer customerToUpdate = customerDao.getById(customer.getCustomerId()).get();
                 customerToUpdate.setAddressId(address.get().getId());
@@ -366,6 +334,27 @@ public class CustomerCard {
                         "-fx-padding: 25, 25, 25, 25;" +
                         "-fx-label-padding: 5;"
         );
+    }
+
+    private Optional<Address> getAddress(DbAddressDao addressDao, Optional<Address> address) throws Exception {
+        if(address.isPresent()){
+            // update current address
+            Address addressToUpdate = address.get();
+            addressToUpdate.setAddress(addressLine1TxtFld.getText());
+            addressToUpdate.setAddress2(addressLine2TxtFld.getText());
+            addressToUpdate.setCityId(cityComboBox.getSelectionModel().getSelectedItem().getId());
+            addressToUpdate.setPostalCode(postalCodeTxtFld.getText());
+            addressToUpdate.setPhone(phoneTxtFld.getText());
+            addressDao.update(addressToUpdate);                }
+        else {
+            // add new address to address table
+            // get maxId and increment by 1 for unique addressId (PK)
+            int newId = addressDao.getMaxId()+1;
+            addressDao.add(new Address(newId, addressLine1TxtFld.getText(), addressLine2TxtFld.getText(), cityComboBox.getSelectionModel().getSelectedItem().getId(), postalCodeTxtFld.getText(), phoneTxtFld.getText()));
+            // set address to new address
+            address = addressDao.getById(newId);
+        }
+        return address;
     }
 
     public GridPane getCustomerCard() {

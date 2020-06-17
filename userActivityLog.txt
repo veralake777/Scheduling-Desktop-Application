@@ -1003,3 +1003,13 @@ INFO: SUCCESSFUL LOGIN:
   UserName: test 
   Password: test
   Timestamp: 2020-06-17T15:34:32.271365700
+Jun 17, 2020 5:53:13 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-17T17:53:13.340978900
+Jun 17, 2020 5:55:18 PM Components.LoginScreen validateUser
+INFO: SUCCESSFUL LOGIN:
+  UserName: test 
+  Password: test
+  Timestamp: 2020-06-17T17:55:18.211053500

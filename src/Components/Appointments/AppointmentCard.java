@@ -28,6 +28,8 @@ import java.util.Optional;
 public class AppointmentCard {
     // Calendar.Week
     private Week weekView = null;
+    // Time slot
+    private Week.TimeSlot timeSlot;
     // Appointment Table (parent)
     private AppointmentsTable appointmentsTable = null;
     // Appointment Id
@@ -108,12 +110,30 @@ public class AppointmentCard {
         System.out.println("constructor2: " + userId);
     }
 
-    // for week view, new appointment
-    public AppointmentCard(User user, LocalDate date, Duration duration) {
+    // for week view, onDragRelease --> new appointment popup
+    public AppointmentCard(User user, Week weekView, Week.TimeSlot timeSlot) {
         this.stage = new Stage();
         this.userId = user.getId();
-        this.datePicker.setValue(date);
-        this.durationComboBox.getSelectionModel().select(Integer.parseInt(String.valueOf(duration.toMinutes())));
+        this.datePicker.setValue(timeSlot.getStart().toLocalDate());
+        this.weekView = weekView;
+        this.timeSlot = timeSlot;
+        assert this.startTxt != null;
+        this.startTxt.getSelectionModel().select(timeSlot.getTime());
+        int durationToInt = (int) timeSlot.getDuration().toMinutes();
+        switch (durationToInt) {
+            case 15:
+                this.durationComboBox.getSelectionModel().selectFirst();
+                break;
+            case 30:
+                this.durationComboBox.getSelectionModel().select(2);
+                break;
+            case 45:
+                this.durationComboBox.getSelectionModel().select(3);
+            case 60:
+                this.durationComboBox.getSelectionModel().select(4);
+            default:
+                this.durationComboBox.getSelectionModel().clearSelection();
+        }
         System.out.println("constructor3: " + userId);
     }
 
@@ -194,7 +214,7 @@ public class AppointmentCard {
     }
 
     public AppointmentCard(int appointmentId, LocalDate date, Week weekView) throws Exception {
-        System.out.println("constructor7: " + userId);
+        System.out.println("constructor7: " + appointmentId);
         this.stage = new Stage();
         this.weekView = weekView;
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
@@ -264,7 +284,7 @@ public class AppointmentCard {
 
 
     // NEW APPOINTMENT
-    private ButtonBar newAppointmentButtonBar() {
+    private ButtonBar newAppointmentButtonBar() throws Exception {
         ButtonBar buttonBar = new ButtonBar();
         Button okBtn = new Button("OK");
         Button cancelBtn = new Button("Cancel");
@@ -316,7 +336,7 @@ public class AppointmentCard {
                                     new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointmentToAdd.getCustomerId()).get().getCustomerName()));
                 } else {
                     // else you are using calendar view and need to update the week
-                    weekView.getView(weekView.monday);
+                    weekView.setAppointments();
                     stage.close();
                 }
             } catch (Exception ex) {
@@ -326,12 +346,28 @@ public class AppointmentCard {
             }
         });
 
-        cancelBtn.setOnAction(e -> stage.close());
+        cancelBtn.setOnAction(e -> {stage.close();
+
+            try {
+                if(timeSlot != null) {
+                    Week.TimeSlot endSlot = new Week.TimeSlot(timeSlot.getStart(), timeSlot.getDuration());
+                    weekView.getTimeSlots().forEach(slot -> {
+                        if(weekView.isBetween(slot, timeSlot, endSlot)) {
+                            timeSlot.setStart(timeSlot.getStart().plusMinutes(15));
+                            slot.setSelected(false);
+                        }
+                    });
+                }
+                weekView.getView(weekView.monday);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
 
         return buttonBar;
     }
 
-    private GridPane newAppointmentGridPane() {
+    private GridPane newAppointmentGridPane() throws Exception {
         // style gridPane
         GridPane gridPane = new GridPane();
         gridPane.setHgap(20);
@@ -365,7 +401,7 @@ public class AppointmentCard {
     }
 
     // Overloaded function that includes start and duration of the appointment - used to set values in the GridPane
-    private void newAppointmentGridPane(LocalDateTime start, Duration duration) {
+    private void newAppointmentGridPane(LocalDateTime start, Duration duration) throws Exception {
         // style gridPane
         GridPane gridPane = new GridPane();
         gridPane.setHgap(20);
@@ -483,7 +519,7 @@ public class AppointmentCard {
     }
 
     // Build Edit Appointment Stage
-    private GridPane editAppointmentGridPane() {
+    private GridPane editAppointmentGridPane() throws Exception {
         // style gridPane
         GridPane gridPane = new GridPane();
         gridPane.setHgap(20);
@@ -497,31 +533,51 @@ public class AppointmentCard {
          * add nodes to gridPane
          */
         gridPane.add(customerNameLbl, 0, 0);
+        customerNameTxt.getSelectionModel().select(new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointment.getCustomerId()).get());
         gridPane.add(customerNameTxt, 1, 0);
+
         gridPane.add(titleLbl, 0, 1);
+        titleTxt.setText(appointment.getTitle());
         gridPane.add(titleTxt, 1, 1);
+
         gridPane.add(descriptionLbl, 0, 2);
+        descriptionTxt.setText(appointment.getDescription());
         gridPane.add(descriptionTxt, 1, 2);
+
         gridPane.add(locationLbl, 0, 3);
+        locationTxt.setText(appointment.getLocation());
         gridPane.add(locationTxt, 1, 3);
+
         gridPane.add(contactLbl, 0, 4);
+        contactTxt.setText(appointment.getContact());
         gridPane.add(contactTxt, 1, 4);
+
         gridPane.add(typeLbl, 0, 5);
+        typeTxt.setText(appointment.getType());
         gridPane.add(typeTxt, 1, 5);
+
         gridPane.add(urlLbl, 0, 6);
+        urlTxt.setText(appointment.getUrl());
         gridPane.add(urlTxt, 1, 6);
+
+        // datepicker is set somewhere else
         gridPane.add(datePickerLbl, 0, 7);
         gridPane.add(datePicker, 1, 7);
+
+        // start is set somewhere else
         gridPane.add(startLbl, 0, 8);
         gridPane.add(startTxt, 1, 8);
+
+        // end is set somewhere else
         gridPane.add(endLbl, 0, 9);
         gridPane.add(durationComboBox, 1, 9);
+
         gridPane.add(editAppointmentButtonBar(), 1, 10);
 
         return gridPane;
     }
 
-    public Stage getNewAppointmentStage() {
+    public Stage getNewAppointmentStage() throws Exception {
         stage.setScene(new Scene(newAppointmentGridPane()));
         stage.setResizable(false);
         stage.setMinWidth(500);
@@ -531,7 +587,8 @@ public class AppointmentCard {
         return stage;
     }
 
-    public Stage getEditAppointmentStage() {
+    public Stage getEditAppointmentStage(Appointment appointment) throws Exception {
+        setAppointment(appointment);
         stage.setScene(new Scene(editAppointmentGridPane()));
         stage.setResizable(false);
         stage.setMinWidth(500);
@@ -541,7 +598,7 @@ public class AppointmentCard {
         return stage;
     }
 
-    public Stage getNewAppointmentStage(LocalDateTime start, Duration duration) {
+    public Stage getNewAppointmentStage(LocalDateTime start, Duration duration) throws Exception {
         newAppointmentGridPane(start, duration);
         stage.setResizable(false);
         stage.setMinWidth(500);
@@ -551,11 +608,11 @@ public class AppointmentCard {
         return stage;
     }
 
-    public GridPane getNewAppointmentGridPane() {
+    public GridPane getNewAppointmentGridPane() throws Exception {
         return newAppointmentGridPane();
     }
 
-    public GridPane getEditAppointmentGridPane() {
+    public GridPane getEditAppointmentGridPane() throws Exception {
         return editAppointmentGridPane();
     }
 }

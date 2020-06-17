@@ -214,7 +214,11 @@ public class AppointmentsTable {
 
         // New Button below the table
         newAppointmentBtn.setOnAction(e -> {
-            updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
+            try {
+                updateRightSideView(new AppointmentCard(AppointmentsTable.this, user).getNewAppointmentGridPane());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
 
         // init table

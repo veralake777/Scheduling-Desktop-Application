@@ -34,7 +34,7 @@
 }
 
 .time-slot:selected {
-    -fx-background-color: rgba(235, 170, 93, .5);
-    -fx-border-radius: .5;
+    /*-fx-background-color: rgba(235, 170, 93, .5);*/
+    -fx-background-radius: 5px;
     -fx-padding: -5;
 }

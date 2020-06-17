@@ -154,13 +154,15 @@ public class Month {
         while (!calendarDate.getDayOfWeek().toString().equals("SUNDAY")) {
             calendarDate = calendarDate.minusDays(1);
         }
+
+
         // Populate the calendar with day numbers
         for (AnchorPaneNode ap : allCalendarDays) {
             ap.setStyle("-fx-background-color: WHITE;");
-            if (ap.getChildren().size() != 0) {
-                ap.getChildren().remove(0);
-                ap.onMouseClickedProperty().set(null);
-            }
+            // if anchor pane has children remove the first
+            ap.getChildren().clear();
+
+
             Text txt = new Text(String.valueOf(calendarDate.getDayOfMonth()));
             txt.setStyle("-fx-font-family: 'Roboto Bold';" +
                     "-fx-font-size: 16;" +
@@ -170,10 +172,7 @@ public class Month {
             AnchorPane.setLeftAnchor(txt, 5.0);
             ap.getChildren().add(txt);
 
-            ap.removeEventHandler(EventType.ROOT, Event::consume);
-            LocalDate finalCalendarDate = calendarDate;
             ap.setOnMouseClicked(e -> {
-                System.out.println(week);
                 try {
                     updateWeek(ap.getDate());
                 } catch (Exception ex) {
@@ -182,12 +181,30 @@ public class Month {
             });
 
             if (isAppointment(ap.getDate(), ap)) {
+                // remove date
+                if (ap.getChildren().size() != 0) {
+                    ap.getChildren().remove(0);
+                }
+
+                // add date
+                txt = new Text(String.valueOf(calendarDate.getDayOfMonth()));
+                txt.setStyle("-fx-font-family: 'Roboto Bold';" +
+                        "-fx-font-size: 16;" +
+                        "-fx-font-weight: BOLD;");
+                ap.setDate(calendarDate);
+                AnchorPane.setTopAnchor(txt, 5.0);
+                AnchorPane.setLeftAnchor(txt, 5.0);
+                ap.getChildren().add(txt);
+
+                // appointment count label
                 Label appointmentCount = new Label(String.valueOf(ap.appointments.size()));
                 appointmentCount.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 40));
                 appointmentCount.setStyle("-fx-text-fill: white;");
                 AnchorPane.setTopAnchor(appointmentCount, 15.0);
                 AnchorPane.setRightAnchor(appointmentCount, 30.0);
                 ap.getChildren().add(appointmentCount);
+
+                // background color
                 ap.setStyle("-fx-background-color: rgba(210, 145, 188, .5)");
             }
             calendarDate = calendarDate.plusDays(1);
@@ -208,6 +225,8 @@ public class Month {
 
     private boolean isAppointment(LocalDate calendarDate, AnchorPaneNode ap) {
         boolean match = false;
+        // clear previously loaded appointments
+        ap.appointments.clear();
         for (Appointment a : appointmentsThisMonth) {
             String startDate = new SimpleDateFormat("yyyy-MM-dd").format(a.getStart());
             if (startDate.equals(String.valueOf(calendarDate)) && a.getUserId() == user.getId()) {

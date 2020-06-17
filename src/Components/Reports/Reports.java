@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import utils.DBUtils;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.DayOfWeek;
@@ -288,12 +289,67 @@ public class Reports {
 
 
     // one additional report of your choice
-    private AnchorPane numberOfCustomersPerCountry() {
-        Label title = new Label("productivity");
-        AnchorPane anchorPane = new AnchorPane(title);
-        anchorPane.setMinHeight(300);
-        anchorPane.setStyle("-fx-background-color: WHITE;");
-        return anchorPane;
+    private GridPane numberOfCustomersPerCountry() throws SQLException, IOException {
+        GridPane gridPane = new GridPane();
+        gridPane.setGridLinesVisible(true);
+        gridPane.maxHeight(Double.MAX_VALUE);
+        gridPane.maxWidth(Double.MAX_VALUE);
+        gridPane.setStyle("-fx-background-color: WHITE;");
+
+        /**
+         * result set returns
+         * -------------------------------
+         * | countryName | customerCount per country |
+         * ------------------------------
+         */
+        String statement = "SELECT c1.country, COUNT(cust.customerName) AS customerCount \n" +
+                "FROM country c1\n" +
+                "     JOIN city c2\n" +
+                "        ON c1.countryId = c2.countryId\n" +
+                "     JOIN address a\n" +
+                "        ON c2.cityId = a.cityId\n" +
+                "\tJOIN customer cust\n" +
+                "\t\tON a.addressId = cust.addressId\n" +
+                "GROUP BY c1.country;";
+        // get connection
+        var connection = DBUtils.getMySQLDataSource().getConnection();
+
+        // get distinct type count and generate row constraints
+        PreparedStatement typeCountStatement = (PreparedStatement) connection.prepareStatement(statement);
+        ResultSet resultSet = typeCountStatement.executeQuery();
+        int rowIndex = 1;
+        while (resultSet.next()) {
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.setMinHeight(40);
+            rowConst.setFillHeight(true);
+            gridPane.getRowConstraints().add(rowConst);
+
+            Label countryName = new Label(resultSet.getString(1));
+            countryName.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
+
+            Label customerCount = new Label(String.valueOf(resultSet.getInt(2)));
+            customerCount.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
+            GridPane.setHalignment(customerCount, HPos.CENTER);
+
+            gridPane.add(countryName, 0, rowIndex);
+            gridPane.add(customerCount, 1, rowIndex);
+            rowIndex++;
+        }
+
+        int colCount = 2;
+        for(int i = 1; i <= colCount; i ++)  {
+            ColumnConstraints columnConstraints = new ColumnConstraints(280);
+            gridPane.getColumnConstraints().add(columnConstraints);
+        }
+
+
+        Label title = new Label("Customers/Country");
+        title.setStyle("-fx-background-color: radial-gradient(radius 75%, #ebaa5d, #38909b);" +
+                "-fx-padding:10 205;");
+        title.setFont(Font.font("Roboto Bold", FontWeight.BOLD, 14));
+        gridPane.add(title, 0, 0, gridPane.getColumnCount(), 1);
+        GridPane.setHalignment(title, HPos.CENTER);
+        return gridPane;
     }
 
     public GridPane getView() throws Exception {
@@ -316,10 +372,11 @@ public class Reports {
 
         // consultant schedule with combobox (right)
         GridPane consultantSchedule = consultantSchedule();
-        consultantSchedule.getColumnConstraints().clear();
         consultantSchedule.setPadding(new Insets(0, 0, 0, 10));
-        gridPane.add(consultantSchedule, 1, 1, 1, 2);
+        consultantSchedule.getColumnConstraints().clear();
 
+        gridPane.add(consultantSchedule, 1, 1, 1, 2);
+        gridPane.setPadding(new Insets(5, 5, 0, 5));
         return gridPane;
     }
 }

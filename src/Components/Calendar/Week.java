@@ -171,7 +171,7 @@ public class Week {
 
         // TIMES
         int slotIndex = 1;
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
         for (LocalDateTime startTime = monday.atTime(FIRST_SLOT_START);
              !startTime.isAfter(monday.atTime(LAST_SLOT_END));
              startTime = startTime.plus(slotLength)) {
@@ -261,7 +261,6 @@ public class Week {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    assert popup != null;
                     popup.showAndWait();
                     if(!popup.isShowing()) {
                         try {
@@ -318,7 +317,7 @@ public class Week {
 
         // TIMES
         int slotIndex = 1;
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm");
         for (LocalDateTime startTime = monday.atTime(FIRST_SLOT_START);
              !startTime.isAfter(monday.atTime(LAST_SLOT_END));
              startTime = startTime.plus(slotLength)) {
@@ -369,11 +368,17 @@ public class Week {
                 int g = (int)(Math.random()*256);
                 int b = (int)(Math.random()*256);
 
+                // get minutes of appointment and convert to duration
                 long minutes = a.getEnd().getMinutes() - a.getStart().getMinutes();
                 Duration duration = Duration.ofMinutes(minutes);
+                // create appointmentSlot
                 TimeSlot appointmentSlot = new TimeSlot(a.getStart().toLocalDateTime(), Duration.ofMinutes(a.getEnd().getTime() - a.getStart().getTime()));
-                if (timeSlot.getStart().equals(appointmentSlot.getStart()) && a.getUserId() == user.getId()) {
+                if (timeSlot.getStart().format(DateTimeFormatter.ofPattern("yyyy-mm-dd hh:mm"))
+                        .equals(appointmentSlot.getStart().format(DateTimeFormatter.ofPattern("yyy-mm-dd hh:mm")))
+                        && a.getUserId() == user.getId()) {
+                    // set timeslot duration to selected number of slots
                     timeSlot.duration = Duration.ofMinutes(duration.toMinutes());
+                    // use temp variable for subtracting minutes from duration in while loop
                     Duration tempD = Duration.ofMinutes(timeSlot.duration.toMinutes());
                     int j = i;
                     while (tempD.toMinutes() >= 15) {
@@ -461,8 +466,6 @@ public class Week {
                     slot.addFifteenMinutes();
                     slot.setSelected(true);
                     slot.getView().setStyle("-fx-background-color: rgba(" + r + "," + g + "," + b + ",.25);");
-                } else {
-                    slot.setDuration(Duration.ofMinutes(15));
                 }
             });
         });
@@ -501,11 +504,13 @@ public class Week {
     // Finally we note that x <= y <= z or z <= y <= x if and only if (y-x)*(z-y) >= 0.
 
     public boolean isBetween(TimeSlot testSlot, TimeSlot startSlot, TimeSlot endSlot) {
+
         boolean daysBetween = testSlot.getDayOfWeek().compareTo(startSlot.getDayOfWeek()) * endSlot.getDayOfWeek().compareTo(testSlot.getDayOfWeek()) == 0;
 
-        boolean timesBetween = testSlot.getTime().compareTo(startSlot.getTime())
-                * endSlot.getTime().compareTo(testSlot.getTime()) >= 0 && testSlot.getTime().compareTo(startSlot.getTime())
-                * endSlot.getTime().compareTo(testSlot.getTime()) <= 60;
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("hh:mm");
+        boolean timesBetween = testSlot.getTime().format(dtf).compareTo(startSlot.getTime().format(dtf))
+                * endSlot.getTime().format(dtf).compareTo(testSlot.getTime().format(dtf)) >= 0 && testSlot.getTime().format(dtf).compareTo(startSlot.getTime().format(dtf))
+                * endSlot.getTime().format(dtf).compareTo(testSlot.getTime().format(dtf)) <= 1;
 
         return daysBetween && timesBetween;
     }
@@ -559,7 +564,7 @@ public class Week {
         }
 
         public LocalTime getTime() {
-            return start.toLocalTime();
+            return LocalTime.parse(start.toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm")));
         }
 
         public DayOfWeek getDayOfWeek() {

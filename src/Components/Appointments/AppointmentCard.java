@@ -18,12 +18,11 @@ import utils.DBUtils;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 public class AppointmentCard {
     // Calendar.Week
@@ -49,7 +48,7 @@ public class AppointmentCard {
     }
 
     // User
-    public int userId;
+    public User user;
 
     // Title
     private Label titleLbl = new Label("Title");
@@ -98,39 +97,29 @@ public class AppointmentCard {
     // For popups in Components.Calendar.Week, Components.Calendar.Month
     public AppointmentCard(User user) {
         this.stage = new Stage();
-        this.userId = user.getId();
-        System.out.println("constructor1: " + userId);
+        this.user = user;
+        System.out.println("constructor1: " + user.getId());
     }
 
     // for grid pane in dynamic views of Components.Appointments.AppointmentsTable, Components.Customer.CustomersTable
     public AppointmentCard(AppointmentsTable appointmentsTable, User user) {
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
-        this.userId = user.getId();
-        System.out.println("constructor2: " + userId);
+        this.user = user;
+        System.out.println("constructor2: " + user.getId());
     }
 
     // for week view, onDragRelease --> new appointment popup
     public AppointmentCard(User user, Week weekView, Week.TimeSlot timeSlot) {
         this.stage = new Stage();
-        this.userId = user.getId();
+        this.user = user;
         this.datePicker.setValue(timeSlot.getStart().toLocalDate());
         this.weekView = weekView;
         this.timeSlot = timeSlot;
         assert this.startTxt != null;
-        this.startTxt.getSelectionModel().select(timeSlot.getTime());
-        if (Duration.ofMinutes(15).equals(timeSlot.getDuration())) {
-            this.durationComboBox.getSelectionModel().selectFirst();
-        } else if (Duration.ofMinutes(30).equals(timeSlot.getDuration())) {
-            this.durationComboBox.getSelectionModel().select(Integer.valueOf(30));
-        } else if (Duration.ofMinutes(45).equals(timeSlot.getDuration())) {
-            this.durationComboBox.getSelectionModel().select(Integer.valueOf(45));
-        } else if (Duration.ofMinutes(60).equals(timeSlot.getDuration())) {
-            this.durationComboBox.getSelectionModel().select(Integer.valueOf(60));
-        } else {
-            this.durationComboBox.getSelectionModel().clearSelection();
-        }
-        System.out.println("constructor3: " + userId);
+        this.startTxt.getSelectionModel().select(LocalTime.parse(timeSlot.getTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+        this.durationComboBox.getSelectionModel().select(Integer.valueOf((int) timeSlot.getDuration().toMinutes()));
+        System.out.println("constructor3: " + user.getId());
     }
 
     /**
@@ -138,7 +127,7 @@ public class AppointmentCard {
      * @throws Exception Use with edit appointment buttons where you pass in a selected appointment
      */
     public AppointmentCard(int appointmentId) throws Exception {
-        System.out.println("constructor5: " + userId);
+        System.out.println("constructor5: " + user.getId());
         this.stage = new Stage();
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
         // special LocalAppointment class for building the table that includes customer names
@@ -159,7 +148,7 @@ public class AppointmentCard {
             typeTxt.setText(this.appointment.getType());
             urlTxt.setText(this.appointment.getUrl());
 
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
             assert startTxt != null;
             startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
             sdf = new SimpleDateFormat("mm");
@@ -175,7 +164,7 @@ public class AppointmentCard {
      * @throws Exception Use with edit appointment buttons where you pass in a selected appointment
      */
     public AppointmentCard(int appointmentId, AppointmentsTable appointmentsTable) throws Exception {
-        System.out.println("constructor6: " + userId);
+        System.out.println("constructor6");
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
@@ -191,7 +180,9 @@ public class AppointmentCard {
             assert customerNameTxt != null;
             customerNameTxt.getSelectionModel().select(customer.get());
             User user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
-            this.userId = user.getId();
+            this.user = user;
+
+            // set text fields with data
             titleTxt.setText(this.appointment.getTitle());
             descriptionTxt.setText(this.appointment.getDescription());
             locationTxt.setText(this.appointment.getLocation());
@@ -199,11 +190,10 @@ public class AppointmentCard {
             typeTxt.setText(this.appointment.getType());
             urlTxt.setText(this.appointment.getUrl());
             datePicker.setValue(LocalDate.from(appointment.get().getStart().toLocalDateTime()));
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+
             assert startTxt != null;
-            startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
-            sdf = new SimpleDateFormat("mm");
-            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+            startTxt.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+            durationComboBox.getSelectionModel().select(Integer.valueOf(this.appointment.getEnd().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("mm"))));
         } else {
             System.out.println("Appointment not found.");
         }
@@ -226,7 +216,9 @@ public class AppointmentCard {
             assert customerNameTxt != null;
             customerNameTxt.getSelectionModel().select(customer.get());
             User user = new DbUserDao(DBUtils.getMySQLDataSource()).getById(this.appointment.getUserId()).get();
-            this.userId = user.getId();
+            this.user = user;
+
+            // set text fields with data
             titleTxt.setText(this.appointment.getTitle());
             descriptionTxt.setText(this.appointment.getDescription());
             locationTxt.setText(this.appointment.getLocation());
@@ -234,26 +226,24 @@ public class AppointmentCard {
             typeTxt.setText(this.appointment.getType());
             urlTxt.setText(this.appointment.getUrl());
             this.datePicker.setValue(date);
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
             assert startTxt != null;
-            startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
-            sdf = new SimpleDateFormat("mm");
-            durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime())));
+            startTxt.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+            durationComboBox.getSelectionModel().select(Integer.valueOf(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("mm"))));
         } else {
             System.out.println("Appointment not found.");
         }
     }
 
 
-    public AppointmentCard(LocalDate date, int userId) {
-        System.out.println("constructor8: " + userId);
-        this.userId = userId;
+    public AppointmentCard(LocalDate date, User user) {
+        System.out.println("constructor8: " + user.getId());
+        this.user = user;
         this.stage = new Stage();
         this.datePicker.setValue(date);
     }
 
     private void setAppointment(Appointment appointment) {
-        // set all appointment values to input values
+        // set all appointment values to with text field values
         appointment.setCustomerId(customerNameTxt.getSelectionModel().getSelectedItem().getId());
         appointment.setTitle(titleTxt.getText());
         appointment.setDescription(descriptionTxt.getText());
@@ -269,11 +259,17 @@ public class AppointmentCard {
         LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
         LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
 
-        if (datePicker.getValue() != null && startTime != null && endTime != null) {
+        // F.   Write exception controls to prevent setting appointments outside of business hours
+        if (datePicker.getValue() != null
+                && datePicker.getValue().getDayOfWeek() != DayOfWeek.SATURDAY
+                && datePicker.getValue().getDayOfWeek() != DayOfWeek.SUNDAY
+                && startTime != null
+                && endTime != null) {
             appointment.setStart(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)));
             appointment.setEnd(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)));
         } else {
-            Alert a = new Alert(Alert.AlertType.INFORMATION, "You must select a date, start time, and end time.");
+            // F.   Write exception controls to prevent setting appointments outside of business hours
+            Alert a = new Alert(Alert.AlertType.INFORMATION, "You must select a date of M-F, start time, and end time.");
             a.showAndWait();
         }
     }
@@ -290,58 +286,76 @@ public class AppointmentCard {
         ButtonBar.setButtonData(cancelBtn, ButtonBar.ButtonData.CANCEL_CLOSE);
         buttonBar.getButtons().addAll(okBtn, cancelBtn);
 
+        // G.  Write two or more lambda expressions to make your program more efficient, justifying the use of each lambda expression with an in-line comment.
+        // this lambda is more efficient than the procedural version because the "e" allows the name of the EventType<> to be omitted
         okBtn.setOnAction(e -> {
-            // Date formatter for date picker and time combo boxes
-            final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
-            LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
-            LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
-            // DAO.add()
-            DbAppointmentDao dao = null;
-            try {
-                dao = new DbAppointmentDao(DBUtils.getMySQLDataSource());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            try {
-                assert dao != null;
-                Appointment appointmentToAdd = new Appointment(
-                        dao.getMaxId() + 1,
-                        customerNameTxt.getValue().getId(),
-                        userId,
-                        titleTxt.getText(),
-                        descriptionTxt.getText(),
-                        locationTxt.getText(),
-                        contactTxt.getText(),
-                        typeTxt.getText(),
-                        urlTxt.getText(),
-                        Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)),
-                        Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)),
-                        Timestamp.valueOf(LocalDateTime.now()),
-                        "default",
-                        Timestamp.valueOf(LocalDateTime.now()),
-                        "default");
-                dao.add(appointmentToAdd);
-                Alert a = new Alert(Alert.AlertType.INFORMATION, "Success!");
-                a.showAndWait();
-                if(appointmentsTable != null) {
-                    appointmentsTable.appointments.add(
-                            new AppointmentsTable.LocalAppointment(
-                                    appointmentToAdd.getId(),
-                                    appointmentToAdd.getType(),
-                                    new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointmentToAdd.getCustomerId()).get().getCustomerName()));
-                } else {
-                    // else you are using calendar view and need to update the week
-                    weekView.setAppointments();
-                    stage.close();
+            // exception handling
+            if (customerNameTxt.getSelectionModel().isEmpty() || typeTxt.getText().isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "You must select a customer from the list and enter a type.");
+                alert.showAndWait();
+            } else {
+                // Date formatter for date picker and time combo boxes
+                final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
+                LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
+                LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
+                // DAO.add()
+                DbAppointmentDao dao = null;
+                try {
+                    dao = new DbAppointmentDao(DBUtils.getMySQLDataSource());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-            } catch (Exception ex) {
-                Alert a = new Alert(Alert.AlertType.ERROR, "Something went wrong.");
-                a.showAndWait();
-                ex.printStackTrace();
+                try {
+                    assert dao != null;
+                    Appointment appointmentToAdd = new Appointment(
+                            dao.getMaxId() + 1,
+                            customerNameTxt.getValue().getId(),
+                            user.getId(),
+                            titleTxt.getText(),
+                            descriptionTxt.getText(),
+                            locationTxt.getText(),
+                            contactTxt.getText(),
+                            typeTxt.getText(),
+                            urlTxt.getText(),
+                            Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)),
+                            Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)),
+                            Timestamp.valueOf(LocalDateTime.now()),
+                            user.getUserName(),
+                            Timestamp.valueOf(LocalDateTime.now()),
+                            "default");
+
+                    // RUBRIC F:  exception control for scheduling overlapping appointments
+                    if (!isAppointment(appointmentToAdd)) {
+                        dao.add(appointmentToAdd);
+                        Alert a = new Alert(Alert.AlertType.INFORMATION, "Success!");
+                        a.showAndWait();
+                        if (appointmentsTable != null) {
+                            appointmentsTable.appointments.add(
+                                    new AppointmentsTable.LocalAppointment(
+                                            appointmentToAdd.getId(),
+                                            appointmentToAdd.getType(),
+                                            new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointmentToAdd.getCustomerId()).get().getCustomerName()));
+                        } else {
+                            // else you are using calendar view and need to update the week
+                            weekView.setAppointments();
+                            stage.close();
+                        }
+                    } else {
+                        // RUBRIC F:  exception control for scheduling overlapping appointments
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment unavailable. Please try again.");
+                        alert.showAndWait();
+                    }
+                } catch (Exception ex) {
+                    Alert a = new Alert(Alert.AlertType.ERROR, "Something went wrong.");
+                    a.showAndWait();
+                    ex.printStackTrace();
+                }
             }
         });
 
+        // G.  Write two or more lambda expressions to make your program more efficient, justifying the use of each lambda expression with an in-line comment.
+        // this lambda is more efficient than the procedural version because the "e" allows the name of the EventType<> to be omitted
         cancelBtn.setOnAction(e -> {stage.close();
             if(appointmentsTable != null) {
                 appointmentsTable.updateRightSideView(new Label("Press Edit, Delete, or New Appointment to load a view."));
@@ -350,6 +364,10 @@ public class AppointmentCard {
             try {
                 if(timeSlot != null) {
                     Week.TimeSlot endSlot = new Week.TimeSlot(timeSlot.getStart(), timeSlot.getDuration());
+                    // G.  Write two or more lambda expressions to make your program more efficient,
+                    //     justifying the use of each lambda expression with an in-line comment.
+                    // this lambda is more efficient than the procedural version because the "slot" allows
+                    // the name of the verbose version of fetching the slot to be omitted
                     weekView.getTimeSlots().forEach(slot -> {
                         if(weekView.isBetween(slot, timeSlot, endSlot)) {
                             timeSlot.setStart(timeSlot.getStart().plusMinutes(15));
@@ -426,7 +444,7 @@ public class AppointmentCard {
         datePicker.setValue(start.toLocalDate());
         gridPane.add(datePicker, 1, 7);
         gridPane.add(startLbl, 0, 8);
-        startTxt.getSelectionModel().select(LocalTime.from(start));
+        startTxt.getSelectionModel().select(LocalTime.parse(start.toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
         gridPane.add(startTxt, 1, 8);
         gridPane.add(endLbl, 0, 9);
         durationComboBox.setValue((int) duration.toMinutes());
@@ -461,6 +479,7 @@ public class AppointmentCard {
             try {
                 assert dao != null;
                 setAppointment(appointment);
+
                 dao.update(appointment);
                 // if appointmentsTable is not null then it is from the AppointmentsTable view
                 if(appointmentsTable != null) {
@@ -579,6 +598,19 @@ public class AppointmentCard {
         gridPane.add(editAppointmentButtonBar(), 1, 10);
 
         return gridPane;
+    }
+
+    private boolean isAppointment(Appointment appointment) throws Exception {
+        // default to false - assume the appointment slot is available
+        AtomicBoolean isAppointment = new AtomicBoolean(false);
+        Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+        appointmentStream.forEach(a->{
+            // if appointment times start or end
+            if(a.getStart() == appointment.getStart() || a.getEnd() == appointment.getEnd()) {
+                isAppointment.set(true);
+            }
+        });
+        return isAppointment.get();
     }
 
     public Stage getNewAppointmentStage() throws Exception {

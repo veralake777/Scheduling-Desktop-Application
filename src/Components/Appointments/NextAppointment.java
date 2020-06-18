@@ -12,6 +12,7 @@ import utils.DBUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 public class NextAppointment {
@@ -54,9 +55,8 @@ public class NextAppointment {
             if (nextAppointment != null) {
                 // appointment data
                 Label type = new Label("TYPE:    " + nextAppointment.getType());
-                Label startTime = new Label("TIME:    " +
-                        nextAppointment.getStart().toLocalDateTime().toLocalTime().getHour() + ":" +
-                        nextAppointment.getStart().toLocalDateTime().toLocalTime().getMinute());
+                Label startTime = new Label(String.format(String.format("TIME:    " +
+                        nextAppointment.getStart().toLocalDateTime().format(DateTimeFormatter.ofPattern("hh:mm")))));
                 Label date = new Label("DATE:    " + nextAppointment.getStart().toLocalDateTime().toLocalDate().toString());
                 type.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));
                 startTime.setFont(Font.font("Roboto", FontWeight.NORMAL, 18));

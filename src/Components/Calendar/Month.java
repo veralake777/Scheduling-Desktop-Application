@@ -380,7 +380,7 @@ public class Month {
                 appointmentVBox.getChildren().addAll(appt, separator);
                 newAppointmentBtn.setOnAction(e -> {
                     try {
-                        stage.setScene(new Scene(new AppointmentCard(date, user.getId()).getNewAppointmentGridPane()));
+                        stage.setScene(new Scene(new AppointmentCard(date, user).getNewAppointmentGridPane()));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

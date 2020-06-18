@@ -65,21 +65,24 @@ public class ComboBoxes extends ComboBox {
         });
     }
 
+    //F.   Write exception controls to prevent each of the following. You may use the same mechanism of exception control more than once, but you must incorporate at least  two different mechanisms of exception control.
+    // (a)  scheduling an appointment outside business hours
+    // this combobox and the durationTimes are the only ways to set Appointment Times and they are both always within business hours
     private void fifteenMinuteAppointmentSlots() {
         // 15 minute increments
         ObservableList<LocalTime> list = FXCollections.observableArrayList();
         for (LocalTime startTime = LocalTime.of(8, 0);
              !startTime.isAfter(LocalTime.of(18, 0));
              startTime = startTime.plus(Duration.ofMinutes(15))) {
-            DateTimeFormatter timeFormatter2 = DateTimeFormatter.ofPattern("h:mm");
-            list.add(startTime);
+            DateTimeFormatter timeFormatter2 = DateTimeFormatter.ofPattern("hh:mm");
+            list.add(LocalTime.parse(startTime.format(timeFormatter2)));
         }
         appointmentTimes.setItems(list);
     }
 
     private ComboBox<Integer> durationTimes() {
         ObservableList<Integer> list = FXCollections.observableArrayList();
-        list.addAll(15, 30, 45, 60);
+        list.addAll(15, 30, 45, 60, 75, 90, 105, 120);
         ComboBox<Integer> durations = new ComboBox<>(list);
         return durations;
     }

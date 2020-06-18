@@ -85,6 +85,10 @@ public class CustomerCard {
     }
 
     private GridPane buildNewCustomerGridPane() {
+        // validators
+        validateNameInput(customerNameTextFld);
+        validatePhoneInput(phoneTxtFld);
+
         ColumnConstraints columnConstraints = new ColumnConstraints(150);
         ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
         gridPane.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
@@ -210,6 +214,10 @@ public class CustomerCard {
     }
 
     private void buildEditCustomerGridPane() {
+        // validators
+        validateNameInput(customerNameTextFld);
+        validatePhoneInput(phoneTxtFld);
+
         ColumnConstraints columnConstraints = new ColumnConstraints(150);
         ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
         gridPane.getColumnConstraints().addAll(columnConstraints, columnConstraints1);
@@ -292,6 +300,7 @@ public class CustomerCard {
                 address = getAddress(addressDao, address);
                 // update customer table
                 Customer customerToUpdate = customerDao.getById(customer.getCustomerId()).get();
+                customerToUpdate.setCustomerName(customerNameTextFld.getText());
                 customerToUpdate.setAddressId(address.get().getId());
                 customerToUpdate.setLastUpdate( new Timestamp(System.currentTimeMillis()));
                 customerToUpdate.setLastUpdateBy(user.getUserName());
@@ -299,6 +308,7 @@ public class CustomerCard {
                 for(int i = 0; i<customersTable.getCustomersList().size(); i++) {
                     CustomerDetails customerInTable = customersTable.getCustomersList().get(i);
                     if(customerInTable.getCustomerId() == customerToUpdate.getId()) {
+                        customerInTable.setCustomerName(customerNameTextFld.getText());
                         customerInTable.setPhone(address.get().getPhone());
                         customerInTable.setAddress(address.get().getAddress());
                         customerInTable.setAddress2(address.get().getAddress2());
@@ -364,5 +374,34 @@ public class CustomerCard {
 
     public GridPane getNewCustomerCardGridPane() {
         return buildNewCustomerGridPane();
+    }
+
+    //F.   Write exception controls to prevent each of the following. You may use the same mechanism of exception control more than once, but you must incorporate at least  two different mechanisms of exception control.
+    //      entering nonexistent or invalid customer data
+    //     non existent data is prevented by @Components.ComboBoxes, @POJO.Customer
+    private void validateNameInput(TextField textField) {
+        textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) {
+                //when focus lost check for letters and spaces only from any language
+                if(!textField.getText().matches("\\p{L}[a-zA-Z][a-zA-Z ]*")){
+                    //when it does not match the pattern
+                    //set the textField with invalid input
+                    textField.setText("Invalid Input");
+                }
+            }
+        });
+    }
+
+    private void validatePhoneInput(TextField textField) {
+        textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
+            if (!newValue) {
+                //when focus lost check for international numbers and symbols
+                if(!textField.getText().matches("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$")){
+                    //when it does not match the pattern
+                    //set the textField with invalid input
+                    textField.setText("Invalid Input");
+                }
+            }
+        });
     }
 }

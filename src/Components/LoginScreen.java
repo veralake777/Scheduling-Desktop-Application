@@ -1,15 +1,14 @@
 package Components;
 
+import DbDao.DbAppointmentDao;
 import DbDao.DbUserDao;
+import POJO.Appointment;
 import POJO.User;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
@@ -21,6 +20,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.*;
+import java.util.stream.Stream;
 
 
 /**
@@ -117,7 +117,6 @@ public class LoginScreen {
         HBox btnHBox = new HBox(25);
         Button loginBtn = new Button(rb.getString("login"));
         loginBtn.setOnAction(e -> {
-            System.out.println(e);
             try {
                 validateUser(e, userNameTxtFld.getText(), passwordFld.getText());
             } catch (Exception ex) {
@@ -158,9 +157,7 @@ public class LoginScreen {
         LogManager.getLogManager().getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.FINE);
         DbUserDao dbUserDao = new DbUserDao(DBUtils.getMySQLDataSource());
         Optional<User> user = dbUserDao.getByNameAndPassword(userName, password);
-//            Stream<User> validateUserStream = dbUserDao.getAll();
-//            boolean userNameExists = validateUserStream
-//                    .anyMatch(user -> user.getUserName().equals(userName) && user.getPassword().equals(password));
+
         // RUBRIC J.   Provide the ability to track user activity by recording timestamps for user log-ins in
         // a .txt file. Each new record should be appended to the log file, if the file already exists.
 
@@ -178,6 +175,17 @@ public class LoginScreen {
             GridPane mainView = new MainView(user.get()).getView();
             Scene mainViewScene = new Scene(mainView);
 
+            // H.   Write code to provide an alert if there is an appointment within 15 minutes of the user’s log-in.
+            Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+            LocalDateTime localDateTime = LocalDateTime.now();
+            appointmentStream.forEach(a->{
+                if(a.getStart().toLocalDateTime().toLocalTime().isBefore(localDateTime.toLocalTime())
+                && a.getEnd().toLocalDateTime().toLocalTime().isAfter(localDateTime.toLocalTime())) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "You have an appointment of " + a.getType() +
+                            " in less than 15 minutes!" );
+                    alert.showAndWait();
+                }
+            });
             primaryStage.setScene(mainViewScene);
 
             // log to userlog.txt
@@ -191,6 +199,7 @@ public class LoginScreen {
                     " \n  Password: " + password + "\n  Timestamp: " + LocalDateTime.now().toString() +
                     "\n----------------------------------------\n"
             );
+            // RUBRIC F: Write exception controls to prevent entering an incorrect username and password
             loginErrorLbl.getStyleClass().add("small");
             loginErrorLbl.setText(rb.getString("loginErrorMessage"));
         }

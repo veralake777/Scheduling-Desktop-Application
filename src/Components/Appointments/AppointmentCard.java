@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import utils.DBUtils;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -80,44 +79,46 @@ public class AppointmentCard {
 
     // Start Time
     private Label startLbl = new Label("Start");
-    private ComboBox<LocalTime> startTxt;
-
-    {
-        try {
-            startTxt = new ComboBoxes().getAppointmentTimes();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
+    private ComboBox<LocalTime> availableAppointmentSlots;
 
     // Duration (end time)
     private Label endLbl = new Label("Duration");
     private ComboBox<Integer> durationComboBox = new ComboBoxes().getDurationTimes();
 
     // For popups in Components.Calendar.Week, Components.Calendar.Month
-    public AppointmentCard(User user) {
+    public AppointmentCard(User user) throws Exception {
         this.stage = new Stage();
         this.user = user;
         System.out.println("constructor1: " + user.getId());
     }
 
     // for grid pane in dynamic views of Components.Appointments.AppointmentsTable, Components.Customer.CustomersTable
-    public AppointmentCard(AppointmentsTable appointmentsTable, User user) {
+    public AppointmentCard(AppointmentsTable appointmentsTable, User user) throws Exception {
         this.appointmentsTable = appointmentsTable;
         this.stage = new Stage();
         this.user = user;
+        datePicker.setValue(LocalDate.now());
+        availableAppointmentSlots = new ComboBoxes().getAppointmentTimes(LocalDateTime.of(datePicker.getValue(), LocalTime.of(8, 0)));
         System.out.println("constructor2: " + user.getId());
     }
 
     // for week view, onDragRelease --> new appointment popup
-    public AppointmentCard(User user, Week weekView, Week.TimeSlot timeSlot) {
+    public AppointmentCard(User user, Week weekView, Week.TimeSlot timeSlot) throws Exception {
         this.stage = new Stage();
         this.user = user;
         this.datePicker.setValue(timeSlot.getStart().toLocalDate());
         this.weekView = weekView;
         this.timeSlot = timeSlot;
-        assert this.startTxt != null;
-        this.startTxt.getSelectionModel().select(LocalTime.parse(timeSlot.getTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+        assert this.availableAppointmentSlots != null;
+        // populate available appointment times in comboBox
+        {
+            try {
+                availableAppointmentSlots = new ComboBoxes().getAppointmentTimes(timeSlot.getStart());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        this.availableAppointmentSlots.getSelectionModel().select(LocalTime.parse(timeSlot.getTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
         this.durationComboBox.getSelectionModel().select(Integer.valueOf((int) timeSlot.getDuration().toMinutes()));
         System.out.println("constructor3: " + user.getId());
     }
@@ -149,10 +150,10 @@ public class AppointmentCard {
             urlTxt.setText(this.appointment.getUrl());
 
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-            assert startTxt != null;
-            startTxt.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
-            sdf = new SimpleDateFormat("mm");
+            assert availableAppointmentSlots != null;
+            availableAppointmentSlots.getSelectionModel().select(LocalTime.parse(sdf.format(this.appointment.getStart().getTime())));
             durationComboBox.getSelectionModel().select(Integer.valueOf(sdf.format(this.appointment.getEnd().getTime() - this.appointment.getStart().getTime())));
+
         } else {
             System.out.println("Appointment not found.");
         }
@@ -190,19 +191,19 @@ public class AppointmentCard {
             typeTxt.setText(this.appointment.getType());
             urlTxt.setText(this.appointment.getUrl());
             datePicker.setValue(LocalDate.from(appointment.get().getStart().toLocalDateTime()));
-
-            assert startTxt != null;
-            startTxt.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
-            durationComboBox.getSelectionModel().select(Integer.valueOf(this.appointment.getEnd().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("mm"))));
+            availableAppointmentSlots = new ComboBoxes().getAppointmentTimes(LocalDateTime.of(datePicker.getValue(), LocalTime.of(8, 0)));
+            availableAppointmentSlots.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
         } else {
             System.out.println("Appointment not found.");
         }
     }
 
-    public AppointmentCard(int appointmentId, LocalDate date, Week weekView) throws Exception {
+    public AppointmentCard(int appointmentId, Week.TimeSlot timeSlot, Week weekView) throws Exception {
         System.out.println("constructor7: " + appointmentId);
         this.stage = new Stage();
         this.weekView = weekView;
+        this.timeSlot = timeSlot;
         // access appointment in database - must use appointment id because the AppointmentsTable class uses a
         // special LocalAppointment class for building the table that includes customer names
         Optional<Appointment> appointment = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getById(appointmentId);
@@ -225,10 +226,17 @@ public class AppointmentCard {
             contactTxt.setText(this.appointment.getContact());
             typeTxt.setText(this.appointment.getType());
             urlTxt.setText(this.appointment.getUrl());
-            this.datePicker.setValue(date);
-            assert startTxt != null;
-            startTxt.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
-            durationComboBox.getSelectionModel().select(Integer.valueOf(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("mm"))));
+            this.datePicker.setValue(timeSlot.getStart().toLocalDate());
+            {
+                try {
+                    availableAppointmentSlots = new ComboBoxes().getAppointmentTimes(timeSlot.getStart());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            assert availableAppointmentSlots != null;
+            availableAppointmentSlots.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+            durationComboBox.getSelectionModel().select(Integer.valueOf((int) Math.abs(timeSlot.getDuration().toMinutes())));
         } else {
             System.out.println("Appointment not found.");
         }
@@ -256,17 +264,25 @@ public class AppointmentCard {
         // Date formatter for date picker and time combo boxes
         final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
-        LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
+        LocalTime startTime = availableAppointmentSlots.getSelectionModel().getSelectedItem();
         LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
+        Timestamp startStamp = Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime));
+        Timestamp endStamp = Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime));
 
         // F.   Write exception controls to prevent setting appointments outside of business hours
         if (datePicker.getValue() != null
                 && datePicker.getValue().getDayOfWeek() != DayOfWeek.SATURDAY
                 && datePicker.getValue().getDayOfWeek() != DayOfWeek.SUNDAY
-                && startTime != null
-                && endTime != null) {
-            appointment.setStart(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)));
-            appointment.setEnd(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)));
+                && startTime.isAfter(LocalTime.of(8, 0))
+                && endTime.isBefore(LocalTime.of(18, 0)))
+        {
+            if(timeSlot != null) {
+                System.out.println("TIMESLOT NOT NULL");
+                timeSlot.setDuration(Duration.ofMinutes(endStamp.getTime() - startStamp.getTime()));
+            }
+            appointment.setStart(startStamp);
+            appointment.setEnd(endStamp);
+//            System.out.println(startTime + " " + endTime);
         } else {
             // F.   Write exception controls to prevent setting appointments outside of business hours
             Alert a = new Alert(Alert.AlertType.INFORMATION, "You must select a date of M-F, start time, and end time.");
@@ -297,7 +313,7 @@ public class AppointmentCard {
                 // Date formatter for date picker and time combo boxes
                 final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
-                LocalTime startTime = startTxt.getSelectionModel().getSelectedItem();
+                LocalTime startTime = availableAppointmentSlots.getSelectionModel().getSelectedItem();
                 LocalTime endTime = startTime.plusMinutes(durationComboBox.getSelectionModel().getSelectedItem());
                 // DAO.add()
                 DbAppointmentDao dao = null;
@@ -337,7 +353,9 @@ public class AppointmentCard {
                                             appointmentToAdd.getType(),
                                             new DbCustomerDao(DBUtils.getMySQLDataSource()).getById(appointmentToAdd.getCustomerId()).get().getCustomerName()));
                         } else {
-                            // else you are using calendar view and need to update the week
+                            // else you are using calendar view and need to update the week and timeslot
+                            timeSlot.setDuration(Duration.ofMinutes(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)).getTime()
+                                    - Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)).getTime()));
                             weekView.setAppointments();
                             stage.close();
                         }
@@ -409,7 +427,7 @@ public class AppointmentCard {
         gridPane.add(datePickerLbl, 0, 7);
         gridPane.add(datePicker, 1, 7);
         gridPane.add(startLbl, 0, 8);
-        gridPane.add(startTxt, 1, 8);
+        gridPane.add(availableAppointmentSlots, 1, 8);
         gridPane.add(endLbl, 0, 9);
         gridPane.add(durationComboBox, 1, 9);
         gridPane.add(newAppointmentButtonBar(), 1, 10);
@@ -444,8 +462,8 @@ public class AppointmentCard {
         datePicker.setValue(start.toLocalDate());
         gridPane.add(datePicker, 1, 7);
         gridPane.add(startLbl, 0, 8);
-        startTxt.getSelectionModel().select(LocalTime.parse(start.toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
-        gridPane.add(startTxt, 1, 8);
+        availableAppointmentSlots.getSelectionModel().select(LocalTime.parse(start.toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
+        gridPane.add(availableAppointmentSlots, 1, 8);
         gridPane.add(endLbl, 0, 9);
         durationComboBox.setValue((int) duration.toMinutes());
         gridPane.add(durationComboBox, 1, 9);
@@ -481,6 +499,7 @@ public class AppointmentCard {
                 setAppointment(appointment);
 
                 dao.update(appointment);
+
                 // if appointmentsTable is not null then it is from the AppointmentsTable view
                 if(appointmentsTable != null) {
                     // get customer name
@@ -497,7 +516,7 @@ public class AppointmentCard {
                     // show success message for calendar view
                     weekView.getView(weekView.monday);
                     stage.close();
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment updated.");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment was successfully updated.");
                     alert.showAndWait();
                 }
             } catch (Exception ex) {
@@ -589,7 +608,7 @@ public class AppointmentCard {
 
         // start is set somewhere else
         gridPane.add(startLbl, 0, 8);
-        gridPane.add(startTxt, 1, 8);
+        gridPane.add(availableAppointmentSlots, 1, 8);
 
         // end is set somewhere else
         gridPane.add(endLbl, 0, 9);
@@ -606,8 +625,15 @@ public class AppointmentCard {
         Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
         appointmentStream.forEach(a->{
             // if appointment times start or end
-            if(a.getStart() == appointment.getStart() || a.getEnd() == appointment.getEnd()) {
-                isAppointment.set(true);
+            LocalDateTime testTime = appointment.getStart().toLocalDateTime();
+            while(testTime.isBefore(appointment.getEnd().toLocalDateTime())) {
+                if(testTime.equals(a.getStart().toLocalDateTime())
+                        || testTime.equals(a.getEnd().toLocalDateTime())
+                && user.getId() == a.getUserId()) {
+                    System.out.println(testTime + " " + a.getStart().toLocalDateTime());
+                    isAppointment.set(true);
+                }
+                testTime = testTime.plusMinutes(15);
             }
         });
         return isAppointment.get();

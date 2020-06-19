@@ -15,6 +15,8 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import utils.DBUtils;
 
+import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
@@ -177,15 +179,13 @@ public class LoginScreen {
 
             // H.   Write code to provide an alert if there is an appointment within 15 minutes of the user’s log-in.
             Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
-            LocalDateTime localDateTime = LocalDateTime.now();
             appointmentStream.forEach(a->{
-                if(a.getStart().toLocalDateTime().toLocalTime().isBefore(localDateTime.toLocalTime())
-                && a.getEnd().toLocalDateTime().toLocalTime().isAfter(localDateTime.toLocalTime())) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "You have an appointment of " + a.getType() +
-                            " in less than 15 minutes!" );
-                    alert.showAndWait();
-                }
+                    if(a.getStart().toInstant().isAfter(Timestamp.valueOf(LocalDateTime.now().minus(Duration.ofMinutes(15))).toInstant()) && a.getStart().toInstant().isBefore(Timestamp.valueOf(LocalDateTime.now()).toInstant())) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "You have an appointment in less than 15 minutes!");
+                        alert.showAndWait();
+                    }
             });
+
             primaryStage.setScene(mainViewScene);
 
             // log to userlog.txt

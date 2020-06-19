@@ -1,22 +1,17 @@
 package Components;
 
-import DbDao.DbCityDao;
-import DbDao.DbCountryDao;
-import DbDao.DbCustomerDao;
-import DbDao.DbUserDao;
-import POJO.City;
-import POJO.Country;
-import POJO.Customer;
-import POJO.User;
+import DbDao.*;
+import POJO.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import utils.DBUtils;
 
-import java.text.ParseException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ComboBoxes extends ComboBox {
@@ -68,16 +63,46 @@ public class ComboBoxes extends ComboBox {
     //F.   Write exception controls to prevent each of the following. You may use the same mechanism of exception control more than once, but you must incorporate at least  two different mechanisms of exception control.
     // (a)  scheduling an appointment outside business hours
     // this combobox and the durationTimes are the only ways to set Appointment Times and they are both always within business hours
-    private void fifteenMinuteAppointmentSlots() {
+    private void fifteenMinuteAppointmentSlots(LocalDateTime localDate) throws Exception {
         // 15 minute increments
-        ObservableList<LocalTime> list = FXCollections.observableArrayList();
-        for (LocalTime startTime = LocalTime.of(8, 0);
-             !startTime.isAfter(LocalTime.of(18, 0));
+
+        // unavailable appointments
+        ObservableList<LocalTime> allAppointmentSlots = FXCollections.observableArrayList();
+        Stream<Appointment> appointmentStream = new DbAppointmentDao(DBUtils.getMySQLDataSource()).getAll();
+        List<LocalDateTime> unavailableAppointmentSlots = FXCollections.observableArrayList();
+        ObservableList<LocalTime> availableSlots = FXCollections.observableArrayList();
+
+        // FUTURE FEATURE
+//        appointmentStream.forEach(a->{
+//            LocalDateTime start = LocalDateTime.of(localDate.toLocalDate(), LocalTime.of(a.getStart().toLocalDateTime().getHour(), a.getStart().toLocalDateTime().getMinute()));
+//            LocalDateTime end = LocalDateTime.of(localDate.toLocalDate(), LocalTime.of(a.getEnd().toLocalDateTime().getHour(), a.getEnd().toLocalDateTime().getMinute()));
+//            while(start.isBefore(end)) {
+//                unavailableAppointmentSlots.add(start);
+//                start = start.plusMinutes(15);
+//            }
+//            unavailableAppointmentSlots.add(start);
+//        });
+
+        // all appointment slots
+        for (LocalDateTime startTime = LocalDateTime.of(localDate.toLocalDate(), LocalTime.of(8, 0));
+             !startTime.isAfter(LocalDateTime.of(localDate.toLocalDate(), LocalTime.of(18, 0)));
              startTime = startTime.plus(Duration.ofMinutes(15))) {
-            DateTimeFormatter timeFormatter2 = DateTimeFormatter.ofPattern("hh:mm");
-            list.add(LocalTime.parse(startTime.format(timeFormatter2)));
+            allAppointmentSlots.add(LocalTime.parse(startTime.toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
         }
-        appointmentTimes.setItems(list);
+
+        // FUTURE FEATURE
+        // remove unavailable appointments from all appointments
+//        for (LocalDateTime available : allAppointmentSlots) {
+//            for (LocalDateTime unavailable : unavailableAppointmentSlots) {
+//                if (available.equals(unavailable)) {
+//                    allAppointmentSlots.remove(unavailable);
+//                    break;
+//                }
+//            }
+//        }
+
+
+        appointmentTimes.setItems(allAppointmentSlots);
     }
 
     private ComboBox<Integer> durationTimes() {
@@ -103,8 +128,8 @@ public class ComboBoxes extends ComboBox {
         return cities;
     }
 
-    public ComboBox<LocalTime> getAppointmentTimes() throws ParseException {
-        fifteenMinuteAppointmentSlots();
+    public ComboBox<LocalTime> getAppointmentTimes(LocalDateTime localDateTime) throws Exception {
+        fifteenMinuteAppointmentSlots(localDateTime);
         return appointmentTimes;
     }
 

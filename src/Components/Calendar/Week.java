@@ -35,7 +35,7 @@ public class Week {
     private User user;
     private final LocalTime FIRST_SLOT_START = LocalTime.of(8, 0);
     private final Duration slotLength = Duration.ofMinutes(15);
-    private final LocalTime LAST_SLOT_END = LocalTime.of(18, 0);
+    private final LocalTime LAST_SLOT_END = LocalTime.of(23, 0);
     // Start week on Monday + date
     public LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
 
@@ -108,7 +108,12 @@ public class Week {
                 timeSlots.add(timeSlot);
 
                 timeSlot.getView().setOnMouseClicked(mouseEvent -> {
-                    AppointmentCard appointmentCard = new AppointmentCard(user, this, timeSlot);
+                    AppointmentCard appointmentCard = null;
+                    try {
+                        appointmentCard = new AppointmentCard(user, this, timeSlot);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Stage popup = null;
                     try {
                         popup = appointmentCard.getNewAppointmentStage();
@@ -254,7 +259,12 @@ public class Week {
                 timeSlots.add(timeSlot);
 
                 timeSlot.getView().setOnMouseClicked(mouseEvent -> {
-                    AppointmentCard appointmentCard = new AppointmentCard(user, this, timeSlot);
+                    AppointmentCard appointmentCard = null;
+                    try {
+                        appointmentCard = new AppointmentCard(user, this, timeSlot);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Stage popup = null;
                     try {
                         popup = appointmentCard.getNewAppointmentStage();
@@ -377,7 +387,7 @@ public class Week {
                         .equals(appointmentSlot.getStart().format(DateTimeFormatter.ofPattern("yyy-mm-dd hh:mm")))
                         && a.getUserId() == user.getId()) {
                     // set timeslot duration to selected number of slots
-                    timeSlot.duration = Duration.ofMinutes(duration.toMinutes());
+                    timeSlot.setDuration(Duration.ofMinutes(duration.toMinutes()));
                     // use temp variable for subtracting minutes from duration in while loop
                     Duration tempD = Duration.ofMinutes(timeSlot.duration.toMinutes());
                     int j = i;
@@ -409,7 +419,7 @@ public class Week {
         timeSlot.getView().setOnMouseClicked(me -> {
             AppointmentCard appointmentCard = null;
             try {
-                appointmentCard = new AppointmentCard(a.getId(), timeSlot.getStart().toLocalDate(), this);
+                appointmentCard = new AppointmentCard(a.getId(), timeSlot, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -475,7 +485,7 @@ public class Week {
             // set mouse anchor to null
             Stage popup = null;
             try {
-                popup = new AppointmentCard(user, this, timeSlot).getNewAppointmentStage();
+                popup = new AppointmentCard(user, this, timeSlot).getNewAppointmentStage(timeSlot.getStart(), timeSlot.getDuration());
             } catch (Exception e) {
                 e.printStackTrace();
             }

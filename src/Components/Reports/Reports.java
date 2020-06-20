@@ -274,6 +274,7 @@ public class Reports {
                     user = consultants.getSelectionModel().getSelectedItem();
                     try {
                         week.getView(user, monday);
+                        week.disableEditing();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -284,6 +285,7 @@ public class Reports {
 
         gridPane.add(hBox, 1, 0);
         gridPane.add(week.getView(monday), 1, 1);
+        week.disableEditing();
         return gridPane;
     }
 

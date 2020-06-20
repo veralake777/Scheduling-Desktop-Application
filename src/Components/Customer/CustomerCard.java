@@ -87,7 +87,6 @@ public class CustomerCard {
     private GridPane buildNewCustomerGridPane() {
         // validators
         validateNameInput(customerNameTextFld);
-        validatePhoneInput(phoneTxtFld);
 
         ColumnConstraints columnConstraints = new ColumnConstraints(150);
         ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
@@ -216,7 +215,6 @@ public class CustomerCard {
     private void buildEditCustomerGridPane() {
         // validators
         validateNameInput(customerNameTextFld);
-        validatePhoneInput(phoneTxtFld);
 
         ColumnConstraints columnConstraints = new ColumnConstraints(150);
         ColumnConstraints columnConstraints1 = new ColumnConstraints(150);
@@ -384,19 +382,6 @@ public class CustomerCard {
             if (!newValue) {
                 //when focus lost check for letters and spaces only from any language
                 if(!textField.getText().matches("\\p{L}[a-zA-Z][a-zA-Z ]*")){
-                    //when it does not match the pattern
-                    //set the textField with invalid input
-                    textField.setText("Invalid Input");
-                }
-            }
-        });
-    }
-
-    private void validatePhoneInput(TextField textField) {
-        textField.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-            if (!newValue) {
-                //when focus lost check for international numbers and symbols
-                if(!textField.getText().matches("^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$")){
                     //when it does not match the pattern
                     //set the textField with invalid input
                     textField.setText("Invalid Input");

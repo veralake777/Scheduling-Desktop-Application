@@ -193,7 +193,11 @@ public class AppointmentCard {
             datePicker.setValue(LocalDate.from(appointment.get().getStart().toLocalDateTime()));
             availableAppointmentSlots = new ComboBoxes().getAppointmentTimes(LocalDateTime.of(datePicker.getValue(), LocalTime.of(8, 0)));
             availableAppointmentSlots.getSelectionModel().select(LocalTime.parse(this.appointment.getStart().toLocalDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("hh:mm"))));
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+
+            long milliseconds = this.appointment.getStart().getTime() - this.appointment.getEnd().getTime();
+            int seconds = (int) milliseconds / 1000;
+            int minutes = (seconds % 3600) / 60;
+            durationComboBox.getSelectionModel().select(Integer.valueOf(Math.abs(minutes)));
         } else {
             System.out.println("Appointment not found.");
         }
@@ -251,15 +255,6 @@ public class AppointmentCard {
     }
 
     private void setAppointment(Appointment appointment) {
-        // set all appointment values to with text field values
-        appointment.setCustomerId(customerNameTxt.getSelectionModel().getSelectedItem().getId());
-        appointment.setTitle(titleTxt.getText());
-        appointment.setDescription(descriptionTxt.getText());
-        appointment.setLocation(locationTxt.getText());
-        appointment.setContact(contactTxt.getText());
-        appointment.setType(typeTxt.getText());
-        appointment.setUrl(urlTxt.getText());
-
         // format times
         // Date formatter for date picker and time combo boxes
         final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -273,16 +268,22 @@ public class AppointmentCard {
         if (datePicker.getValue() != null
                 && datePicker.getValue().getDayOfWeek() != DayOfWeek.SATURDAY
                 && datePicker.getValue().getDayOfWeek() != DayOfWeek.SUNDAY
-                && startTime.isAfter(LocalTime.of(8, 0))
-                && endTime.isBefore(LocalTime.of(18, 0)))
-        {
-            if(timeSlot != null) {
-                System.out.println("TIMESLOT NOT NULL");
-                timeSlot.setDuration(Duration.ofMinutes(endStamp.getTime() - startStamp.getTime()));
-            }
+                && startTime.isAfter(LocalTime.of(7, 59))
+                && endTime.isBefore(LocalTime.of(18, 1))
+            ){
+                if(timeSlot != null) {
+                    timeSlot.setDuration(Duration.ofMinutes(endStamp.getTime() - startStamp.getTime()));
+                }
+            // set all appointment values to with text field values
+            appointment.setCustomerId(customerNameTxt.getSelectionModel().getSelectedItem().getId());
+            appointment.setTitle(titleTxt.getText());
+            appointment.setDescription(descriptionTxt.getText());
+            appointment.setLocation(locationTxt.getText());
+            appointment.setContact(contactTxt.getText());
+            appointment.setType(typeTxt.getText());
+            appointment.setUrl(urlTxt.getText());
             appointment.setStart(startStamp);
             appointment.setEnd(endStamp);
-//            System.out.println(startTime + " " + endTime);
         } else {
             // F.   Write exception controls to prevent setting appointments outside of business hours
             Alert a = new Alert(Alert.AlertType.INFORMATION, "You must select a date of M-F, start time, and end time.");
@@ -356,7 +357,7 @@ public class AppointmentCard {
                             // else you are using calendar view and need to update the week and timeslot
                             timeSlot.setDuration(Duration.ofMinutes(Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(startTime)).getTime()
                                     - Timestamp.valueOf(dateFormatter.format(datePicker.getValue()) + " " + timeFormatter.format(endTime)).getTime()));
-                            weekView.setAppointments();
+                            weekView.updateWeek(appointmentToAdd.getStart().toLocalDateTime().toLocalDate());
                             stage.close();
                         }
                     } else {
@@ -393,7 +394,6 @@ public class AppointmentCard {
                         }
                     });
                 }
-                weekView.getView(weekView.monday);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -514,7 +514,7 @@ public class AppointmentCard {
                     appointmentsTable.updateRightSideView(new Label("Appointment was successfully updated!"));
                 } else {
                     // show success message for calendar view
-                    weekView.getView(weekView.monday);
+                    weekView.updateWeek(appointment.getStart().toLocalDateTime().toLocalDate());
                     stage.close();
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment was successfully updated.");
                     alert.showAndWait();
@@ -540,7 +540,7 @@ public class AppointmentCard {
                     }
                     appointmentsTable.updateRightSideView(new Label("Appointment was successfully deleted!"));
                 } else {
-                    weekView.getView(weekView.monday);
+                    weekView.updateWeek(appointment.getStart().toLocalDateTime().toLocalDate());
                     stage.close();
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Appointment Deleted.");
                     alert.showAndWait();
@@ -630,7 +630,6 @@ public class AppointmentCard {
                 if(testTime.equals(a.getStart().toLocalDateTime())
                         || testTime.equals(a.getEnd().toLocalDateTime())
                 && user.getId() == a.getUserId()) {
-                    System.out.println(testTime + " " + a.getStart().toLocalDateTime());
                     isAppointment.set(true);
                 }
                 testTime = testTime.plusMinutes(15);

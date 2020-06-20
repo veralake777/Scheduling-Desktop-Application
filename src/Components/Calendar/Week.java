@@ -35,7 +35,7 @@ public class Week {
     private User user;
     private final LocalTime FIRST_SLOT_START = LocalTime.of(8, 0);
     private final Duration slotLength = Duration.ofMinutes(15);
-    private final LocalTime LAST_SLOT_END = LocalTime.of(23, 0);
+    private final LocalTime LAST_SLOT_END = LocalTime.of(18, 0);
     // Start week on Monday + date
     public LocalDate monday = LocalDate.now().with(DayOfWeek.MONDAY);
 
@@ -51,6 +51,7 @@ public class Week {
 
     public ScrollPane getView(LocalDate monday) throws Exception {
         // clear gridpane
+        this.monday = monday;
         weekView.getChildren().clear();
         weekView.getColumnConstraints().clear();
         weekView.getRowConstraints().clear();
@@ -201,6 +202,7 @@ public class Week {
 
     public ScrollPane getView(User user, LocalDate monday) throws Exception {
         this.user = user;
+        this.monday = monday;
         // clear gridpane
         weekView.getChildren().clear();
         weekView.getColumnConstraints().clear();
@@ -474,6 +476,9 @@ public class Week {
             timeSlots.forEach(slot -> {
                 if(isBetween(slot, startSlot, timeSlot)) {
                     slot.addFifteenMinutes();
+                    if(slot.getDuration().toMinutes() > Duration.ofMinutes(30).toMinutes()) {
+                        mouseAnchor.set(null);
+                    }
                     slot.setSelected(true);
                     slot.getView().setStyle("-fx-background-color: rgba(" + r + "," + g + "," + b + ",.25);");
                 }
@@ -489,6 +494,7 @@ public class Week {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            assert popup != null;
             popup.showAndWait();
             if(!popup.isShowing()) {
                 try {
@@ -498,7 +504,9 @@ public class Week {
                 }
             }
         });
+
     }
+
 
 
     // Utility method that checks if testSlot is "between" startSlot and endSlot
@@ -514,6 +522,9 @@ public class Week {
     // Finally we note that x <= y <= z or z <= y <= x if and only if (y-x)*(z-y) >= 0.
 
     public boolean isBetween(TimeSlot testSlot, TimeSlot startSlot, TimeSlot endSlot) {
+        if(testSlot == null || startSlot == null || endSlot == null) {
+            return false;
+        }
 
         boolean daysBetween = testSlot.getDayOfWeek().compareTo(startSlot.getDayOfWeek()) * endSlot.getDayOfWeek().compareTo(testSlot.getDayOfWeek()) == 0;
 
@@ -605,5 +616,19 @@ public class Week {
                 this.duration = this.duration.plusMinutes(15);
             }
         }
+    }
+
+    public void updateWeek(LocalDate localDate) throws Exception {
+        this.getView(localDate.with(DayOfWeek.MONDAY));
+    }
+
+    // disable editing for Reports view
+    public void disableEditing() {
+        timeSlots.forEach(slot-> {
+            slot.getView().setOnDragDetected(null);
+            slot.getView().setOnMouseDragEntered(null);
+            slot.getView().setOnMouseReleased(null);
+            slot.getView().setOnMouseClicked(null);
+        });
     }
 }

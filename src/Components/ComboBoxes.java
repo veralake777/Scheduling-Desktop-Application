@@ -107,9 +107,9 @@ public class ComboBoxes extends ComboBox {
 
     private ComboBox<Integer> durationTimes() {
         ObservableList<Integer> list = FXCollections.observableArrayList();
-        list.addAll(15, 30, 45, 60, 75, 90, 105, 120);
-        ComboBox<Integer> durations = new ComboBox<>(list);
-        return durations;
+        // up to 45 mins only
+        list.addAll(15, 30, 45);
+        return new ComboBox<>(list);
     }
 
 
